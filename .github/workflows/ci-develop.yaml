@@ -1,0 +1,50 @@
+name: CI Develop
+
+on:
+  pull_request:
+    branches:
+      - develop
+jobs:
+  check-application:
+    strategy:
+      matrix:
+        ubuntu: ['ubuntu-latest']
+        java: ['17']
+    runs-on: ${{ matrix.ubuntu }}
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=10
+
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+
+    steps:
+      - name: Checkout codigo
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'corretto'
+          java-version: ${{ matrix.java }}
+
+      - name: Setup Maven
+        run: |
+            sudo apt-get install -y maven
+
+      - name: Install Dependencies
+        run: mvn clean install -DskipTests
+
+      - name: Run Tests
+        run: mvn test

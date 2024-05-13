@@ -1,0 +1,27 @@
+services:
+  database:
+    image: "mysql:latest"
+    container_name: conectar_doacoes_mysql_db
+    environment:
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - db-mysql-conectar-doacoes:/var/lib/mysql
+
+  conectar-doacoes-app:
+    image: diegoneves/conectar-doacoes:latest
+    container_name: conectar_doacoes_api
+    ports:
+      - "8080:8080"
+      - "8081:5005"
+    depends_on:
+      - database
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+    entrypoint: sh -c "dockerize -wait tcp://$${DB_HOST}:$${DB_PORT} -timeout 20s && java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar target/conectar-doacoes.jar"
+
+volumes:
+  db-mysql-conectar-doacoes:
