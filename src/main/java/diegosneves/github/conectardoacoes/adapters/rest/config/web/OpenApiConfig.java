@@ -1,4 +1,4 @@
-package diegosneves.github.conectardoacoes.config.web;
+package diegosneves.github.conectardoacoes.adapters.rest.config.web;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
