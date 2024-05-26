@@ -1,4 +1,4 @@
-package diegosneves.github.conectardoacoes.config.web;
+package diegosneves.github.conectardoacoes.adapters.rest.config.web;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
