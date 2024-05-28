@@ -2,7 +2,8 @@ package diegosneves.github.conectardoacoes.core.enums;
 
 public enum ExceptionDetails {
 
-    USER_NAME_INVALID("Um erro ocorreu ao tentar criar um usuario devido ao seguinte motivo: %s"),
+    USER_CREATION_ERROR("Um erro ocorreu ao tentar criar um usuario devido ao seguinte motivo: %s"),
+    ADDRESS_CREATION_ERROR("Um erro ocorreu ao tentar criar um endereço devido ao seguinte motivo: %s"),
     INVALID_UUID_FORMAT_MESSAGE("O ID %s precisa estar no formato UUID");
 
     private final String message;
