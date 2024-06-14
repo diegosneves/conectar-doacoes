@@ -2,6 +2,7 @@ package diegosneves.github.conectardoacoes.core.domain.shelter.entity;
 
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
+import diegosneves.github.conectardoacoes.core.domain.shelter.factory.ShelterFactory;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
@@ -39,10 +40,10 @@ class ShelterTest {
 
     @Test
     void shouldCreateShelterWithGivenDetails() {
-        Shelter shelter = new Shelter(UUID_TEST, "Casa 1", this.address, this.user);
+        Shelter shelter = ShelterFactory.create("Casa 1", this.address, this.user);
 
         assertNotNull(shelter);
-        assertEquals(UUID_TEST, shelter.getId());
+        assertTrue(UuidUtils.isValidUUID(shelter.getId()));
         assertEquals("Casa 1", shelter.getShelterName());
         assertEquals(this.address, shelter.getAddress());
         assertEquals(this.user, shelter.getUser());
