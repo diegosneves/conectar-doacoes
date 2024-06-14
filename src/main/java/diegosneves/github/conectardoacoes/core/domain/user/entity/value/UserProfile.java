@@ -1,5 +1,12 @@
 package diegosneves.github.conectardoacoes.core.domain.user.entity.value;
 
+/**
+ * A enumeração {@link UserProfile} fornece os tipos de perfis disponíveis para um usuário.
+ * Os perfis disponíveis são {@code 'Doador'} e {@code 'Beneficiário'}.
+ *
+ * @author diegoneves
+ * @version 1.0.0
+ */
 public enum UserProfile {
 
     DONOR("Doador"),

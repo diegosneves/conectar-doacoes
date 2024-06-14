@@ -4,10 +4,10 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
 
 /**
  * Esta é uma classe de exceção personalizada que estende a {@link RuntimeException}.
- * É usado especialmente para lidar com erros que ocorrem durante a criação de um usuário.
+ * É usado especialmente para lidar com erros que ocorrem durante a criação de um abrigo.
  * <p>
- * A classe contém uma constante de ERROR, que define o detalhe da exceção. Esta constante é do tipo ExceptionDetails e
- * é inicializada com o valor {@link ExceptionDetails#USER_CREATION_ERROR USER_CREATION_ERROR}.
+ * A classe contém uma constante de ERROR, que define o detalhe da exceção. Esta constante é do tipo {@link ExceptionDetails} e
+ * é inicializada com o valor {@link ExceptionDetails#SHELTER_CREATION_ERROR}.
  * <p>
  * Possui dois construtores:
  * <p>
@@ -20,28 +20,37 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
  * <p>
  * <pre>
  *     {@code
+ * if (AlgumaValidacaoFalhar) {
+ *    throw new ShelterCreationFailureException("Detalhe da falha");
+ * }
+ * // código de criação de um Abrigo
+ * }
+ * </pre>
+ * <pre>
+ *     {@code
  * try {
- *    // código de criação de usuário
+ *    // código de criação de um Abrigo
  * } catch (AlgumaExcecao e) {
- *    throw new UserCreationFailureException("Detalhe da falha", e);
+ *    throw new ShelterCreationFailureException("Detalhe da falha", e);
  * }
  * }
  * </pre>
  * <p>
  * @author diegosneves
+ * @see RuntimeException
  * @version 1.0
  */
-public class UserCreationFailureException extends RuntimeException {
+public class ShelterCreationFailureException extends RuntimeException {
 
-    public static final ExceptionDetails ERROR = ExceptionDetails.USER_CREATION_ERROR;
+    public static final ExceptionDetails ERROR = ExceptionDetails.SHELTER_CREATION_ERROR;
 
     /**
      * Construtor que aceita uma mensagem como argumento e chama o construtor da superclasse com a
-     * mensagem de erro construída a partir de ERROR e a mensagem dada.
+     * mensagem de erro construída a partir de {@code ERROR} e a mensagem dada.
      *
      * @param message Detalhe adicional específico desta instância de exceção.
      */
-    public UserCreationFailureException(String message) {
+    public ShelterCreationFailureException(String message) {
         super(ERROR.buildMessage(message));
     }
 
@@ -52,7 +61,7 @@ public class UserCreationFailureException extends RuntimeException {
      * @param message Detalhe adicional específico desta instância de exceção.
      * @param cause A causa raiz que levou a esta exceção.
      */
-    public UserCreationFailureException(String message, Throwable cause) {
+    public ShelterCreationFailureException(String message, Throwable cause) {
         super(ERROR.buildMessage(message), cause);
     }
 
