@@ -1,6 +1,7 @@
 package diegosneves.github.conectardoacoes.core.domain.user.entity;
 
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
+import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
@@ -22,9 +23,9 @@ class UserTest {
 
     @Test
     void shouldCorrectlyCreateAndValidateUserWithGivenParameters() {
-        User user = new User(UUID_TEST, "Nome", "email", UserProfile.DONOR, "senha");
+        User user = UserFactory.create("Nome", "email", UserProfile.DONOR, "senha");
 
-        assertEquals(UUID_TEST, user.getId());
+        assertTrue(UuidUtils.isValidUUID(user.getId()));
         assertEquals("Nome", user.getUsername());
         assertEquals("email", user.getEmail());
         assertEquals(UserProfile.DONOR, user.getUserProfile());
