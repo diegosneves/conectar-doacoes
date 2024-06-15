@@ -4,8 +4,7 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProf
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
-
-import static java.util.Objects.isNull;
+import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 
 /**
  * Representa um usuário dentro do sistema.
@@ -77,37 +76,17 @@ public class User implements UserContract {
      *                                      faltando, em branco ou é inválido
      */
     private void validateData() throws UserCreationFailureException {
-        this.checkNotNullAndNotEmptyOrThrowException(this.userProfile, PROFILE_NOT_PROVIDED);
-        this.checkNotNullAndNotEmptyOrThrowException(this.userName, String.format(USERNAME_REQUIRED, this.userProfile));
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.userProfile, PROFILE_NOT_PROVIDED, UserCreationFailureException.class);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.userName, String.format(USERNAME_REQUIRED, this.userProfile), UserCreationFailureException.class);
         try {
             UuidUtils.isValidUUID(this.id);
         } catch (UuidUtilsException e) {
             throw new UserCreationFailureException(USER_ID_REQUIRED, e);
         }
-        this.checkNotNullAndNotEmptyOrThrowException(this.email, EMAIL_NOT_PROVIDED);
-        this.checkNotNullAndNotEmptyOrThrowException(this.userPassword, PASSWORD_NOT_PROVIDED);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.email, EMAIL_NOT_PROVIDED, UserCreationFailureException.class);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.userPassword, PASSWORD_NOT_PROVIDED, UserCreationFailureException.class);
     }
 
-    /**
-     * Este é um método genérico usado para verificar se o objeto fornecido é nulo ou, se é uma instância de String, se é vazio.
-     * Em ambos os casos, ele lançará uma exceção {@link UserCreationFailureException}.
-     * <p>
-     * Este método é particularmente útil para validar os detalhes do usuário durante a criação de um novo usuário.
-     * Assegura que os valores de todos os campos necessários estão presentes e não são nulos ou vazios.
-     *
-     * @param <T>          O tipo de objeto a ser verificado.
-     * @param object       O objeto a ser verificado.
-     * @param errorMessage A mensagem de erro a ser anexada à exceção em caso de falha de validação.
-     * @throws UserCreationFailureException Se o objeto fornecido for nulo ou, se for uma instância de String, se for vazio.
-     */
-    private <T> void checkNotNullAndNotEmptyOrThrowException(T object, String errorMessage) throws UserCreationFailureException {
-        if (isNull(object)) {
-            throw new UserCreationFailureException(errorMessage);
-        }
-        if (object instanceof String && ((String) object).trim().isEmpty()) {
-            throw new UserCreationFailureException(errorMessage);
-        }
-    }
 
     @Override
     public String getId() {
@@ -136,13 +115,13 @@ public class User implements UserContract {
 
     @Override
     public void changeUserPassword(String password) throws UserCreationFailureException {
-        this.checkNotNullAndNotEmptyOrThrowException(password, PASSWORD_NOT_PROVIDED);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(password, PASSWORD_NOT_PROVIDED, UserCreationFailureException.class);
         this.userPassword = password;
     }
 
     @Override
     public void changeUserName(String updatedUsername) {
-        this.checkNotNullAndNotEmptyOrThrowException(updatedUsername, String.format(USERNAME_REQUIRED, this.userProfile));
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(updatedUsername, String.format(USERNAME_REQUIRED, this.userProfile), UserCreationFailureException.class);
         this.userName = updatedUsername;
     }
 }

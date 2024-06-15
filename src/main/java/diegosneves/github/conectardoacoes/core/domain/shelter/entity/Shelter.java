@@ -6,11 +6,10 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.exception.ShelterCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
+import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.util.Objects.isNull;
 
 /**
  * Implementação da interface {@link ShelterContract}, que representa um abrigo na aplicação.
@@ -75,31 +74,11 @@ public class Shelter implements ShelterContract {
         } catch (UuidUtilsException e) {
             throw new ShelterCreationFailureException(ID_VALIDATION_FAILURE, e);
         }
-        this.checkNotNullAndNotEmptyOrThrowException(this.shelterName, SHELTER_NAME_REQUIRED_ERROR);
-        this.checkNotNullAndNotEmptyOrThrowException(this.address, ADDRESS_REQUIRED_ERROR);
-        this.checkNotNullAndNotEmptyOrThrowException(this.responsibleUser, RESPONSIBLE_REQUIRED_ERROR);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.shelterName, SHELTER_NAME_REQUIRED_ERROR, ShelterCreationFailureException.class);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.address, ADDRESS_REQUIRED_ERROR, ShelterCreationFailureException.class);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.responsibleUser, RESPONSIBLE_REQUIRED_ERROR, ShelterCreationFailureException.class);
     }
 
-    /**
-     * Este é um método genérico usado para verificar se o objeto fornecido é nulo ou, se é uma instância de String, se é vazio.
-     * Em ambos os casos, ele lançará uma exceção {@link ShelterCreationFailureException}.
-     * <p>
-     * Este método é particularmente útil para validar os detalhes do abrigo durante a criação de um novo abrigo.
-     * Assegura que os valores de todos os campos necessários estão presentes e não são nulos ou vazios.
-     *
-     * @param <T>          O tipo de objeto a ser verificado.
-     * @param object       O objeto a ser verificado.
-     * @param errorMessage A mensagem de erro a ser anexada à exceção em caso de falha de validação.
-     * @throws ShelterCreationFailureException Se o objeto fornecido for nulo ou, se for uma instância de String, se for vazio.
-     */
-    private <T> void checkNotNullAndNotEmptyOrThrowException(T object, String errorMessage) throws ShelterCreationFailureException {
-        if (isNull(object)) {
-            throw new ShelterCreationFailureException(errorMessage);
-        }
-        if (object instanceof String && ((String) object).trim().isEmpty()) {
-            throw new ShelterCreationFailureException(errorMessage);
-        }
-    }
 
     @Override
     public String getId() {
@@ -123,19 +102,19 @@ public class Shelter implements ShelterContract {
 
     @Override
     public void changeShelterName(String shelterName) throws ShelterCreationFailureException {
-        this.checkNotNullAndNotEmptyOrThrowException(shelterName, SHELTER_NAME_REQUIRED_ERROR);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(shelterName, SHELTER_NAME_REQUIRED_ERROR, ShelterCreationFailureException.class);
         this.shelterName = shelterName;
     }
 
     @Override
     public void changeAddress(Address address) throws ShelterCreationFailureException {
-        this.checkNotNullAndNotEmptyOrThrowException(address, ADDRESS_REQUIRED_ERROR);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(address, ADDRESS_REQUIRED_ERROR, ShelterCreationFailureException.class);
         this.address = address;
     }
 
     @Override
     public void addDonation(Donation donation) throws ShelterCreationFailureException {
-        this.checkNotNullAndNotEmptyOrThrowException(donation, DONATION_REQUIRED_ERROR);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(donation, DONATION_REQUIRED_ERROR, ShelterCreationFailureException.class);
         this.donations.add(donation);
     }
 }
