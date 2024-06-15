@@ -3,7 +3,6 @@ package diegosneves.github.conectardoacoes.core.utils;
 import diegosneves.github.conectardoacoes.core.exception.ValidationUtilsException;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * A classe {@link ValidationUtils} é um utilitário que fornece métodos para validar dados de entrada.
@@ -28,8 +27,7 @@ public class ValidationUtils {
      * @param customException a classe da exceção RuntimeException a ser lançada
      * @throws RuntimeException se o objeto fornecido for nulo ou se fora uma instância de String e estiver vazia
      */
-    public static <T> void checkNotNullAndNotEmptyOrThrowException(T object, String errorMessage, Class<? extends RuntimeException> customException)
-            throws RuntimeException {
+    public static <T> void checkNotNullAndNotEmptyOrThrowException(T object, String errorMessage, Class<? extends RuntimeException> customException) throws RuntimeException {
         if (object == null) {
             throwException(errorMessage, customException);
         }
@@ -43,14 +41,13 @@ public class ValidationUtils {
      *
      * @param message               a mensagem de erro a ser anexada à exceção
      * @param runtimeExceptionClass a classe da exceção RuntimeException a ser lançada
-     * @throws RuntimeException se houve um erro ao tentar lançar a exceção
+     * @throws ValidationUtilsException se houve um erro ao tentar lançar a exceção
      */
     private static void throwException(String message, Class<? extends RuntimeException> runtimeExceptionClass) {
         try {
             Constructor<? extends RuntimeException> exceptionConstructor = runtimeExceptionClass.getConstructor(String.class);
             throw exceptionConstructor.newInstance(message);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException |
-                 InvocationTargetException e) {
+        } catch (ReflectiveOperationException e) {
             throw new ValidationUtilsException(runtimeExceptionClass.getSimpleName(), e);
         }
     }
