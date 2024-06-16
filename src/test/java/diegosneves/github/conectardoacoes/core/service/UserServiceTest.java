@@ -1,10 +1,12 @@
 package diegosneves.github.conectardoacoes.core.service;
 
+import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.domain.user.shared.repository.UserRepository;
 import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
+import diegosneves.github.conectardoacoes.core.exception.ShelterCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UserServiceFailureException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
@@ -76,6 +78,90 @@ class UserServiceTest {
         assertEquals(UserProfile.BENEFICIARY, actual.getUserProfile());
         assertEquals(USER_PASSWORD, returnedUser.getUserPassword());
         assertEquals(USER_PASSWORD, actual.getUserPassword());
+    }
+
+    @Test
+    void shouldThrowUserCreationFailureExceptionWhenUsernameIsNull() {
+
+        Exception actual = assertThrows(Exception.class,
+                () -> this.userService.createUser(null, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD));
+
+        verify(this.userRepository, never()).save(any(UserContract.class));
+
+        assertNotNull(actual);
+        assertEquals(UserCreationFailureException.class, actual.getClass());
+    }
+
+    @Test
+    void shouldThrowUserCreationFailureExceptionWhenUsernameIsEmpty() {
+
+        Exception actual = assertThrows(Exception.class,
+                () -> this.userService.createUser(" ", USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD));
+
+        verify(this.userRepository, never()).save(any(UserContract.class));
+
+        assertNotNull(actual);
+        assertEquals(UserCreationFailureException.class, actual.getClass());
+    }
+
+    @Test
+    void shouldThrowUserCreationFailureExceptionWhenUserEmailIsNull() {
+
+        Exception actual = assertThrows(Exception.class,
+                () -> this.userService.createUser(USERNAME, null, UserProfile.BENEFICIARY, USER_PASSWORD));
+
+        verify(this.userRepository, never()).save(any(UserContract.class));
+
+        assertNotNull(actual);
+        assertEquals(UserCreationFailureException.class, actual.getClass());
+    }
+
+    @Test
+    void shouldThrowUserCreationFailureExceptionWhenUserEmailIsEmpty() {
+
+        Exception actual = assertThrows(Exception.class,
+                () -> this.userService.createUser(USERNAME, "", UserProfile.BENEFICIARY, USER_PASSWORD));
+
+        verify(this.userRepository, never()).save(any(UserContract.class));
+
+        assertNotNull(actual);
+        assertEquals(UserCreationFailureException.class, actual.getClass());
+    }
+
+    @Test
+    void shouldThrowUserCreationFailureExceptionWhenUserProfileIsNull() {
+
+        Exception actual = assertThrows(Exception.class,
+                () -> this.userService.createUser(USERNAME, USER_EMAIL, null, USER_PASSWORD));
+
+        verify(this.userRepository, never()).save(any(UserContract.class));
+
+        assertNotNull(actual);
+        assertEquals(UserCreationFailureException.class, actual.getClass());
+    }
+
+    @Test
+    void shouldThrowUserCreationFailureExceptionWhenUserPasswordIsNull() {
+
+        Exception actual = assertThrows(Exception.class,
+                () -> this.userService.createUser(USERNAME, USER_EMAIL, UserProfile.BENEFICIARY, null));
+
+        verify(this.userRepository, never()).save(any(UserContract.class));
+
+        assertNotNull(actual);
+        assertEquals(UserCreationFailureException.class, actual.getClass());
+    }
+
+    @Test
+    void shouldThrowUserCreationFailureExceptionWhenUserPasswordIsEmpty() {
+
+        Exception actual = assertThrows(Exception.class,
+                () -> this.userService.createUser(USERNAME, USER_EMAIL, UserProfile.BENEFICIARY, " "));
+
+        verify(this.userRepository, never()).save(any(UserContract.class));
+
+        assertNotNull(actual);
+        assertEquals(UserCreationFailureException.class, actual.getClass());
     }
 
     @Test
