@@ -9,6 +9,7 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.core.exception.ShelterCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UserServiceFailureException;
+import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -294,6 +295,18 @@ class UserServiceTest {
     }
 
     @Test
+    void shouldThrowUserServiceFailureExceptionWhenInvalidUserIdProvidedOnGetUser() {
+
+        UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUser("id"));
+
+        verify(this.userRepository, never()).findById(anyString());
+
+        assertNotNull(actual);
+        assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
+        assertEquals(UuidUtilsException.class, actual.getCause().getClass());
+    }
+
+    @Test
     void shouldChangeUserPasswordAndPersistTheChange() {
         String newPassword = "newPassword";
         when(this.userRepository.findById(USER_UUID)).thenReturn(this.user);
@@ -374,6 +387,18 @@ class UserServiceTest {
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
+    }
+
+    @Test
+    void shouldThrowUserServiceFailureExceptionWhenInvalidUserIdProvidedOnChangePassword() {
+
+        UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.changePassword("Invalid", "newPassword"));
+
+        verify(this.userRepository, never()).findById(anyString());
+
+        assertNotNull(actual);
+        assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
+        assertEquals(UuidUtilsException.class, actual.getCause().getClass());
     }
 
     @Test
@@ -459,6 +484,19 @@ class UserServiceTest {
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
+    }
+
+    @Test
+    void shouldThrowUserServiceFailureExceptionWhenInvalidUserIdProvidedOnChangeUsername() {
+
+        UserServiceFailureException actual = assertThrows(UserServiceFailureException.class,
+                () -> this.userService.changeUserName("ID", "newUsername"));
+
+        verify(this.userRepository, never()).findById(anyString());
+
+        assertNotNull(actual);
+        assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
+        assertEquals(UuidUtilsException.class, actual.getCause().getClass());
     }
 
 }

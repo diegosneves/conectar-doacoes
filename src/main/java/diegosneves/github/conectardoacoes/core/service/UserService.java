@@ -7,6 +7,8 @@ import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
 import diegosneves.github.conectardoacoes.core.domain.user.shared.repository.UserRepository;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UserServiceFailureException;
+import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
+import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 
 /**
@@ -62,8 +64,17 @@ public class UserService implements UserServiceContract {
      */
     @Override
     public UserContract getUser(String userId) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(userId, INVALID_IDENTIFIER_ERROR_MESSAGE, UserServiceFailureException.class);
+        validateUserId(userId);
         return this.userRepository.findById(userId);
+    }
+
+    private static void validateUserId(String userId) throws UserServiceFailureException {
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(userId, INVALID_IDENTIFIER_ERROR_MESSAGE, UserServiceFailureException.class);
+        try {
+            UuidUtils.isValidUUID(userId);
+        } catch (UuidUtilsException e) {
+            throw new UserServiceFailureException(INVALID_IDENTIFIER_ERROR_MESSAGE, e);
+        }
     }
 
     /**
@@ -75,7 +86,7 @@ public class UserService implements UserServiceContract {
      */
     @Override
     public void changePassword(String userId, String newPassword) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(userId, INVALID_IDENTIFIER_ERROR_MESSAGE, UserServiceFailureException.class);
+        validateUserId(userId);
         ValidationUtils.checkNotNullAndNotEmptyOrThrowException(newPassword, INVALID_NEW_PASSWORD_MESSAGE, UserServiceFailureException.class);
         UserContract retrievedUser = this.userRepository.findById(userId);
         ValidationUtils.checkNotNullAndNotEmptyOrThrowException(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
@@ -92,7 +103,7 @@ public class UserService implements UserServiceContract {
      */
     @Override
     public void changeUserName(String userId, String newUsername) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(userId, INVALID_IDENTIFIER_ERROR_MESSAGE, UserServiceFailureException.class);
+        validateUserId(userId);
         ValidationUtils.checkNotNullAndNotEmptyOrThrowException(newUsername, USERNAME_INVALID_ERROR_MESSAGE, UserServiceFailureException.class);
         UserContract retrievedUser = this.userRepository.findById(userId);
         ValidationUtils.checkNotNullAndNotEmptyOrThrowException(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
