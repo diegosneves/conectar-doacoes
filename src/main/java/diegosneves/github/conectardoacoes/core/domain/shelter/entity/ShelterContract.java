@@ -5,6 +5,8 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donat
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.exception.ShelterCreationFailureException;
 
+import java.util.List;
+
 /**
  * Interface {@link ShelterContract} define os métodos que representam os principais comportamentos e a divulgação de informações de uma entidade {@link Shelter}.
  * <p>
@@ -36,6 +38,21 @@ public interface ShelterContract {
      * @return um objeto Address que representa o endereço do refúgio.
      */
     Address getAddress();
+
+    /**
+     * Retorna uma lista de todas as doações associadas ao Abrigo.
+     * <p>
+     * Cada item na lista é um objeto {@link Donation}, que representa uma
+     * doação feita ao Abrigo. A doação contém informações sobre a descrição
+     * e a quantidade da doação.
+     * <p>
+     * Este método não recebe nenhum parâmetro.
+     *
+     * @return Uma lista de objetos {@link Donation} que representam as
+     * doações feitas ao Abrigo. Se não houver doações, este método retornará
+     * uma lista vazia.
+     */
+    List<Donation> getDonations();
 
     /**
      * Este método é usado para alterar o endereço do abrigo.

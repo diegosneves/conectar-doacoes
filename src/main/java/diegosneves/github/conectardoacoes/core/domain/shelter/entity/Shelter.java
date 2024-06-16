@@ -101,6 +101,11 @@ public class Shelter implements ShelterContract {
     }
 
     @Override
+    public List<Donation> getDonations() {
+        return this.donations;
+    }
+
+    @Override
     public void changeShelterName(String shelterName) throws ShelterCreationFailureException {
         ValidationUtils.checkNotNullAndNotEmptyOrThrowException(shelterName, SHELTER_NAME_REQUIRED_ERROR, ShelterCreationFailureException.class);
         this.shelterName = shelterName;
