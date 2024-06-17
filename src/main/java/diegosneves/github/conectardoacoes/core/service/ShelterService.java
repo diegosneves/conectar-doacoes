@@ -21,7 +21,7 @@ import java.util.List;
  * Esta classe implementa a interface {@link ShelterServiceContract}.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  * @see ShelterServiceContract
  * @see ShelterRepository
  */

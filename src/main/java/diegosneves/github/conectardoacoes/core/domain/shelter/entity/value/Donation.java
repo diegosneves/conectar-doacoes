@@ -8,7 +8,7 @@ import lombok.Getter;
  * Uma doação é caracterizada pela sua descrição e quantidade.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  */
 @Getter
 public class Donation {

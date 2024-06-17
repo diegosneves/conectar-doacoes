@@ -14,7 +14,7 @@ import lombok.Getter;
  * Este classe é utilizada na criação de entidades tais como {@link Shelter}, que precisam de uma representação de endereço.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  */
 @Getter
 public class Address {

@@ -14,7 +14,7 @@ import java.util.List;
  * além da adição de doações e recuperação de um usuário responsável pelo abrigo.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  */
 public interface ShelterContract {
 

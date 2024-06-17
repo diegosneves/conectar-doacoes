@@ -15,7 +15,7 @@ import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
  * Esta classe destaca a declaração de um método público estático create, responsável pela criação de uma instance de {@link Shelter}.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  * @see Shelter
  */
 public class ShelterFactory {

@@ -16,7 +16,7 @@ import java.util.List;
  * Uma instância desta classe representa um abrigo com uma identificação, um nome de referência, um endereço, um usuário responsável, e uma lista de doações.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  * @see ShelterContract
  */
 public class Shelter implements ShelterContract {

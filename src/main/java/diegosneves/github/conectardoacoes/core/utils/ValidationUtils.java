@@ -9,7 +9,7 @@ import java.lang.reflect.Constructor;
  * Contém todos os métodos estáticos e não pode ser instanciada.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  */
 public class ValidationUtils {
 

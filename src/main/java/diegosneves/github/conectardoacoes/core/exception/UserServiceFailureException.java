@@ -29,7 +29,7 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
  * </pre>
  * <p>
  * @author diegosneves
- * @version 1.0
+ * @since 1.0.0
  * @see RuntimeException
  */
 public class UserServiceFailureException extends RuntimeException {

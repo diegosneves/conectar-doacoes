@@ -17,7 +17,7 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
  * String para o construtor ao instanciar um novo objeto {@link DonationRegisterFailureException}.
  * </p>
  * @author diegoneves
- * @version 1.0
+ * @since 1.0.0
  * @see RuntimeException
  */
 public class DonationRegisterFailureException extends RuntimeException {

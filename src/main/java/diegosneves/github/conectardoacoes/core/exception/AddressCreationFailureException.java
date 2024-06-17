@@ -23,7 +23,7 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
  * <p>
  * @author diegosneves
  * @see RuntimeException
- * @version 1.0
+ * @since 1.0.0
  */
 public class AddressCreationFailureException extends RuntimeException {
 

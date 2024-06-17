@@ -19,7 +19,7 @@ package diegosneves.github.conectardoacoes.core.enums;
  * </p>
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  */
 public enum ExceptionDetails {
 

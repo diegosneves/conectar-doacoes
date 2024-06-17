@@ -9,7 +9,7 @@ import diegosneves.github.conectardoacoes.core.exception.UserServiceFailureExcep
  * Interface para o contrato de serviço do usuário. Define os métodos funcionais para todos os serviços de usuário.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  */
 public interface UserServiceContract {
 

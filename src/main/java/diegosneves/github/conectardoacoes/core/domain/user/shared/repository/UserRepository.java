@@ -22,7 +22,7 @@ import diegosneves.github.conectardoacoes.core.repository.RepositoryContract;
  * <p> Caso as operações de pesquisa não possam encontrar usuário(s) correspondente, eles retornarão um valor nulo ou uma lista vazia.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  * @see RepositoryContract
  * @see UserContract
  */

@@ -20,7 +20,7 @@ import diegosneves.github.conectardoacoes.core.repository.RepositoryContract;
  * <p>
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  * @see RepositoryContract
  * @see Shelter
  */

@@ -21,7 +21,7 @@ import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
  * </p>
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  * @see User
  */
 public class UserFactory {

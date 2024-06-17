@@ -21,7 +21,7 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
  * eles lançarão uma exceção {@link UserServiceFailureException}.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  * @see UserServiceContract
  * @see UserRepository
  * @see UserServiceFailureException

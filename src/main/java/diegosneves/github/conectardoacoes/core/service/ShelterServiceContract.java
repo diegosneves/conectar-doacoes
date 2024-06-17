@@ -15,7 +15,7 @@ import java.util.List;
  * Isso inclui criar um abrigo, alterar o nome e o endereço de um abrigo, adicionar uma doação e obter detalhes de um abrigo.
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  */
 public interface ShelterServiceContract {
 
