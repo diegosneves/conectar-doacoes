@@ -4,6 +4,7 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProf
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
+import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 
 /**
  * Representa um usuário dentro do sistema.
@@ -30,7 +31,7 @@ import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
  * </p>
  *
  * @author diegoneves
- * @version 1.0
+ * @since 1.0.0
  */
 public class User implements UserContract {
 
@@ -75,24 +76,17 @@ public class User implements UserContract {
      *                                      faltando, em branco ou é inválido
      */
     private void validateData() throws UserCreationFailureException {
-        if (this.userProfile == null) {
-            throw new UserCreationFailureException(PROFILE_NOT_PROVIDED);
-        }
-        if (this.userName == null || this.userName.isBlank()) {
-            throw new UserCreationFailureException(String.format(USERNAME_REQUIRED, this.userProfile));
-        }
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.userProfile, PROFILE_NOT_PROVIDED, UserCreationFailureException.class);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.userName, String.format(USERNAME_REQUIRED, this.userProfile), UserCreationFailureException.class);
         try {
             UuidUtils.isValidUUID(this.id);
         } catch (UuidUtilsException e) {
             throw new UserCreationFailureException(USER_ID_REQUIRED, e);
         }
-        if (this.email == null || this.email.isBlank()) {
-            throw new UserCreationFailureException(EMAIL_NOT_PROVIDED);
-        }
-        if (this.userPassword == null || this.userPassword.isBlank()) {
-            throw new UserCreationFailureException(PASSWORD_NOT_PROVIDED);
-        }
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.email, EMAIL_NOT_PROVIDED, UserCreationFailureException.class);
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.userPassword, PASSWORD_NOT_PROVIDED, UserCreationFailureException.class);
     }
+
 
     @Override
     public String getId() {
@@ -121,17 +115,13 @@ public class User implements UserContract {
 
     @Override
     public void changeUserPassword(String password) throws UserCreationFailureException {
-        if (password == null || password.isBlank()) {
-            throw new UserCreationFailureException(PASSWORD_NOT_PROVIDED);
-        }
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(password, PASSWORD_NOT_PROVIDED, UserCreationFailureException.class);
         this.userPassword = password;
     }
 
     @Override
     public void changeUserName(String updatedUsername) {
-        if (updatedUsername == null || updatedUsername.isBlank()) {
-            throw new UserCreationFailureException(String.format(USERNAME_REQUIRED, this.userProfile));
-        }
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(updatedUsername, String.format(USERNAME_REQUIRED, this.userProfile), UserCreationFailureException.class);
         this.userName = updatedUsername;
     }
 }

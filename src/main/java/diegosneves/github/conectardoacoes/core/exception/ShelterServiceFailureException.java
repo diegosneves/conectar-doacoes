@@ -7,7 +7,7 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
  * É usado especialmente para lidar com erros que ocorrem durante a criação de um abrigo.
  * <p>
  * A classe contém uma constante de ERROR, que define o detalhe da exceção. Esta constante é do tipo {@link ExceptionDetails} e
- * é inicializada com o valor {@link ExceptionDetails#SHELTER_CREATION_ERROR}.
+ * é inicializada com o valor {@link ExceptionDetails#SHELTER_MANIPULATION_ERROR}.
  * <p>
  * Possui dois construtores:
  * <p>
@@ -21,7 +21,7 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
  * <pre>
  *     {@code
  * if (AlgumaValidacaoFalhar) {
- *    throw new ShelterCreationFailureException("Detalhe da falha");
+ *    throw new ShelterServiceFailureException("Detalhe da falha");
  * }
  * // código de criação de um Abrigo
  * }
@@ -31,7 +31,7 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
  * try {
  *    // código de criação de um Abrigo
  * } catch (AlgumaExcecao e) {
- *    throw new ShelterCreationFailureException("Detalhe da falha", e);
+ *    throw new ShelterServiceFailureException("Detalhe da falha", e);
  * }
  * }
  * </pre>
@@ -40,9 +40,9 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
  * @see RuntimeException
  * @since 1.0.0
  */
-public class ShelterCreationFailureException extends RuntimeException {
+public class ShelterServiceFailureException extends RuntimeException {
 
-    public static final ExceptionDetails ERROR = ExceptionDetails.SHELTER_CREATION_ERROR;
+    public static final ExceptionDetails ERROR = ExceptionDetails.SHELTER_MANIPULATION_ERROR;
 
     /**
      * Construtor que aceita uma mensagem como argumento e chama o construtor da superclasse com a
@@ -50,7 +50,7 @@ public class ShelterCreationFailureException extends RuntimeException {
      *
      * @param message Detalhe adicional específico desta instância de exceção.
      */
-    public ShelterCreationFailureException(String message) {
+    public ShelterServiceFailureException(String message) {
         super(ERROR.buildMessage(message));
     }
 
@@ -61,7 +61,7 @@ public class ShelterCreationFailureException extends RuntimeException {
      * @param message Detalhe adicional específico desta instância de exceção.
      * @param cause A causa raiz que levou a esta exceção.
      */
-    public ShelterCreationFailureException(String message, Throwable cause) {
+    public ShelterServiceFailureException(String message, Throwable cause) {
         super(ERROR.buildMessage(message), cause);
     }
 

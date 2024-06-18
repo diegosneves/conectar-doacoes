@@ -19,15 +19,18 @@ package diegosneves.github.conectardoacoes.core.enums;
  * </p>
  *
  * @author diegoneves
- * @version 1.0.0
+ * @since 1.0.0
  */
 public enum ExceptionDetails {
 
     USER_CREATION_ERROR("Um erro ocorreu ao tentar criar um usuario devido ao seguinte motivo: %s"),
+    USER_MANIPULATION_ERROR("Ocorreu um erro no UserService ao tentar manipular um usuário. Motivo: %s"),
+    SHELTER_MANIPULATION_ERROR("Ocorreu um erro no ShelterService ao tentar manipular um abrigo. Motivo: %s"),
     DONATION_CREATION_ERROR("Um erro ocorreu ao tentar registrar uma doação devido ao seguinte motivo: %s"),
     SHELTER_CREATION_ERROR("Um erro ocorreu ao tentar criar um Abrigo devido ao seguinte motivo: %s"),
     ADDRESS_CREATION_ERROR("Um erro ocorreu ao tentar criar um endereço devido ao seguinte motivo: %s"),
-    INVALID_UUID_FORMAT_MESSAGE("O ID %s precisa estar no formato UUID");
+    INVALID_UUID_FORMAT_MESSAGE("O ID %s precisa estar no formato UUID"),
+    EXCEPTION_TYPE_NOT_THROWN("Não foi possível lançar a exceção do tipo %s");
 
     private final String message;
 

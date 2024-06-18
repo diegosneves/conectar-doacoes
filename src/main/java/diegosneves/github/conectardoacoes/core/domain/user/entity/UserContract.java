@@ -14,7 +14,7 @@ import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureExce
  * {@link UserCreationFailureException}.
  *
  * @author diegoneves
- * @version 1.0
+ * @since 1.0.0
  * @see UserCreationFailureException
  * @see RuntimeException
  */

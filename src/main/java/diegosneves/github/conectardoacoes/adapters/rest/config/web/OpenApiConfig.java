@@ -18,6 +18,7 @@ import java.util.List;
  * <p>
  *
  * @author diegosneves
+ * @since 1.0.0
  */
 @Configuration
 public class OpenApiConfig {

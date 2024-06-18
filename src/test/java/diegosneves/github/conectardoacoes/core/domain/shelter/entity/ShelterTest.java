@@ -186,12 +186,10 @@ class ShelterTest {
     @SneakyThrows
     void shouldAddDonation() {
         Donation newDonation = new Donation("Doação", 1);
-        Field field = Shelter.class.getDeclaredField("donations");
-        field.setAccessible(true);
 
         this.shelter.addDonation(newDonation);
 
-        List<Donation> actualDonations = (List<Donation>) field.get(this.shelter);
+        List<Donation> actualDonations = this.shelter.getDonations();
 
         assertNotNull(actualDonations);
         assertFalse(actualDonations.isEmpty());

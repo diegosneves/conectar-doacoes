@@ -11,6 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * A classe {@link WebSecurityConfig} tem a responsabilidade de definir as configurações de segurança web desta aplicação.
  *
  * @author diegosneves
+ * @since 1.0.0
  */
 @Configuration
 @EnableWebSecurity

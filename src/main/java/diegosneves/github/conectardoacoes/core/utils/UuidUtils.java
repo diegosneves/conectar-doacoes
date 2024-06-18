@@ -10,6 +10,7 @@ import java.util.UUID;
  * Esta classe fornece métodos estáticos para gerar um novo {@link UUID} e para validar um {@link UUID} existente.
  *
  * @author diegoneves
+ * @since 1.0.0
  */
 @Slf4j
 public class UuidUtils {
