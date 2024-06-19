@@ -1,12 +1,9 @@
 package diegosneves.github.conectardoacoes.core.service;
 
-import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.domain.user.shared.repository.UserRepository;
-import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
-import diegosneves.github.conectardoacoes.core.exception.ShelterCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UserServiceFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
@@ -19,7 +16,6 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
