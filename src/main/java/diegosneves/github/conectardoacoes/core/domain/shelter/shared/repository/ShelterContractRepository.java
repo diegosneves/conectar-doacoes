@@ -5,7 +5,7 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterCont
 import diegosneves.github.conectardoacoes.core.repository.RepositoryContract;
 
 /**
- * A interface {@link ShelterRepository} herda da interface {@link RepositoryContract}.
+ * A interface {@link ShelterContractRepository} herda da interface {@link RepositoryContract}.
  * Ela define o contrato para um repositório que persiste e recupera as entidades {@link ShelterContract}.
  * <p>
  * Tem as seguintes operações básicas:
@@ -24,6 +24,6 @@ import diegosneves.github.conectardoacoes.core.repository.RepositoryContract;
  * @see RepositoryContract
  * @see Shelter
  */
-public interface ShelterRepository extends RepositoryContract<ShelterContract> {
+public interface ShelterContractRepository extends RepositoryContract<ShelterContract> {
 
 }

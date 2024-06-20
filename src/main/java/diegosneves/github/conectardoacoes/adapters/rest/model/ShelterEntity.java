@@ -37,8 +37,8 @@ public class ShelterEntity {
     private String shelterName;
     @OneToOne
     private AddressEntity address;
-//    @OneToOne
-//    private UserEntity responsibleUser;
+    @OneToOne
+    private UserEntity responsibleUser;
     @OneToMany
     private List<DonationEntity> donations;
 

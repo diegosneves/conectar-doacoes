@@ -3,7 +3,7 @@ package diegosneves.github.conectardoacoes.core.service;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
-import diegosneves.github.conectardoacoes.core.domain.user.shared.repository.UserRepository;
+import diegosneves.github.conectardoacoes.core.domain.user.shared.repository.UserContractRepository;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UserServiceFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
@@ -42,7 +42,7 @@ class UserServiceTest {
     private UserService userService;
 
     @Mock
-    private UserRepository userRepository;
+    private UserContractRepository userContractRepository;
 
     @Captor
     private ArgumentCaptor<User> userCaptor;
@@ -56,11 +56,11 @@ class UserServiceTest {
 
     @Test
     void shouldCreateUserAndReturnCreatedUser() {
-        when(this.userRepository.save(any(UserContract.class))).thenReturn(this.user);
+        when(this.userContractRepository.persist(any(UserContract.class))).thenReturn(this.user);
 
         UserContract actual = this.userService.createUser(USERNAME, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD);
 
-        verify(this.userRepository, times(1)).save(this.userCaptor.capture());
+        verify(this.userContractRepository, times(1)).persist(this.userCaptor.capture());
 
         assertNotNull(this.userCaptor.getValue());
         User returnedUser = this.userCaptor.getValue();
@@ -83,7 +83,7 @@ class UserServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.userService.createUser(null, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.class, actual.getClass());
@@ -95,7 +95,7 @@ class UserServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.userService.createUser(" ", USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.class, actual.getClass());
@@ -107,7 +107,7 @@ class UserServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.userService.createUser(USERNAME, null, UserProfile.BENEFICIARY, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.class, actual.getClass());
@@ -119,7 +119,7 @@ class UserServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.userService.createUser(USERNAME, "", UserProfile.BENEFICIARY, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.class, actual.getClass());
@@ -131,7 +131,7 @@ class UserServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.userService.createUser(USERNAME, USER_EMAIL, null, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.class, actual.getClass());
@@ -143,7 +143,7 @@ class UserServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.userService.createUser(USERNAME, USER_EMAIL, UserProfile.BENEFICIARY, null));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.class, actual.getClass());
@@ -155,7 +155,7 @@ class UserServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.userService.createUser(USERNAME, USER_EMAIL, UserProfile.BENEFICIARY, " "));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.class, actual.getClass());
@@ -167,7 +167,7 @@ class UserServiceTest {
         UserCreationFailureException actual = assertThrows(UserCreationFailureException.class,
                 () -> this.userService.createUser(null, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.ERROR.buildMessage(String.format(User.USERNAME_REQUIRED, UserProfile.BENEFICIARY)), actual.getMessage());
@@ -179,7 +179,7 @@ class UserServiceTest {
         UserCreationFailureException actual = assertThrows(UserCreationFailureException.class,
                 () -> this.userService.createUser(" ", USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.ERROR.buildMessage(String.format(User.USERNAME_REQUIRED, UserProfile.BENEFICIARY)), actual.getMessage());
@@ -191,7 +191,7 @@ class UserServiceTest {
         UserCreationFailureException actual = assertThrows(UserCreationFailureException.class,
                 () -> this.userService.createUser(USERNAME, null, UserProfile.BENEFICIARY, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.ERROR.buildMessage(User.EMAIL_NOT_PROVIDED), actual.getMessage());
@@ -203,7 +203,7 @@ class UserServiceTest {
         UserCreationFailureException actual = assertThrows(UserCreationFailureException.class,
                 () -> this.userService.createUser(USERNAME, "", UserProfile.BENEFICIARY, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.ERROR.buildMessage(User.EMAIL_NOT_PROVIDED), actual.getMessage());
@@ -215,7 +215,7 @@ class UserServiceTest {
         UserCreationFailureException actual = assertThrows(UserCreationFailureException.class,
                 () -> this.userService.createUser(USERNAME, USER_EMAIL, null, USER_PASSWORD));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.ERROR.buildMessage(User.PROFILE_NOT_PROVIDED), actual.getMessage());
@@ -227,7 +227,7 @@ class UserServiceTest {
         UserCreationFailureException actual = assertThrows(UserCreationFailureException.class,
                 () -> this.userService.createUser(USERNAME, USER_EMAIL, UserProfile.BENEFICIARY, null));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.ERROR.buildMessage(User.PASSWORD_NOT_PROVIDED), actual.getMessage());
@@ -239,7 +239,7 @@ class UserServiceTest {
         UserCreationFailureException actual = assertThrows(UserCreationFailureException.class,
                 () -> this.userService.createUser(USERNAME, USER_EMAIL, UserProfile.BENEFICIARY, "   "));
 
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(actual);
         assertEquals(UserCreationFailureException.ERROR.buildMessage(User.PASSWORD_NOT_PROVIDED), actual.getMessage());
@@ -247,11 +247,11 @@ class UserServiceTest {
 
     @Test
     void shouldGetUserById() {
-        when(this.userRepository.findById(USER_UUID)).thenReturn(this.user);
+        when(this.userContractRepository.findEntityById(USER_UUID)).thenReturn(this.user);
 
         UserContract actual = this.userService.getUser(USER_UUID);
 
-        verify(this.userRepository, times(1)).findById(USER_UUID);
+        verify(this.userContractRepository, times(1)).findEntityById(USER_UUID);
 
         assertNotNull(actual);
         assertEquals(this.user, actual);
@@ -259,11 +259,11 @@ class UserServiceTest {
 
     @Test
     void shouldReturnNullWhenUserNotFoundOnGetUser() {
-        when(this.userRepository.findById(USER_IDENTIFIER)).thenReturn(null);
+        when(this.userContractRepository.findEntityById(USER_IDENTIFIER)).thenReturn(null);
 
         UserContract actual = this.userService.getUser(USER_IDENTIFIER);
 
-        verify(this.userRepository, times(1)).findById(USER_IDENTIFIER);
+        verify(this.userContractRepository, times(1)).findEntityById(USER_IDENTIFIER);
 
         assertNull(actual);
     }
@@ -273,7 +273,7 @@ class UserServiceTest {
 
         UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUser(null));
 
-        verify(this.userRepository, never()).findById(anyString());
+        verify(this.userContractRepository, never()).findEntityById(anyString());
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
@@ -284,7 +284,7 @@ class UserServiceTest {
 
         UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUser("   "));
 
-        verify(this.userRepository, never()).findById(anyString());
+        verify(this.userContractRepository, never()).findEntityById(anyString());
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
@@ -295,7 +295,7 @@ class UserServiceTest {
 
         UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUser("id"));
 
-        verify(this.userRepository, never()).findById(anyString());
+        verify(this.userContractRepository, never()).findEntityById(anyString());
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
@@ -305,12 +305,12 @@ class UserServiceTest {
     @Test
     void shouldChangeUserPasswordAndPersistTheChange() {
         String newPassword = "newPassword";
-        when(this.userRepository.findById(USER_UUID)).thenReturn(this.user);
+        when(this.userContractRepository.findEntityById(USER_UUID)).thenReturn(this.user);
 
         this.userService.changePassword(USER_UUID, newPassword);
 
-        verify(this.userRepository, times(1)).findById(USER_UUID);
-        verify(this.userRepository, times(1)).save(this.userCaptor.capture());
+        verify(this.userContractRepository, times(1)).findEntityById(USER_UUID);
+        verify(this.userContractRepository, times(1)).persist(this.userCaptor.capture());
 
         assertNotNull(userCaptor.getValue());
         User updatedUser = userCaptor.getValue();
@@ -327,8 +327,8 @@ class UserServiceTest {
         UserServiceFailureException exception = assertThrows(UserServiceFailureException.class,
                 () -> this.userService.changePassword(USER_UUID, null));
 
-        verify(this.userRepository, never()).findById(USER_UUID);
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).findEntityById(USER_UUID);
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(exception);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_NEW_PASSWORD_MESSAGE), exception.getMessage());
@@ -341,8 +341,8 @@ class UserServiceTest {
         UserServiceFailureException exception = assertThrows(UserServiceFailureException.class,
                 () -> this.userService.changePassword(USER_UUID, newPassword));
 
-        verify(this.userRepository, never()).findById(USER_UUID);
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).findEntityById(USER_UUID);
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(exception);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_NEW_PASSWORD_MESSAGE), exception.getMessage());
@@ -351,13 +351,13 @@ class UserServiceTest {
     @Test
     void shouldThrowUserServiceFailureExceptionWhenUserNotFound() {
         String newPassword = "newPassword";
-        when(this.userRepository.findById(USER_UUID)).thenReturn(null);
+        when(this.userContractRepository.findEntityById(USER_UUID)).thenReturn(null);
 
         UserServiceFailureException exception = assertThrows(UserServiceFailureException.class,
                 () -> this.userService.changePassword(USER_UUID, newPassword));
 
-        verify(this.userRepository, times(1)).findById(USER_UUID);
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, times(1)).findEntityById(USER_UUID);
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(exception);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.USER_NOT_FOUND_MESSAGE), exception.getMessage());
@@ -368,7 +368,7 @@ class UserServiceTest {
 
         UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.changePassword(null, "newPassword"));
 
-        verify(this.userRepository, never()).findById(anyString());
+        verify(this.userContractRepository, never()).findEntityById(anyString());
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
@@ -379,7 +379,7 @@ class UserServiceTest {
 
         UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.changePassword("   ", "newPassword"));
 
-        verify(this.userRepository, never()).findById(anyString());
+        verify(this.userContractRepository, never()).findEntityById(anyString());
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
@@ -390,7 +390,7 @@ class UserServiceTest {
 
         UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.changePassword("Invalid", "newPassword"));
 
-        verify(this.userRepository, never()).findById(anyString());
+        verify(this.userContractRepository, never()).findEntityById(anyString());
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
@@ -400,12 +400,12 @@ class UserServiceTest {
     @Test
     void shouldChangeUsernameAndPersistTheChange() {
         String newUsername = "newUsername";
-        when(this.userRepository.findById(USER_UUID)).thenReturn(this.user);
+        when(this.userContractRepository.findEntityById(USER_UUID)).thenReturn(this.user);
 
         this.userService.changeUserName(USER_UUID, newUsername);
 
-        verify(this.userRepository, times(1)).findById(USER_UUID);
-        verify(this.userRepository, times(1)).save(this.userCaptor.capture());
+        verify(this.userContractRepository, times(1)).findEntityById(USER_UUID);
+        verify(this.userContractRepository, times(1)).persist(this.userCaptor.capture());
 
         assertNotNull(userCaptor.getValue());
         User updatedUser = userCaptor.getValue();
@@ -422,8 +422,8 @@ class UserServiceTest {
         UserServiceFailureException exception = assertThrows(UserServiceFailureException.class,
                 () -> this.userService.changeUserName(USER_UUID, null));
 
-        verify(this.userRepository, never()).findById(USER_UUID);
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).findEntityById(USER_UUID);
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(exception);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.USERNAME_INVALID_ERROR_MESSAGE), exception.getMessage());
@@ -436,8 +436,8 @@ class UserServiceTest {
         UserServiceFailureException exception = assertThrows(UserServiceFailureException.class,
                 () -> this.userService.changeUserName(USER_UUID, newUsername));
 
-        verify(this.userRepository, never()).findById(USER_UUID);
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, never()).findEntityById(USER_UUID);
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(exception);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.USERNAME_INVALID_ERROR_MESSAGE), exception.getMessage());
@@ -446,13 +446,13 @@ class UserServiceTest {
     @Test
     void shouldThrowUserServiceFailureExceptionWhenUserNotFoundOnChangeUsername() {
         String newUsername = "newUsername";
-        when(this.userRepository.findById(USER_UUID)).thenReturn(null);
+        when(this.userContractRepository.findEntityById(USER_UUID)).thenReturn(null);
 
         UserServiceFailureException exception = assertThrows(UserServiceFailureException.class,
                 () -> this.userService.changeUserName(USER_UUID, newUsername));
 
-        verify(this.userRepository, times(1)).findById(USER_UUID);
-        verify(this.userRepository, never()).save(any(UserContract.class));
+        verify(this.userContractRepository, times(1)).findEntityById(USER_UUID);
+        verify(this.userContractRepository, never()).persist(any(UserContract.class));
 
         assertNotNull(exception);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.USER_NOT_FOUND_MESSAGE), exception.getMessage());
@@ -464,7 +464,7 @@ class UserServiceTest {
         UserServiceFailureException actual = assertThrows(UserServiceFailureException.class,
                 () -> this.userService.changeUserName(null, "newUsername"));
 
-        verify(this.userRepository, never()).findById(anyString());
+        verify(this.userContractRepository, never()).findEntityById(anyString());
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
@@ -476,7 +476,7 @@ class UserServiceTest {
         UserServiceFailureException actual = assertThrows(UserServiceFailureException.class,
                 () -> this.userService.changeUserName("   ", "newUsername"));
 
-        verify(this.userRepository, never()).findById(anyString());
+        verify(this.userContractRepository, never()).findEntityById(anyString());
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
@@ -488,7 +488,7 @@ class UserServiceTest {
         UserServiceFailureException actual = assertThrows(UserServiceFailureException.class,
                 () -> this.userService.changeUserName("ID", "newUsername"));
 
-        verify(this.userRepository, never()).findById(anyString());
+        verify(this.userContractRepository, never()).findEntityById(anyString());
 
         assertNotNull(actual);
         assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
