@@ -14,9 +14,9 @@ public interface MapperStrategy<T, E> {
     /**
      * Executa a estratégia para realizar uma operação de mapeamento entre objetos.
      *
-     * @param origem o objeto de origem que será convertido no objeto de destino
+     * @param source o objeto de source que será convertido no objeto de destino
      * @return uma instância da classe de destino com seus campos preenchidos
      */
-    T mapFrom(E origem);
+    T mapFrom(E source);
 
 }
