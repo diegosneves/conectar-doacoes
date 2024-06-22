@@ -2,12 +2,14 @@ package diegosneves.github.conectardoacoes.core.domain.shelter.entity.value;
 
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
 import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;
+import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
+import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
 import lombok.Getter;
 
 /**
  * Classe {@link Address} representa um endereço físico.
  * <p>
- * Um endereço é composto pela rua, número, bairro, cidade, estado e CEP (código postal).
+ * Um endereço é composto pelo id, rua, número, bairro, cidade, estado e CEP (código postal).
  * Cada um destes campos é uma string e é validado no momento da criação de um objeto {@link Address}.
  * Se um destes campos estiver faltando ou em branco, uma exceção {@link AddressCreationFailureException} será lançada.
  * <p>
@@ -25,7 +27,9 @@ public class Address {
     public static final String CITY_NAME_ERROR_MESSAGE = "Por favor, certifique-se de que o nome da cidade foi inserido corretamente.";
     public static final String STATE_NAME_ERROR_MESSAGE = "Por favor, certifique-se de que o nome do Estado foi inserido corretamente.";
     public static final String CEP_ERROR_MESSAGE = "Por favor, certifique-se de que o CEP foi inserido corretamente.";
+    public static final String INVALID_ID_MESSAGE = "Deve ser fornecido um ID válido";
 
+    private final String id;
     private final String street;
     private final String number;
     private final String neighborhood;
@@ -36,6 +40,7 @@ public class Address {
     /**
      * Construtor para a classe {@link Address}. Cada um dos parâmetros é usado para definir os detalhes de um endereço.
      *
+     * @param id       A string que representa o UUID do endereço.
      * @param street       A string que representa a rua do endereço.
      * @param number       A string que representa o número da residência no endereço.
      * @param neighborhood A string que representa o bairro do endereço.
@@ -48,7 +53,8 @@ public class Address {
      *                                         Isso é feito através da verificação de que cada campo não seja nulo nem em branco.
      *                                         Se algum campo for inválido, será lançada uma exceção {@link AddressCreationFailureException} específica para aquele campo.
      */
-    public Address(String street, String number, String neighborhood, String city, String state, String zip) {
+    public Address(String id, String street, String number, String neighborhood, String city, String state, String zip) {
+        this.id = id;
         this.street = street;
         this.number = number;
         this.neighborhood = neighborhood;
@@ -67,6 +73,11 @@ public class Address {
      * a mensagem de erro específica para aquele campo.
      */
     private void validateData() {
+        try {
+            UuidUtils.isValidUUID(this.id);
+        } catch (UuidUtilsException e) {
+            throw new AddressCreationFailureException(INVALID_ID_MESSAGE, e);
+        }
         this.validateData(this.street, STREET_NAME_ERROR_MESSAGE);
         this.validateData(this.number, RESIDENCE_NUMBER_ERROR_MESSAGE);
         this.validateData(this.neighborhood, NEIGHBORHOOD_NAME_ERROR_MESSAGE);

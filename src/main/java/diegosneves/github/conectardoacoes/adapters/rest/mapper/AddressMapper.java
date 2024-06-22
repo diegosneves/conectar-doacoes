@@ -44,7 +44,7 @@ public class AddressMapper implements MapperStrategy<Address, AddressEntity> {
         ValidationUtils.checkNotNullAndNotEmptyOrThrowException(source, MapperFailureException.ERROR.formatErrorMessage(ADDRESS_ENTITY_TYPE.getSimpleName()), AddressEntityFailuresException.class);
         Address address;
         try {
-            address = new Address(source.getStreet(), source.getNumber(), source.getNeighborhood(), source.getCity(), source.getState(), source.getZip());
+            address = new Address(source.getId(), source.getStreet(), source.getNumber(), source.getNeighborhood(), source.getCity(), source.getState(), source.getZip());
         } catch (AddressCreationFailureException e) {
             throw new AddressEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(ADDRESS_ENTITY_TYPE.getSimpleName()), e);
         }
