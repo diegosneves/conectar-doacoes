@@ -1,6 +1,9 @@
 package diegosneves.github.conectardoacoes.core.domain.shelter.entity.value;
 
 import diegosneves.github.conectardoacoes.core.exception.DonationRegisterFailureException;
+import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
+import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
+import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import lombok.Getter;
 
 /**
@@ -16,18 +19,28 @@ public class Donation {
     public static final String INVALID_DESCRIPTION_ERROR = "A descrição da doação está vazia ou nula";
     public static final String INVALID_QUANTITY = "A quantidade deve ser maior que zero";
     public static final int DEFAULT_DONATION_AMOUNT = 1;
+    public static final String INVALID_ID_MESSAGE = "Deve fornecer um ID válido";
 
+    private String id;
     private String description;
     private Integer amount;
 
     /**
-     * Construtor da entidade Donation.
+     * Construtor para criar uma nova instância de doação.
      *
-     * @param description Descrição da doação.
-     * @param amount      Quantidade da doação.
-     * @throws DonationRegisterFailureException se a descrição ou a quantidade da doação forem inválidos.
+     * <p>
+     * Esse construtor aceita três argumentos que representam o id, a descrição e a quantidade da doação.
+     * Ele valida os argumentos fornecidos e pode lançar uma {@code DonationRegisterFailureException}
+     * se a descrição ou a quantidade fornecida forem inválidas.
+     * </p>
+     *
+     * @param id          O identificador único para a doação.
+     * @param description Descrição detalhada da doação.
+     * @param amount      Quantidade de doação.
+     * @throws DonationRegisterFailureException Se a descrição é nula ou vazia, ou se a quantidade é nula.
      */
-    public Donation(String description, Integer amount) {
+    public Donation(String id, String description, Integer amount) {
+        this.id = id;
         this.description = description;
         this.amount = this.defaultAmount(amount);
         this.validateData();
@@ -39,9 +52,12 @@ public class Donation {
      * @throws DonationRegisterFailureException se a descrição da doação for nula ou vazia.
      */
     private void validateData() throws DonationRegisterFailureException {
-        if (this.description == null || this.description.trim().isEmpty()) {
-            throw new DonationRegisterFailureException(INVALID_DESCRIPTION_ERROR);
+        try {
+            UuidUtils.isValidUUID(this.id);
+        } catch (UuidUtilsException e) {
+            throw new DonationRegisterFailureException(INVALID_ID_MESSAGE, e);
         }
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.description, INVALID_DESCRIPTION_ERROR, DonationRegisterFailureException.class);
     }
 
     /**
@@ -52,9 +68,7 @@ public class Donation {
      * @throws DonationRegisterFailureException se a quantia é nula.
      */
     private Integer defaultAmount(Integer amount) throws DonationRegisterFailureException {
-        if (amount == null) {
-            throw new DonationRegisterFailureException(INVALID_QUANTITY);
-        }
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(amount, INVALID_QUANTITY, DonationRegisterFailureException.class);
         return (amount < DEFAULT_DONATION_AMOUNT) ? DEFAULT_DONATION_AMOUNT : amount;
     }
 }
