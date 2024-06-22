@@ -17,6 +17,15 @@ public class ConstructorDefaultUndefinedException extends RuntimeException {
      * Construtor da exceção {@link ConstructorDefaultUndefinedException}.
      *
      * @param message a mensagem de detalhe da exceção.
+     */
+    public ConstructorDefaultUndefinedException(String message) {
+        super(ERROR.formatErrorMessage(message));
+    }
+
+    /**
+     * Construtor da exceção {@link ConstructorDefaultUndefinedException}.
+     *
+     * @param message a mensagem de detalhe da exceção.
      * @param e a causa da exceção.
      */
     public ConstructorDefaultUndefinedException(String message, Throwable e) {
