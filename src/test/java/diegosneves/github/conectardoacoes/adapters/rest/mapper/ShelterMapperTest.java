@@ -82,17 +82,21 @@ class ShelterMapperTest {
         assertInstanceOf(Shelter.class, shelter);
         assertEquals(this.shelterEntity.getShelterName(), shelter.getShelterName());
         assertEquals(this.shelterEntity.getId(), shelter.getId());
+        assertNotNull(shelter.getAddress());
         assertEquals(this.addressEntity.getStreet(), shelter.getAddress().getStreet());
         assertEquals(this.addressEntity.getNumber(), shelter.getAddress().getNumber());
         assertEquals(this.addressEntity.getNeighborhood(), shelter.getAddress().getNeighborhood());
         assertEquals(this.addressEntity.getCity(), shelter.getAddress().getCity());
         assertEquals(this.addressEntity.getState(), shelter.getAddress().getState());
         assertEquals(this.addressEntity.getZip(), shelter.getAddress().getZip());
+        assertNotNull(shelter.getUser());
         assertEquals(this.userEntity.getId(), shelter.getUser().getId());
         assertEquals(this.userEntity.getUserName(), shelter.getUser().getUsername());
         assertEquals(this.userEntity.getEmail(), shelter.getUser().getEmail());
         assertEquals(this.userEntity.getUserPassword(), shelter.getUser().getUserPassword());
+        assertNotNull(shelter.getUser().getUserProfile());
         assertEquals(UserProfile.BENEFICIARY, shelter.getUser().getUserProfile());
+        assertNotNull(shelter.getDonations());
         assertFalse(shelter.getDonations().isEmpty());
         assertEquals(this.shelterEntity.getDonations().size(), shelter.getDonations().size());
         assertEquals(this.donationEntity.getDescription(), shelter.getDonations().get(0).getDescription());
@@ -109,17 +113,21 @@ class ShelterMapperTest {
         assertInstanceOf(Shelter.class, shelter);
         assertEquals(this.shelterEntity.getShelterName(), shelter.getShelterName());
         assertEquals(this.shelterEntity.getId(), shelter.getId());
+        assertNotNull(shelter.getAddress());
         assertEquals(this.addressEntity.getStreet(), shelter.getAddress().getStreet());
         assertEquals(this.addressEntity.getNumber(), shelter.getAddress().getNumber());
         assertEquals(this.addressEntity.getNeighborhood(), shelter.getAddress().getNeighborhood());
         assertEquals(this.addressEntity.getCity(), shelter.getAddress().getCity());
         assertEquals(this.addressEntity.getState(), shelter.getAddress().getState());
         assertEquals(this.addressEntity.getZip(), shelter.getAddress().getZip());
+        assertNotNull(shelter.getUser());
         assertEquals(this.userEntity.getId(), shelter.getUser().getId());
         assertEquals(this.userEntity.getUserName(), shelter.getUser().getUsername());
         assertEquals(this.userEntity.getEmail(), shelter.getUser().getEmail());
         assertEquals(this.userEntity.getUserPassword(), shelter.getUser().getUserPassword());
+        assertNotNull(shelter.getUser().getUserProfile());
         assertEquals(UserProfile.BENEFICIARY, shelter.getUser().getUserProfile());
+        assertNotNull(shelter.getDonations());
         assertTrue(shelter.getDonations().isEmpty());
     }
 

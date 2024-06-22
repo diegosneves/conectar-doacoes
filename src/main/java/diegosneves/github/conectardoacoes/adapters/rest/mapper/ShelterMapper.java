@@ -70,7 +70,7 @@ public class ShelterMapper implements MapperStrategy<Shelter, ShelterEntity> {
         }
         for (DonationEntity donationEntity : shelterEntity.getDonations()) {
             try {
-                constructedShelter.addDonation(new Donation(donationEntity.getDescription(), donationEntity.getAmount()));
+                constructedShelter.addDonation(new Donation(donationEntity.getId(), donationEntity.getDescription(), donationEntity.getAmount()));
             } catch (DonationRegisterFailureException e) {
                 throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(Donation.class.getSimpleName()), e);
             }

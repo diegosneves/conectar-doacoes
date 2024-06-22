@@ -40,17 +40,24 @@ import static org.mockito.Mockito.when;
 class ShelterServiceTest {
 
     public static final String SHELTER_IDENTIFIER = "89142bda-7b0c-4421-af28-f9cadb316024";
+    public static final String SHELTER_NAME = "Abrigo";
+
     public static final String USER_UUID = "0ed6e6a1-882c-4d2d-83ee-67034ee1ab9f";
     public static final String USERNAME = "Fulano";
     public static final String USER_EMAIL = "teste@email.com";
     public static final String USER_PASSWORD = "senha";
-    public static final String SHELTER_NAME = "Abrigo";
+
+    public static final String ADDRESS_ID = "b6912f61-312b-48c2-912f-61312b38c249";
     public static final String ADDRESS_STREET = "Rua";
     public static final String BUILDING_NUMBER = "54";
     public static final String NEIGHBORHOOD = "Bairro";
     public static final String SHELTER_CITY = "Canoas";
     public static final String STATE_ABBREVIATION = "RS";
     public static final String SHELTER_ZIPCODE = "95000000";
+
+    public static final String DONATION_ID = "8df29915-a43d-4dc2-b299-15a43d9dc2b2";
+    public static final String DONATED_ITEM = "item";
+    public static final int AMOUNT = 1;
 
     @InjectMocks
     private ShelterService service;
@@ -68,7 +75,7 @@ class ShelterServiceTest {
     @BeforeEach
     void setUp() {
         this.user = new User(USER_UUID, USERNAME, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD);
-        this.address = new Address(ADDRESS_STREET, BUILDING_NUMBER, NEIGHBORHOOD, SHELTER_CITY, STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        this.address = new Address(ADDRESS_ID, ADDRESS_STREET, BUILDING_NUMBER, NEIGHBORHOOD, SHELTER_CITY, STATE_ABBREVIATION, SHELTER_ZIPCODE);
         this.shelter = new Shelter(SHELTER_IDENTIFIER, SHELTER_NAME, this.address, this.user);
     }
 
@@ -78,7 +85,7 @@ class ShelterServiceTest {
 
         ShelterContract actual = this.service.createShelter(SHELTER_NAME, this.address, this.user);
 
-        verify(this.repository, times(1)).persist(this.shelterCaptor.capture());
+        verify(this.repository, times(AMOUNT)).persist(this.shelterCaptor.capture());
 
         assertNotNull(actual);
         assertNotNull(this.shelterCaptor.getValue());
@@ -144,7 +151,7 @@ class ShelterServiceTest {
 
         ShelterContract actual = this.service.getShelter(SHELTER_IDENTIFIER);
 
-        verify(this.repository, times(1)).findEntityById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(AMOUNT)).findEntityById(SHELTER_IDENTIFIER);
 
         assertNotNull(actual);
         assertEquals(this.shelter, actual);
@@ -156,7 +163,7 @@ class ShelterServiceTest {
 
         ShelterContract actual = this.service.getShelter(SHELTER_IDENTIFIER);
 
-        verify(this.repository, times(1)).findEntityById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(AMOUNT)).findEntityById(SHELTER_IDENTIFIER);
 
         assertNull(actual);
     }
@@ -202,8 +209,8 @@ class ShelterServiceTest {
 
         this.service.changeShelterName(SHELTER_IDENTIFIER, newShelterName);
 
-        verify(this.repository, times(1)).findEntityById(SHELTER_IDENTIFIER);
-        verify(this.repository, times(1)).persist(this.shelterCaptor.capture());
+        verify(this.repository, times(AMOUNT)).findEntityById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(AMOUNT)).persist(this.shelterCaptor.capture());
 
         assertNotNull(shelterCaptor.getValue());
         Shelter updatedShelter = this.shelterCaptor.getValue();
@@ -256,13 +263,13 @@ class ShelterServiceTest {
 
     @Test
     void shouldUpdateAndSaveShelterAddressGivenValidShelterId() {
-        Address addressUpdate = new Address(ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        Address addressUpdate = new Address(ADDRESS_ID, ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
         when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
 
         this.service.changeAddress(SHELTER_IDENTIFIER, addressUpdate);
 
-        verify(this.repository, times(1)).findEntityById(SHELTER_IDENTIFIER);
-        verify(this.repository, times(1)).persist(this.shelterCaptor.capture());
+        verify(this.repository, times(AMOUNT)).findEntityById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(AMOUNT)).persist(this.shelterCaptor.capture());
 
         assertNotNull(shelterCaptor.getValue());
         Shelter updatedShelter = this.shelterCaptor.getValue();
@@ -275,7 +282,7 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsEmptyOnChangeAddress() {
-        Address addressUpdate = new Address(ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        Address addressUpdate = new Address(ADDRESS_ID, ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeAddress("", addressUpdate));
@@ -289,7 +296,7 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsNullOnChangeAddress() {
-        Address addressUpdate = new Address(ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        Address addressUpdate = new Address(ADDRESS_ID, ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeAddress(null, addressUpdate));
@@ -303,7 +310,7 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsInvalidOnChangeAddress() {
-        Address addressUpdate = new Address(ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        Address addressUpdate = new Address(ADDRESS_ID, ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeAddress("SHELTER_IDENTIFIER", addressUpdate));
@@ -331,7 +338,7 @@ class ShelterServiceTest {
 
     @Test
     void shouldAddDonationToShelter() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
 
         when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
 
@@ -343,13 +350,13 @@ class ShelterServiceTest {
         assertNotNull(shelterCaptor.getValue());
         Shelter updatedShelter = this.shelterCaptor.getValue();
         assertFalse(updatedShelter.getDonations().isEmpty());
-        assertEquals(1, updatedShelter.getDonations().size());
+        assertEquals(AMOUNT, updatedShelter.getDonations().size());
         assertEquals(donation, updatedShelter.getDonations().get(0));
     }
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsNullOnAddDonation() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.addDonation(null, donation));
@@ -363,7 +370,7 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsEmptyOnAddDonation() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.addDonation(" ", donation));
@@ -377,7 +384,7 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsInvalidOnAddDonation() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.addDonation("SHELTER_IDENTIFIER", donation));
@@ -405,7 +412,7 @@ class ShelterServiceTest {
 
     @Test
     void shouldReturnListOfDonations() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
         this.shelter.addDonation(donation);
         when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
 
@@ -415,7 +422,7 @@ class ShelterServiceTest {
 
         assertNotNull(list);
         assertFalse(this.shelter.getDonations().isEmpty());
-        assertEquals(1, list.size());
+        assertEquals(AMOUNT, list.size());
         assertEquals(donation, list.get(0));
     }
 
