@@ -31,7 +31,6 @@ import lombok.Setter;
 public class AddressEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String street;
     private String number;

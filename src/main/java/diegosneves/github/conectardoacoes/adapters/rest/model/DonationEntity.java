@@ -31,7 +31,6 @@ import lombok.Setter;
 public class DonationEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String description;
     private Integer amount;
