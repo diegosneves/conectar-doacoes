@@ -14,6 +14,8 @@ import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
@@ -449,21 +451,11 @@ class ShelterServiceTest {
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
     }
 
-    @Test
-    void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsEmptyOnGetDonations() {
+    @ParameterizedTest
+    @ValueSource(strings = {"", "SHELTER_IDENTIFIER"})
+    void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsEmptyOrInvalidOnGetDonations(String shelterIdentifier) {
 
-        ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class, () -> this.service.getDonations(""));
-
-        verify(this.repository, never()).findEntityById(anyString());
-
-        assertNotNull(exception);
-        assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
-    }
-
-    @Test
-    void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsInvalidOnGetDonations() {
-
-        ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class, () -> this.service.getDonations("SHELTER_IDENTIFIER"));
+        ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class, () -> this.service.getDonations(shelterIdentifier));
 
         verify(this.repository, never()).findEntityById(anyString());
 

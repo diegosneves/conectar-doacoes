@@ -1,8 +1,8 @@
 package diegosneves.github.conectardoacoes.adapters.rest.repository;
 
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.MapperStrategy;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
@@ -38,6 +38,7 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
 
 
     String INVALID_ID_MESSAGE = "Deve ser fornecido um ID válido!";
+    String SHELTER_ERROR_MESSAGE = "Um objeto Abrigo válido deve ser fornecido para persistência!";
 
     /**
      * Retorna uma nova instância do {@link MapperStrategy} para mapear uma entidade {@link ShelterEntity} para a classe de domínio {@link Shelter}.
@@ -45,7 +46,7 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
      *
      * @return uma nova instância de {@link ShelterMapper} que implementa a interface {@link MapperStrategy}
      */
-    private MapperStrategy<Shelter, ShelterEntity> getShelterMapper() {
+    private ShelterMapper getShelterMapper() {
         return new ShelterMapper();
     }
 
@@ -103,11 +104,7 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
     default ShelterContract findEntityById(String id) {
         ShelterEntity entityToMap = this.getShelterEntityById(id);
         if (entityToMap == null) return null;
-        try {
-            return this.getShelterMapper().mapFrom(entityToMap);
-        } catch (ShelterCreationFailureException e) {
-            throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(entityToMap.getClass().getSimpleName()), e);
-        }
+        return this.getShelterMapper().mapFrom(entityToMap);
     }
 
     /**
@@ -149,9 +146,30 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
         return this.mapEntityList(shelterEntityList);
     }
 
+    /**
+     * Persiste uma instância de {@link ShelterContract} na representação do banco de dados.
+     * <p>
+     * Primeiro, o método mapeia a instância de {@link ShelterContract} fornecida para seu equivalente {@link ShelterEntity}.
+     * A conversão é feita usando uma instância de {@link ShelterEntityMapper}.
+     * <p>
+     * O {@link ShelterEntity} resultante é então passado para o método {@code save} da interface {@link CrudRepository}.
+     * Este método salva a entidade no banco de dados e retorna a entidade persistida.
+     * <p>
+     * Finalmente, a {@link ShelterEntity} persistida é mapeada de volta para um {@link ShelterContract} usando uma instância de {@link ShelterMapper}.
+     * Este {@link ShelterContract} mapeado é então retornado.
+     * <p>
+     * Este método é uma implementação direta da operação padrão de persistência fornecida pela interface {@link CrudRepository}.
+     *
+     * @param entity A instância de {@link ShelterContract} que será persistida. Deve ser um valor não nulo.
+     * @return uma instância de {@link ShelterContract} que representa a entidade persistida.
+     * @throws ShelterEntityFailuresException se a entidade fornecida for nula.
+     * @see CrudRepository
+     */
     @Override
     default ShelterContract persist(ShelterContract entity) {
-        return null; // TODO Implementar a lógica.
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(entity, SHELTER_ERROR_MESSAGE, ShelterEntityFailuresException.class);
+        ShelterEntity shelterEntity = new ShelterEntityMapper().mapFrom((Shelter) entity);
+        return new ShelterMapper().mapFrom(this.save(shelterEntity));
     }
 
     /**

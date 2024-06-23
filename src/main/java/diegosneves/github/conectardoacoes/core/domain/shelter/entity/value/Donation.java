@@ -21,9 +21,9 @@ public class Donation {
     public static final int DEFAULT_DONATION_AMOUNT = 1;
     public static final String INVALID_ID_MESSAGE = "Deve fornecer um ID válido";
 
-    private String id;
-    private String description;
-    private Integer amount;
+    private final String id;
+    private final String description;
+    private final Integer amount;
 
     /**
      * Construtor para criar uma nova instância de doação.

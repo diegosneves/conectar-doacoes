@@ -43,13 +43,13 @@ class ShelterTest {
 
     @Test
     void shouldCreateShelterWithGivenDetails() {
-        Shelter shelter = ShelterFactory.create("Casa 1", this.address, this.user);
+        Shelter shelterTeste = ShelterFactory.create("Casa 1", this.address, this.user);
 
-        assertNotNull(shelter);
-        assertTrue(UuidUtils.isValidUUID(shelter.getId()));
-        assertEquals("Casa 1", shelter.getShelterName());
-        assertEquals(this.address, shelter.getAddress());
-        assertEquals(this.user, shelter.getUser());
+        assertNotNull(shelterTeste);
+        assertTrue(UuidUtils.isValidUUID(shelterTeste.getId()));
+        assertEquals("Casa 1", shelterTeste.getShelterName());
+        assertEquals(this.address, shelterTeste.getAddress());
+        assertEquals(this.user, shelterTeste.getUser());
     }
 
     @Test

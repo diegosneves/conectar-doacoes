@@ -5,6 +5,8 @@ import diegosneves.github.conectardoacoes.core.exception.DonationRegisterFailure
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,20 +67,13 @@ class DonationTest {
         assertEquals(UuidUtilsException.class, exception.getCause().getClass());
     }
 
-    @Test
-    void shouldNotBeInitializedWithEmptyId() {
-        DonationRegisterFailureException exception = assertThrows(DonationRegisterFailureException.class, () -> new Donation(" ", DONATION_DESCRIPTION, DONATION_AMOUNT));
+    @ParameterizedTest
+    @ValueSource(strings = {" ", "null"})
+    void shouldNotBeInitializedWithEmptyOrInvalidId(String id) {
+        DonationRegisterFailureException exception = assertThrows(DonationRegisterFailureException.class, () -> new Donation(id, DONATION_DESCRIPTION, DONATION_AMOUNT));
         assertNotNull(exception);
         assertEquals(ExceptionDetails.DONATION_CREATION_ERROR.buildMessage(Donation.INVALID_ID_MESSAGE), exception.getMessage());
         assertEquals(UuidUtilsException.class, exception.getCause().getClass());
     }
 
-
-    @Test
-    void shouldNotBeInitializedWithInvalidId() {
-        DonationRegisterFailureException exception = assertThrows(DonationRegisterFailureException.class, () -> new Donation("null", DONATION_DESCRIPTION, DONATION_AMOUNT));
-        assertNotNull(exception);
-        assertEquals(ExceptionDetails.DONATION_CREATION_ERROR.buildMessage(Donation.INVALID_ID_MESSAGE), exception.getMessage());
-        assertEquals(UuidUtilsException.class, exception.getCause().getClass());
-    }
 }

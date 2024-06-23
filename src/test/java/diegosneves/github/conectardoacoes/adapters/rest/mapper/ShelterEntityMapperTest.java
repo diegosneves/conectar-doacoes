@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(MockitoExtension.class)
 class ShelterEntityMapperTest {
@@ -53,17 +52,15 @@ class ShelterEntityMapperTest {
 
     private Shelter shelter;
 
-    private Address address;
-    private User user;
     private Donation donation;
 
     @BeforeEach
     void setUp() {
         this.mapper = new ShelterEntityMapper();
         this.donation = new Donation(DONATION_ID, DONATION_DESCRIPTION, DONATION_AMOUNT);
-        this.address = new Address(ADDRESS_ID, STREET_NAME, NUMBER, NEIGHBORHOOD, CITY, STATE, ZIP);
-        this.user = new User(USER_ID, USER_NAME, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD);
-        this.shelter = new Shelter(SHELTER_ID, SHELTER_NAME, this.address, this.user);
+        Address address = new Address(ADDRESS_ID, STREET_NAME, NUMBER, NEIGHBORHOOD, CITY, STATE, ZIP);
+        User user = new User(USER_ID, USER_NAME, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD);
+        this.shelter = new Shelter(SHELTER_ID, SHELTER_NAME, address, user);
     }
 
     @Test
