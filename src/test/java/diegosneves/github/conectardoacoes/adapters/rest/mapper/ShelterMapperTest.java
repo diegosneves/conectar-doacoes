@@ -18,6 +18,8 @@ import diegosneves.github.conectardoacoes.core.exception.ShelterCreationFailureE
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -132,14 +134,26 @@ class ShelterMapperTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenShelterEntityIdIsEmpty() {
-        this.shelterEntity.setId("");
+    void shouldThrowExceptionWhenShelterEntityIsNull() {
+        this.shelterEntity = null;
 
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class,
                 () -> this.shelterMapper.mapFrom(this.shelterEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(this.shelterEntity.getClass().getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntity.class.getSimpleName())), exception.getMessage());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "ID"})
+    void shouldThrowExceptionWhenShelterEntityIdIsEmptyOrInvalid(String id) {
+        this.shelterEntity.setId(id);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class,
+                () -> this.shelterMapper.mapFrom(this.shelterEntity));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntity.class.getSimpleName())), exception.getMessage());
         assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
     }
 
@@ -151,21 +165,10 @@ class ShelterMapperTest {
                 () -> this.shelterMapper.mapFrom(this.shelterEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(this.shelterEntity.getClass().getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntity.class.getSimpleName())), exception.getMessage());
         assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
     }
 
-    @Test
-    void shouldThrowExceptionWhenShelterEntityIdIsInvalid() {
-        this.shelterEntity.setId("idInvalida");
-
-        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class,
-                () -> this.shelterMapper.mapFrom(this.shelterEntity));
-
-        assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(this.shelterEntity.getClass().getSimpleName())), exception.getMessage());
-        assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
-    }
 
     @Test
     void shouldThrowExceptionWhenShelterEntityNameIsEmpty() {
@@ -175,7 +178,7 @@ class ShelterMapperTest {
                 () -> this.shelterMapper.mapFrom(this.shelterEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(this.shelterEntity.getClass().getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntity.class.getSimpleName())), exception.getMessage());
         assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
     }
 
@@ -187,7 +190,7 @@ class ShelterMapperTest {
                 () -> this.shelterMapper.mapFrom(this.shelterEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(this.shelterEntity.getClass().getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntity.class.getSimpleName())), exception.getMessage());
         assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
     }
 
@@ -199,7 +202,7 @@ class ShelterMapperTest {
                 () -> this.shelterMapper.mapFrom(this.shelterEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(this.shelterEntity.getClass().getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntity.class.getSimpleName())), exception.getMessage());
         assertEquals(AddressEntityFailuresException.class, exception.getCause().getClass());
     }
 
@@ -211,7 +214,7 @@ class ShelterMapperTest {
                 () -> this.shelterMapper.mapFrom(this.shelterEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(this.shelterEntity.getClass().getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntity.class.getSimpleName())), exception.getMessage());
         assertEquals(UserEntityFailuresException.class, exception.getCause().getClass());
     }
 

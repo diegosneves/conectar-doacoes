@@ -6,9 +6,11 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
+import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.exception.DonationRegisterFailureException;
+import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 
 /**
  * Implementação da interface {@link MapperStrategy} para a conversão entre a entidade {@link ShelterEntity} e a classe de domínio {@link Shelter}.
@@ -21,16 +23,37 @@ import diegosneves.github.conectardoacoes.core.exception.DonationRegisterFailure
  */
 public class ShelterMapper implements MapperStrategy<Shelter, ShelterEntity> {
 
+    public static final Class<ShelterEntity> SHELTER_ENTITY_CLASS = ShelterEntity.class;
+
+
     /**
-     * Mapeia uma entidade de abrigo ({@link ShelterEntity}) para um objeto de abrigo de domínio ({@link Shelter}).
-     * Realiza a conversão de uma entidade persistida de um abrigo, junto com suas relações, para uma representação de abrigo de domínio.
-     * Para mapear a entidade do usuário responsável ({@link UserEntity}), esta implementação utiliza uma instância de {@link UserMapper}.
+     * Este método converte um objeto {@link ShelterEntity} em um novo objeto {@link Shelter}.
+     * <p>
+     * Primeiramente, verifica se a entidade fornecida não é nula.
+     * Se for, lança uma {@link ShelterEntityFailuresException} com uma mensagem de erro formatada.
+     * <p>
+     * Em seguida, tenta instanciar um novo objeto {@link Shelter} passando os atributos necessários do objeto de entidade.
+     * Para o mapeamento de {@link Address} e {@link User}, delega a operação de mapeamento para duas instâncias diferentes, {@link AddressMapper} e {@link UserMapper}.
+     * <p>
+     * Se tudo ocorrer bem, o {@link Shelter} construído tem os mesmos valores de atributos que o da entidade.
+     * Se uma {@link RuntimeException} for lançada durante a operação de instanciação, ela é capturada e uma nova {@link ShelterEntityFailuresException}
+     * é lançada com uma mensagem de erro formatada e a exceção capturada é passada para essa nova exceção.
+     * <p>
+     * Por último, o método {@link #mappedDonationsToShelter} é chamado para mapear as doações relacionadas para o novo {@link Shelter} construído
+     * e então o {@link Shelter} é retornado.
+     * <p>
      *
-     * @param source a entidade de origem que representa um abrigo no banco de dados
-     * @return uma instância da classe de domínio {@link Shelter}, com seus campos preenchidos com os valores correspondentes da entidade de origem
+     * @param source O objeto {@link ShelterEntity} que precisa ser convertido em um objeto {@link Shelter}.
+     * @return Um objeto {@link Shelter} que foi criado a partir do {@link ShelterEntity}.
+     * @throws ShelterEntityFailuresException Se ocorrer um erro durante a operação de mapeamento de um {@link ShelterEntity} para um {@link Shelter}.
+     * @see diegosneves.github.conectardoacoes.adapters.rest.mapper.MapperStrategy#mapFrom
+     * @see diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterMapper#mappedDonationsToShelter
+     * @see diegosneves.github.conectardoacoes.adapters.rest.mapper.AddressMapper#mapFrom
+     * @see diegosneves.github.conectardoacoes.adapters.rest.mapper.UserMapper#mapFrom
      */
     @Override
     public Shelter mapFrom(ShelterEntity source) {
+        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(source, MapperFailureException.ERROR.formatErrorMessage(SHELTER_ENTITY_CLASS.getSimpleName()), ShelterEntityFailuresException.class);
 
         Shelter constructedShelter = null;
         try {
@@ -40,7 +63,7 @@ public class ShelterMapper implements MapperStrategy<Shelter, ShelterEntity> {
                     new AddressMapper().mapFrom(source.getAddress()),
                     new UserMapper().mapFrom(source.getResponsibleUser()));
         } catch (RuntimeException e) {
-            throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(source.getClass().getSimpleName()), e);
+            throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(SHELTER_ENTITY_CLASS.getSimpleName()), e);
         }
         this.mappedDonationsToShelter(source, constructedShelter);
         return constructedShelter;
