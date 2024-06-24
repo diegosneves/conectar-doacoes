@@ -38,4 +38,14 @@ public class DonationRegisterFailureException extends RuntimeException {
         super(ERROR.buildMessage(message));
     }
 
+    /**
+     * Construtor da classe exceção que aceita uma mensagem de erro e um Throwable como causa da exceção.
+     *
+     * @param message Mensagem de erro específica para a ocorrência da exceção.
+     * @param cause Causa-raíz da exceção.
+     */
+    public DonationRegisterFailureException(String message, Throwable cause) {
+        super(ERROR.buildMessage(message), cause);
+    }
+
 }

@@ -4,7 +4,7 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
-import diegosneves.github.conectardoacoes.core.domain.shelter.shared.repository.ShelterRepository;
+import diegosneves.github.conectardoacoes.core.domain.shelter.shared.repository.ShelterContractRepository;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.exception.ShelterCreationFailureException;
@@ -14,16 +14,23 @@ import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
@@ -35,11 +42,14 @@ import static org.mockito.Mockito.when;
 class ShelterServiceTest {
 
     public static final String SHELTER_IDENTIFIER = "89142bda-7b0c-4421-af28-f9cadb316024";
+    public static final String SHELTER_NAME = "Abrigo";
+
     public static final String USER_UUID = "0ed6e6a1-882c-4d2d-83ee-67034ee1ab9f";
     public static final String USERNAME = "Fulano";
     public static final String USER_EMAIL = "teste@email.com";
     public static final String USER_PASSWORD = "senha";
-    public static final String SHELTER_NAME = "Abrigo";
+
+    public static final String ADDRESS_ID = "b6912f61-312b-48c2-912f-61312b38c249";
     public static final String ADDRESS_STREET = "Rua";
     public static final String BUILDING_NUMBER = "54";
     public static final String NEIGHBORHOOD = "Bairro";
@@ -47,11 +57,15 @@ class ShelterServiceTest {
     public static final String STATE_ABBREVIATION = "RS";
     public static final String SHELTER_ZIPCODE = "95000000";
 
+    public static final String DONATION_ID = "8df29915-a43d-4dc2-b299-15a43d9dc2b2";
+    public static final String DONATED_ITEM = "item";
+    public static final int AMOUNT = 1;
+
     @InjectMocks
     private ShelterService service;
 
     @Mock
-    private ShelterRepository repository;
+    private ShelterContractRepository repository;
 
     @Captor
     private ArgumentCaptor<Shelter> shelterCaptor;
@@ -63,17 +77,17 @@ class ShelterServiceTest {
     @BeforeEach
     void setUp() {
         this.user = new User(USER_UUID, USERNAME, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD);
-        this.address = new Address(ADDRESS_STREET, BUILDING_NUMBER, NEIGHBORHOOD, SHELTER_CITY, STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        this.address = new Address(ADDRESS_ID, ADDRESS_STREET, BUILDING_NUMBER, NEIGHBORHOOD, SHELTER_CITY, STATE_ABBREVIATION, SHELTER_ZIPCODE);
         this.shelter = new Shelter(SHELTER_IDENTIFIER, SHELTER_NAME, this.address, this.user);
     }
 
     @Test
     void shouldReturnShelterContract() {
-        when(this.repository.save(any(ShelterContract.class))).thenReturn(this.shelter);
+        when(this.repository.persist(any(ShelterContract.class))).thenReturn(this.shelter);
 
         ShelterContract actual = this.service.createShelter(SHELTER_NAME, this.address, this.user);
 
-        verify(this.repository, times(1)).save(this.shelterCaptor.capture());
+        verify(this.repository, times(AMOUNT)).persist(this.shelterCaptor.capture());
 
         assertNotNull(actual);
         assertNotNull(this.shelterCaptor.getValue());
@@ -91,7 +105,7 @@ class ShelterServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.service.createShelter(null, this.address, this.user));
 
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(actual);
         assertEquals(ShelterCreationFailureException.class, actual.getClass());
@@ -103,7 +117,7 @@ class ShelterServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.service.createShelter("", this.address, this.user));
 
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(actual);
         assertEquals(ShelterCreationFailureException.class, actual.getClass());
@@ -115,7 +129,7 @@ class ShelterServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.service.createShelter(SHELTER_NAME, null, this.user));
 
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(actual);
         assertEquals(ShelterCreationFailureException.class, actual.getClass());
@@ -127,7 +141,7 @@ class ShelterServiceTest {
         Exception actual = assertThrows(Exception.class,
                 () -> this.service.createShelter(SHELTER_NAME, this.address, null));
 
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(actual);
         assertEquals(ShelterCreationFailureException.class, actual.getClass());
@@ -135,11 +149,11 @@ class ShelterServiceTest {
 
     @Test
     void shouldRetrieveShelterContractUsingGivenShelterIdentifier() {
-        when(this.repository.findById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
+        when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
 
         ShelterContract actual = this.service.getShelter(SHELTER_IDENTIFIER);
 
-        verify(this.repository, times(1)).findById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(AMOUNT)).findEntityById(SHELTER_IDENTIFIER);
 
         assertNotNull(actual);
         assertEquals(this.shelter, actual);
@@ -147,11 +161,11 @@ class ShelterServiceTest {
 
     @Test
     void shouldRetrieveNullShelterContractUsingGivenShelterIdentifier() {
-        when(this.repository.findById(SHELTER_IDENTIFIER)).thenReturn(null);
+        when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(null);
 
         ShelterContract actual = this.service.getShelter(SHELTER_IDENTIFIER);
 
-        verify(this.repository, times(1)).findById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(AMOUNT)).findEntityById(SHELTER_IDENTIFIER);
 
         assertNull(actual);
     }
@@ -161,7 +175,7 @@ class ShelterServiceTest {
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.getShelter(null));
 
-        verify(this.repository, never()).findById(anyString());
+        verify(this.repository, never()).findEntityById(anyString());
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -172,7 +186,7 @@ class ShelterServiceTest {
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.getShelter(""));
 
-        verify(this.repository, never()).findById(anyString());
+        verify(this.repository, never()).findEntityById(anyString());
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -183,7 +197,7 @@ class ShelterServiceTest {
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.getShelter("idInvalid"));
 
-        verify(this.repository, never()).findById(anyString());
+        verify(this.repository, never()).findEntityById(anyString());
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -193,12 +207,12 @@ class ShelterServiceTest {
     @Test
     void shouldChangeShelterNameWhenGivenValidShelterIdentifier() {
         String newShelterName = "newShelterName";
-        when(this.repository.findById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
+        when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
 
         this.service.changeShelterName(SHELTER_IDENTIFIER, newShelterName);
 
-        verify(this.repository, times(1)).findById(SHELTER_IDENTIFIER);
-        verify(this.repository, times(1)).save(this.shelterCaptor.capture());
+        verify(this.repository, times(AMOUNT)).findEntityById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(AMOUNT)).persist(this.shelterCaptor.capture());
 
         assertNotNull(shelterCaptor.getValue());
         Shelter updatedShelter = this.shelterCaptor.getValue();
@@ -215,8 +229,8 @@ class ShelterServiceTest {
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeShelterName(SHELTER_IDENTIFIER, newShelterName));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_NAME_ERROR_MESSAGE), exception.getMessage());
@@ -228,8 +242,8 @@ class ShelterServiceTest {
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeShelterName(SHELTER_IDENTIFIER, null));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_NAME_ERROR_MESSAGE), exception.getMessage());
@@ -241,8 +255,8 @@ class ShelterServiceTest {
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeShelterName("SHELTER_IDENTIFIER", SHELTER_NAME));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -251,13 +265,13 @@ class ShelterServiceTest {
 
     @Test
     void shouldUpdateAndSaveShelterAddressGivenValidShelterId() {
-        Address addressUpdate = new Address(ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
-        when(this.repository.findById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
+        Address addressUpdate = new Address(ADDRESS_ID, ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
 
         this.service.changeAddress(SHELTER_IDENTIFIER, addressUpdate);
 
-        verify(this.repository, times(1)).findById(SHELTER_IDENTIFIER);
-        verify(this.repository, times(1)).save(this.shelterCaptor.capture());
+        verify(this.repository, times(AMOUNT)).findEntityById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(AMOUNT)).persist(this.shelterCaptor.capture());
 
         assertNotNull(shelterCaptor.getValue());
         Shelter updatedShelter = this.shelterCaptor.getValue();
@@ -270,13 +284,13 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsEmptyOnChangeAddress() {
-        Address addressUpdate = new Address(ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        Address addressUpdate = new Address(ADDRESS_ID, ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeAddress("", addressUpdate));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -284,13 +298,13 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsNullOnChangeAddress() {
-        Address addressUpdate = new Address(ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        Address addressUpdate = new Address(ADDRESS_ID, ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeAddress(null, addressUpdate));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -298,13 +312,13 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsInvalidOnChangeAddress() {
-        Address addressUpdate = new Address(ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
+        Address addressUpdate = new Address(ADDRESS_ID, ADDRESS_STREET, "377", NEIGHBORHOOD, "Esteio", STATE_ABBREVIATION, SHELTER_ZIPCODE);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeAddress("SHELTER_IDENTIFIER", addressUpdate));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -317,8 +331,8 @@ class ShelterServiceTest {
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.changeAddress(SHELTER_IDENTIFIER, null));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.ERROR_MESSAGE_ADDRESS_NULL), exception.getMessage());
@@ -326,31 +340,31 @@ class ShelterServiceTest {
 
     @Test
     void shouldAddDonationToShelter() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
 
-        when(this.repository.findById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
+        when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
 
         this.service.addDonation(SHELTER_IDENTIFIER, donation);
 
-        verify(this.repository, times(1)).findById(SHELTER_IDENTIFIER);
-        verify(this.repository, times(1)).save(this.shelterCaptor.capture());
+        verify(this.repository, times(1)).findEntityById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(1)).persist(this.shelterCaptor.capture());
 
         assertNotNull(shelterCaptor.getValue());
         Shelter updatedShelter = this.shelterCaptor.getValue();
         assertFalse(updatedShelter.getDonations().isEmpty());
-        assertEquals(1, updatedShelter.getDonations().size());
+        assertEquals(AMOUNT, updatedShelter.getDonations().size());
         assertEquals(donation, updatedShelter.getDonations().get(0));
     }
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsNullOnAddDonation() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.addDonation(null, donation));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -358,13 +372,13 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsEmptyOnAddDonation() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.addDonation(" ", donation));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -372,13 +386,13 @@ class ShelterServiceTest {
 
     @Test
     void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsInvalidOnAddDonation() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.addDonation("SHELTER_IDENTIFIER", donation));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
@@ -391,8 +405,8 @@ class ShelterServiceTest {
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class,
                 () -> this.service.addDonation(SHELTER_IDENTIFIER, null));
 
-        verify(this.repository, never()).findById(anyString());
-        verify(this.repository, never()).save(any(ShelterContract.class));
+        verify(this.repository, never()).findEntityById(anyString());
+        verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.DONATION_REQUIRED_ERROR_MESSAGE), exception.getMessage());
@@ -400,27 +414,27 @@ class ShelterServiceTest {
 
     @Test
     void shouldReturnListOfDonations() {
-        Donation donation = new Donation("item", 1);
+        Donation donation = new Donation(DONATION_ID, DONATED_ITEM, AMOUNT);
         this.shelter.addDonation(donation);
-        when(this.repository.findById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
+        when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
 
         List<Donation> list = this.service.getDonations(SHELTER_IDENTIFIER);
 
-        verify(this.repository, times(1)).findById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(1)).findEntityById(SHELTER_IDENTIFIER);
 
         assertNotNull(list);
         assertFalse(this.shelter.getDonations().isEmpty());
-        assertEquals(1, list.size());
+        assertEquals(AMOUNT, list.size());
         assertEquals(donation, list.get(0));
     }
 
     @Test
     void shouldReturnListOfDonationsEmpty() {
-        when(this.repository.findById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
+        when(this.repository.findEntityById(SHELTER_IDENTIFIER)).thenReturn(this.shelter);
 
         List<Donation> list = this.service.getDonations(SHELTER_IDENTIFIER);
 
-        verify(this.repository, times(1)).findById(SHELTER_IDENTIFIER);
+        verify(this.repository, times(1)).findEntityById(SHELTER_IDENTIFIER);
 
         assertNotNull(list);
         assertTrue(this.shelter.getDonations().isEmpty());
@@ -431,29 +445,19 @@ class ShelterServiceTest {
 
         ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class, () -> this.service.getDonations(null));
 
-        verify(this.repository, never()).findById(anyString());
+        verify(this.repository, never()).findEntityById(anyString());
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
     }
 
-    @Test
-    void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsEmptyOnGetDonations() {
+    @ParameterizedTest
+    @ValueSource(strings = {"", "SHELTER_IDENTIFIER"})
+    void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsEmptyOrInvalidOnGetDonations(String shelterIdentifier) {
 
-        ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class, () -> this.service.getDonations(""));
+        ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class, () -> this.service.getDonations(shelterIdentifier));
 
-        verify(this.repository, never()).findById(anyString());
-
-        assertNotNull(exception);
-        assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());
-    }
-
-    @Test
-    void shouldThrowShelterServiceFailureExceptionWhenShelterIdIsInvalidOnGetDonations() {
-
-        ShelterServiceFailureException exception = assertThrows(ShelterServiceFailureException.class, () -> this.service.getDonations("SHELTER_IDENTIFIER"));
-
-        verify(this.repository, never()).findById(anyString());
+        verify(this.repository, never()).findEntityById(anyString());
 
         assertNotNull(exception);
         assertEquals(ShelterServiceFailureException.ERROR.buildMessage(ShelterService.INVALID_SHELTER_ID_MESSAGE), exception.getMessage());

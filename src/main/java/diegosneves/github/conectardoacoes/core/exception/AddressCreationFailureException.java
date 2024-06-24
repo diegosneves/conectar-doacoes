@@ -21,6 +21,18 @@ import diegosneves.github.conectardoacoes.core.enums.ExceptionDetails;
  * }
  * </pre>
  * <p>
+ * <p>
+ * <pre>
+ *     {@code
+ * try {
+ *    // código de criação de um Endereço.
+ * } catch (AlgumaExcecao e) {
+ *    throw new AdressCreationFailureException("Detalhe da falha", e);
+ * }
+ * }
+ * </pre>
+ * <p>
+ *
  * @author diegosneves
  * @see RuntimeException
  * @since 1.0.0
@@ -37,6 +49,20 @@ public class AddressCreationFailureException extends RuntimeException {
      */
     public AddressCreationFailureException(String message) {
         super(ERROR.buildMessage(message));
+    }
+
+    /**
+     * Construtor para AddressCreationFailureException. Este construtor aceita uma mensagem e uma causa {@link Throwable}.
+     * Ele chama o construtor da superclasse ({@link RuntimeException}), passando uma mensagem de erro construída usando o objeto {@code ERROR} e a string de mensagem fornecida,
+     * juntamente com a causa {@link Throwable} da exceção.
+     * Este construtor é particularmente útil quando uma exceção é capturada no bloco {@code try} e precisa ser envolvida em uma {@link AddressCreationFailureException}.
+     * A causa {@link Throwable} ajuda a manter a cadeia de exceções para uma melhor depuração.
+     *
+     * @param message O detalhe específico desta instância de falha ao criar um Endereço.
+     * @param cause   A exceção original que causou a falha.
+     */
+    public AddressCreationFailureException(String message, Throwable cause) {
+        super(ERROR.buildMessage(message), cause);
     }
 
 }

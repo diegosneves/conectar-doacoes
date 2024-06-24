@@ -4,7 +4,7 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
-import diegosneves.github.conectardoacoes.core.domain.user.shared.repository.UserRepository;
+import diegosneves.github.conectardoacoes.core.domain.user.shared.repository.UserContractRepository;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UserServiceFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
@@ -15,14 +15,14 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
  * A classe {@link UserService} implementa um contratato do serviço do usuário {@link UserServiceContract}.
  * Ela fornece os métodos para gerenciar usuários, incluindo criação de um novo usuário, recuperação de um usuário pelo seu ID,
  * alteração da senha do usuário e alteração do nome de usuário.
- * <p>Isso é feito por meio da interação com o repositório de usuários {@link UserRepository}, onde os dados do usuário são armazenados.
+ * <p>Isso é feito por meio da interação com o repositório de usuários {@link UserContractRepository}, onde os dados do usuário são armazenados.
  * <p>Os métodos implementados nesta classe realizam checagens de validação para garantir que os dados do usuário sejam válidos.
  * Se quaisquer dados inválidos forem fornecidos, como um ID de usuário, senha ou nome de usuário nulo ou em branco,
  * eles lançarão uma exceção {@link UserServiceFailureException}.
  *
  * @author diegoneves
  * @see UserServiceContract
- * @see UserRepository
+ * @see UserContractRepository
  * @see UserServiceFailureException
  * @since 1.0.0
  */
@@ -33,10 +33,10 @@ public class UserService implements UserServiceContract {
     public static final String USER_NOT_FOUND_MESSAGE = "Usuário não encontrado";
     public static final String USERNAME_INVALID_ERROR_MESSAGE = "O novo nome de usuário informado é inválido.";
 
-    private final UserRepository userRepository;
+    private final UserContractRepository userContractRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserContractRepository userContractRepository) {
+        this.userContractRepository = userContractRepository;
     }
 
     /**
@@ -52,7 +52,7 @@ public class UserService implements UserServiceContract {
     @Override
     public UserContract createUser(String username, String email, UserProfile userProfile, String password) throws UserCreationFailureException {
         User newUser = UserFactory.create(username, email, userProfile, password);
-        return this.userRepository.save(newUser);
+        return this.userContractRepository.persist(newUser);
     }
 
     /**
@@ -65,7 +65,7 @@ public class UserService implements UserServiceContract {
     @Override
     public UserContract getUser(String userId) {
         validateUserId(userId);
-        return this.userRepository.findById(userId);
+        return this.userContractRepository.findEntityById(userId);
     }
 
     /**
@@ -111,7 +111,7 @@ public class UserService implements UserServiceContract {
         UserContract retrievedUser = this.getUser(userId);
         ValidationUtils.checkNotNullAndNotEmptyOrThrowException(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
         retrievedUser.changeUserPassword(newPassword);
-        this.userRepository.save(retrievedUser);
+        this.userContractRepository.persist(retrievedUser);
     }
 
     /**
@@ -127,6 +127,6 @@ public class UserService implements UserServiceContract {
         UserContract retrievedUser = this.getUser(userId);
         ValidationUtils.checkNotNullAndNotEmptyOrThrowException(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
         retrievedUser.changeUserName(newUsername);
-        this.userRepository.save(retrievedUser);
+        this.userContractRepository.persist(retrievedUser);
     }
 }
