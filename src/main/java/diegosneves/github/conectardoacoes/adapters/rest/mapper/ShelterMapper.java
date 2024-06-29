@@ -53,7 +53,7 @@ public class ShelterMapper implements MapperStrategy<Shelter, ShelterEntity> {
      */
     @Override
     public Shelter mapFrom(ShelterEntity source) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(source, MapperFailureException.ERROR.formatErrorMessage(SHELTER_ENTITY_CLASS.getSimpleName()), ShelterEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(SHELTER_ENTITY_CLASS.getSimpleName()), ShelterEntityFailuresException.class);
 
         Shelter constructedShelter = null;
         try {

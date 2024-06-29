@@ -42,7 +42,7 @@ public class UserEntityMapper implements MapperStrategy<UserEntity, User> {
      */
     @Override
     public UserEntity mapFrom(User source) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(source, MapperFailureException.ERROR.formatErrorMessage(USER_CLASS.getSimpleName()), UserEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(USER_CLASS.getSimpleName()), UserEntityFailuresException.class);
         UserEntity userEntity = null;
         try {
             userEntity = BuilderMapper.mapTo(UserEntity.class, source);

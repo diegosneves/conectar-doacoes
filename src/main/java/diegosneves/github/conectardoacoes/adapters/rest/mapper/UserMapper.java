@@ -68,7 +68,7 @@ public class UserMapper implements MapperStrategy<User, UserEntity> {
      * @see MapperFailureException
      */
     private <T> void validateData(T data) throws UserEntityFailuresException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(data, MapperFailureException.ERROR.formatErrorMessage(USER_ENTITY_CLASS.getSimpleName()), UserEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(data, MapperFailureException.ERROR.formatErrorMessage(USER_ENTITY_CLASS.getSimpleName()), UserEntityFailuresException.class);
     }
 
 }
