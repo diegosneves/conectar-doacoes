@@ -2,10 +2,13 @@ package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.enums.UserProfileType;
+import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
+import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.AddressEntityMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
-import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.AddressRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.DonationRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
@@ -18,18 +21,30 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Addre
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
+import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;
+import diegosneves.github.conectardoacoes.core.exception.ShelterCreationFailureException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -160,6 +175,303 @@ class ShelterEntityServiceImplTest {
         assertEquals(USER_EMAIL, shelterCaptor.getValue().getUser().getEmail());
         assertEquals(UserProfile.DONOR, shelterCaptor.getValue().getUser().getUserProfile());
         assertEquals(USER_PASSWORD, shelterCaptor.getValue().getUser().getUserPassword());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "  "})
+    void shouldThrowExceptionWhenShelterNameIsBlank(String shelterName) {
+        this.request.setShelterName(shelterName);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenShelterNameIsNull() {
+        this.request.setShelterName(null);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoIsNullInCreateShelter() {
+        this.request.setAddress(null);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoStreetNameIsNullInCreateShelter() {
+        this.addressDTO.setStreet(null);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"  ", ""})
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoStreetNameIsBlankInCreateShelter(String addressStreet) {
+        this.addressDTO.setStreet(addressStreet);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoNumberIsNullInCreateShelter() {
+        this.addressDTO.setNumber(null);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"  ", ""})
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoNumberIsBlankInCreateShelter(String value) {
+        this.addressDTO.setNumber(value);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoNeighborhoodIsNullInCreateShelter() {
+        this.addressDTO.setNeighborhood(null);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"  ", ""})
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoNeighborhoodIsBlankInCreateShelter(String value) {
+        this.addressDTO.setNeighborhood(value);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoCityIsNullInCreateShelter() {
+        this.addressDTO.setCity(null);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"  ", ""})
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoCityIsBlankInCreateShelter(String value) {
+        this.addressDTO.setCity(value);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoStateIsNullInCreateShelter() {
+        this.addressDTO.setState(null);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"  ", ""})
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoStateIsBlankInCreateShelter(String value) {
+        this.addressDTO.setState(value);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoZipCodeIsNullInCreateShelter() {
+        this.addressDTO.setZip(null);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"  ", ""})
+    void shouldThrowShelterEntityFailuresExceptionWhenAddressDtoZipCodeIsBlankInCreateShelter(String value) {
+        this.addressDTO.setZip(value);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "  "})
+    void shouldThrowExceptionWhenResponsibleUserEmailIsBlank(String value) {
+        this.request.setResponsibleUserEmail(value);
+        when(this.userEntityService.searchUserByEmail(anyString())).thenThrow(UserEntityFailuresException.class);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.USER_NOT_FOUND), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(UserEntityFailuresException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenResponsibleUserEmailIsNull() {
+        this.request.setResponsibleUserEmail(null);
+        when(this.userEntityService.searchUserByEmail(null)).thenThrow(UserEntityFailuresException.class);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.USER_NOT_FOUND), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(UserEntityFailuresException.class, exception.getCause().getClass());
+    }
+
+
+    @Test
+    void mapAddressAndSaveToRepositoryThrowsExceptionWhenAddressIsNull() {
+
+        try (MockedStatic<BuilderMapper> mockedBuilder = mockStatic(BuilderMapper.class)) {
+
+            mockedBuilder.when(() -> BuilderMapper.mapTo(any(AddressEntityMapper.class), any(Address.class))).thenThrow(IllegalArgumentException.class);
+
+            ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+            verify(this.addressRepository, never()).save(any(AddressEntity.class));
+            verify(this.repository, never()).persist(any(ShelterContract.class));
+
+            assertNotNull(exception);
+            assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.ERROR_MAPPING_ADDRESS), exception.getMessage());
+            assertNotNull(exception.getCause());
+            assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
+        }
+    }
+
+    @Test
+    void mapShelterAndSaveToRepositoryThrowsExceptionWhenAddressIsNull() {
+
+        when(this.userEntityService.searchUserByEmail(anyString())).thenReturn(this.user);
+        when(this.repository.persist(any(ShelterContract.class))).thenReturn(null);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.addressRepository, times(1)).save(any(AddressEntity.class));
+        verify(this.repository, times(1)).persist(any(ShelterContract.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
+        assertNotNull(exception.getCause());
+        assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
     }
 
 }

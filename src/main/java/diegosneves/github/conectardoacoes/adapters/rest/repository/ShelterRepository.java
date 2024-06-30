@@ -1,6 +1,7 @@
 package diegosneves.github.conectardoacoes.adapters.rest.repository;
 
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.MapperStrategy;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterMapper;
@@ -171,8 +172,8 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
     @Override
     default ShelterContract persist(ShelterContract entity) {
         ValidationUtils.validateNotNullOrEmpty(entity, SHELTER_ERROR_MESSAGE, ShelterEntityFailuresException.class);
-        ShelterEntity shelterEntity = new ShelterEntityMapper().mapFrom((Shelter) entity);
-        return new ShelterMapper().mapFrom(this.save(shelterEntity));
+        ShelterEntity shelterEntity = BuilderMapper.mapTo(new ShelterEntityMapper(), entity);
+        return BuilderMapper.mapTo(this.getShelterMapper(), this.save(shelterEntity));
     }
 
     /**
