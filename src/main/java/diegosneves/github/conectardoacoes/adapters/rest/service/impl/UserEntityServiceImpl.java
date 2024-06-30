@@ -1,6 +1,7 @@
 package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.UserMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.UserRepository;
@@ -44,7 +45,7 @@ public class UserEntityServiceImpl implements UserEntityService {
     public UserContract searchUserByEmail(String email) throws UserEntityFailuresException {
         ValidationUtils.validateNotNullOrEmpty(email, INVALID_EMAIL_ERROR_MESSAGE, UserEntityFailuresException.class);
         UserEntity foundUser = this.userRepository.findByEmail(email).orElseThrow(() -> new UserEntityFailuresException(String.format(EMAIL_NOT_FOUND_ERROR_MESSAGE, email)));
-        return new UserMapper().mapFrom(foundUser);
+        return BuilderMapper.mapTo(new UserMapper(), foundUser);
     }
 
 }
