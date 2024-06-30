@@ -86,7 +86,7 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
         if (entities == null || entities.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Shelter> shelterList = entities.stream().map(this.getShelterMapper()::mapFrom).toList();
+        List<ShelterContract> shelterList = entities.stream().map(this.getShelterMapper()::mapFrom).toList();
         return new ArrayList<>(shelterList);
     }
 

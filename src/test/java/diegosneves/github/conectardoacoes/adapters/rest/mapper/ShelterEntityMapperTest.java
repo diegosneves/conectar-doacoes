@@ -6,6 +6,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityF
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
+import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
@@ -156,7 +157,7 @@ class ShelterEntityMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.mapper.mapFrom(this.shelter));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(Shelter.class.getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntityMapper.SHELTER_CLASS.getSimpleName())), exception.getMessage());
     }
 
     @Test
@@ -170,7 +171,7 @@ class ShelterEntityMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.mapper.mapFrom(this.shelter));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(Shelter.class.getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntityMapper.SHELTER_CLASS.getSimpleName())), exception.getMessage());
         assertEquals(UserEntityFailuresException.class, exception.getCause().getClass());
     }
 
