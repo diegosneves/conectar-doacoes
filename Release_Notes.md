@@ -818,6 +818,68 @@ Este commit adiciona a funcionalidade de criação de um novo abrigo no sistema,
 
 ---
 
+**Commit** 6dc20873197bc7684422c477a9cbf4aeabfb8039:
 
+Esse commit substitui a entidade User pela entidade UserContract nos mappers. Agora, as classes `UserMapper` e `UserEntityMapper` operam com `UserContract` em vez de `User`. Alterações correspondentes também foram refletidas nos respectivos testes para garantir que eles funcionem com a nova configuração.
 
+**Arquivos Alterados:** `UserEntityMapper.java`, `UserMapper.java`, `UserEntityMapperTest.java`, `UserMapperTest.java`
+
+**Alterações:**
+
+- `UserEntityMapper.java`: A entidade 'User' foi substituída por 'UserContract' nos métodos do mapper.
+- `UserMapper.java`: A entidade 'User' foi substituída por 'UserContract' nos métodos do mapper.
+- `UserEntityMapperTest.java`: Testes foram atualizados para refletir as alterações no 'UserEntityMapper'.
+- `UserMapperTest.java`: Testes foram atualizados para refletir as alterações no 'UserMapper'.
+
+**Nota:** A principal mudança desse commit é a substituição da entidade `User` pela `UserContract` nos mappers. Isso proporciona maior flexibilidade e abstração na transformação de dados entre as camadas da aplicação. 
+
+---
+
+**Commit** 28c1baa345cb68cb7aa17b1cfbcb528481bdb0c4:
+
+Este commit atualiza o uso da classe `Shelter` para a classe `ShelterContract` para manter a consistência em todo o código.
+
+**Arquivos Alterados:** `ShelterEntityMapper.java`, `ShelterMapper.java`
+
+**Alterações:**
+
+- `ShelterEntityMapper.java`: `Shelter` foi substituído por `ShelterContract` nos métodos do mapper. Isso inclui mudanças nos comentários do método para refletir essa mudança.
+- `ShelterMapper.java`: `Shelter` foi substituído por `ShelterContract` nos métodos do mapper. Isso inclui mudanças nos comentários do método, o método `mappedDonationsToShelter` para refletir essa mudança.
+
+**Nota:** Este commit refatora o código para usar a interface `ShelterContract` ao invés da classe `Shelter` a fim de manter a consistência ao longo do código. Isso facilita a leitura e a manutenção do código, tornando-o mais eficiente.
+
+---
+
+**Commit** d0804574b881ba87391feee765a1fd94c7db51af:
+
+Este commit aprimora a funcionalidade de mapeamento de objetos em `BuilderMapper`, tornando a função mais genérica e mais segura ao lançar exceções quando os parâmetros fornecidos são nulos.
+
+**Arquivos Alterados:** `ExceptionDetails.java`, `BuilderMapper.java`, `UserEntityServiceImpl.java`, `UserEntityMapperTest.java`
+
+**Alterações:**
+
+- `ExceptionDetails.java`: Altera a mensagem de erro para `CLASS_MAPPING_FAILURE`.
+- `BuilderMapper.java`: Atualiza a função `mapTo` para ser mais genérica e lançar exceções quando o objeto de origem ou a estratégia de mapeamento são nulos.
+- `UserEntityServiceImpl.java`: Atualiza a chamada para a função `mapTo` em `searchUserByEmail`.
+- `UserEntityMapperTest.java`: Atualiza os testes para refletir as alterações no `BuilderMapper`.
+
+**Nota:** Este commit aprimora a funcionalidade de mapeamento de objetos em `BuilderMapper`, tornando o método mais robusto e seguro ao lidar com possíveis entradas nulas. Isso melhora a qualidade do código e o torna mais resistente a possíveis erros de execução.
+
+---
+
+**Commit** aa23f62db86eaf66eedb6a40a2284798776c360c:
+
+Este commit inclui uma refatoração extensa no serviço `ShelterEntity` e testes relacionados. A lógica complexa foi reestruturada em métodos mais gerenciáveis e foram adicionados vários casos de teste para aumentar a cobertura e garantir a robustez do código.
+
+**Arquivos Alterados:** `ShelterRepository.java`, `ShelterEntityServiceImpl.java`, `ShelterEntityMapperTest.java`, `ShelterEntityServiceImplTest.java`
+
+**Alterações:**
+
+- `ShelterRepository.java`: Atualiza o método `persist` para utilizar a classe `BuilderMapper` para mapeamento de entidades.
+- `ShelterEntityServiceImpl.java`: Faz várias mudanças para melhoria da qualidade do código. A lógica de criação do abrigo e endereço e persistência dessas entidades foram movidas para métodos separados para melhor legibilidade. As mensagens de erro também foram melhoradas.
+- `ShelterEntityMapperTest.java`, `ShelterEntityServiceImplTest.java`: Os testes foram atualizados para refletir as alterações no serviço `ShelterEntity`.
+
+**Nota:** Este commit realiza uma refatoração extensa no serviço `ShelterEntity` e seus testes correspondentes para melhorar a qualidade do código e a cobertura dos testes. Isso aumenta a robustez do código e a facilidade de manutenção.
+
+---
 
