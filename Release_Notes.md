@@ -766,4 +766,58 @@ Este commit altera o método de validação de dados `checkNotNullAndNotEmptyOrT
 
 ---
 
+**Commit** 70d2f448e7e970aeaea60c32f2713f781d669dae:
+
+Este commit adiciona a funcionalidade de pesquisa de usuário por e-mail. Isso inclui a criação de um novo endpoint para recuperar os detalhes de um usuário com base em seu e-mail, bem como a criação de novas classes de DTO para mapear a entidade do usuário e a criação de um novo serviço para executar a pesquisa do usuário. Além disso, foram adicionados testes unitários para garantir que o novo endpoint funcione conforme esperado.
+
+**Arquivos Adicionados:** `UserEntityDTO.java`, `UserRepository.java`, `UserEntityService.java`, `UserEntityServiceImpl.java`, `UserRepositoryTest.java`
+
+**Alterações:**
+
+- `UserEntityDTO.java`: Classe modelo DTO para um usuário. Contém informações básicas sobre um usuário, incluindo o id do usuário, o nome do usuário, o e-mail e o tipo de perfil do usuário.
+- `UserRepository.java`: Adicionada uma nova funcionalidade para recuperar um usuário do repositório pelo e-mail.
+- `UserEntityService.java`: Interface do serviço de entidade de usuário criada para definir a operação de busca de usuário pelo e-mail.
+- `UserEntityServiceImpl.java`: Implementação da interface de serviço de entidade de usuário. A nova implementação inclui um método para recuperar usuário pelo e-mail.
+- `UserRepositoryTest.java`: Testes unitários para a funcionalidade de busca de usuário pelo e-mail.
+
+**Nota:** Este commit foca na adição de uma nova funcionalidade que permite a busca de um usuário por e-mail. Esta implementação envolve não apenas a criação do endpoint de busca, mas também a implementação dos métodos de serviço correspondentes e a execução de testes para garantir que a funcionalidade esteja funcionando conforme esperado.
+
+---
+
+**Commit** 39b658255cf4391c1e5b414cfab78d3d56732a2b:
+
+Este commit inclui novos DTOs para endereço e criação de abrigos, além de repositórios para endereços e doações. Também foram criadas classes para lidar com a resposta à criação de um abrigo e a solicitação de criação de um abrigo.
+
+**Arquivos Adicionados:** `AddressDTO.java`, `AddressRepository.java`, `DonationRepository.java`, `ShelterCreationRequest.java`, `ShelterCreatedResponse.java`
+
+**Alterações:**
+
+- `AddressDTO.java`: DTO criado para representar um endereço, contém informações básicas de endereço, como rua, número, bairro, cidade, estado e CEP.
+- `AddressRepository.java`: Repositório criado para lidar com operações de banco de dados para o DTO de endereço.
+- `DonationRepository.java`: Repositório criado para lidar com operações de banco de dados para a entidade de doação.
+- `ShelterCreationRequest.java`: Classe de solicitação criada para lidar com a solicitação de criação de um abrigo. Contém informações essenciais para a criação de um abrigo, incluindo o nome do abrigo, um AddressDTO representando o endereço do abrigo, e o e-mail do usuário responsável pelo abrigo.
+- `ShelterCreatedResponse.java`: Classe de resposta criada para lidar com a resposta da criação de um abrigo. Contém informações sobre a resposta da criação de um abrigo, incluindo o id do novo abrigo, o nome do abrigo, o endereço do abrigo, e o usuário responsável pela criação do abrigo.
+
+**Nota:** Este commit foca na preparação dos componentes necessários para a criação e resposta de abrigos. Isso inclui a adição de novos DTOs, repositórios para lidar com as operações do banco de dados e as classes de solicitação e resposta necessárias.
+
+---
+
+**Commit** 6ac28958a25f110a54442557630fad78a0efaaca:
+
+Este commit adiciona a funcionalidade de criação de um novo abrigo no sistema, através das classes `ShelterEntityService` e `ShelterEntityServiceImpl`. Essa implementação também inclui testes para essa funcionalidade na classe `ShelterEntityServiceImplTest`.
+
+**Arquivos Adicionados:** `ShelterEntityService.java`, `ShelterEntityServiceImpl.java`, `ShelterEntityServiceImplTest.java`
+
+**Alterações:**
+
+- `ShelterEntityService.java`: Interface de serviço criada para definir a operação de criação de abrigos.
+- `ShelterEntityServiceImpl.java`: Implementa a interface `ShelterEntityService` e inclui a lógica para criar um abrigo no sistema. Ele busca um usuário responsável, cria um endereço e, finalmente, cria um abrigo. O abrigo criado é persistido no repositório de abrigos.
+- `ShelterEntityServiceImplTest.java`: Testes para a funcionalidade de criação de abrigos. Ele verifica se a criação de um abrigo está funcionando como esperado e faz asserções para verificar a integridade dos dados do abrigo criado.
+
+**Nota:** Este commit enfoca a implementação da lógica necessária para criar um abrigo e persisti-lo no banco de dados. Com isso, os usuários agora podem criar novos abrigos no sistema.
+
+---
+
+
+
 
