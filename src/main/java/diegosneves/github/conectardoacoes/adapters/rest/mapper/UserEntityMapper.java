@@ -5,6 +5,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureE
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
+import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 
 /**
@@ -16,9 +17,9 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
  * @author diegoneves
  * @since 1.0.0
  */
-public class UserEntityMapper implements MapperStrategy<UserEntity, User> {
+public class UserEntityMapper implements MapperStrategy<UserEntity, UserContract> {
 
-    public static final Class<User> USER_CLASS = User.class;
+    public static final Class<UserContract> USER_CLASS = UserContract.class;
 
     /**
      * Este método é usado para mapear um objeto de origem do tipo {@link User} para um objeto de entidade {@link UserEntity}.
@@ -41,7 +42,7 @@ public class UserEntityMapper implements MapperStrategy<UserEntity, User> {
      * @throws UserEntityFailuresException se o objeto de origem é nulo ou vazio, ou se um erro ocorrer durante o mapeamento ou a configuração do perfil do usuário.
      */
     @Override
-    public UserEntity mapFrom(User source) {
+    public UserEntity mapFrom(UserContract source) {
         ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(USER_CLASS.getSimpleName()), UserEntityFailuresException.class);
         UserEntity userEntity = null;
         try {
