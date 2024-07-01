@@ -883,3 +883,31 @@ Este commit inclui uma refatoração extensa no serviço `ShelterEntity` e teste
 
 ---
 
+**Commit** a5e09f8a1fc54957d9dee7602381a7cd3254893a:
+
+Esse commit adiciona documentação Javadoc detalhada para todas as classes de serviço e repositório, fornecendo descrições abrangentes de suas funções, métodos, autores e versões. A documentação é crucial para entender e manter corretamente o código no futuro.
+
+**Arquivos Alterados:** 
+
+Classe de Repositório:
+
+- `AddressRepository.java`
+- `DonationRepository.java`
+- `UserRepository.java`
+
+Classe de Serviço:
+ 
+- `ShelterEntityService.java`
+- `UserEntityService.java`
+- `ShelterEntityServiceImpl.java` 
+
+**Alterações:**
+
+Nesse commit, cada classe teve alterações substancias em seus comentários, incrementando a documentação dos métodos, classes e suas funcionalidades de maneira detalhada. Como exemplo, temos a documentação dos métodos da classe `ShelterEntityService`, que descreve o propósito, parâmetros, retornos e possíveis exceções de cada método.
+
+**Nota:** Este commit aumenta significativamente a legibilidade e a compreensibilidade do código por meio de comentários Javadoc detalhados. Isso é essencial para o entendimento correto do funcionamento do código e facilita a manutenção e futuras atualizações.
+
+---
+
+
+
