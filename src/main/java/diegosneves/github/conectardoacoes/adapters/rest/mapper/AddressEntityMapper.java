@@ -35,7 +35,7 @@ public class AddressEntityMapper implements MapperStrategy<AddressEntity, Addres
      */
     @Override
     public AddressEntity mapFrom(Address source) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(source, MapperFailureException.ERROR.formatErrorMessage(ADDRESS_CLASS.getSimpleName()), AddressEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(ADDRESS_CLASS.getSimpleName()), AddressEntityFailuresException.class);
         return BuilderMapper.mapTo(AddressEntity.class, source);
     }
 

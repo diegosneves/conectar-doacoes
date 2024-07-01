@@ -4,6 +4,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureE
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
+import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
@@ -21,7 +22,7 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
  * @see MapperStrategy
  * @since 1.0.0
  */
-public class UserMapper implements MapperStrategy<User, UserEntity> {
+public class UserMapper implements MapperStrategy<UserContract, UserEntity> {
 
     public static final Class<UserEntity> USER_ENTITY_CLASS = UserEntity.class;
 
@@ -37,7 +38,7 @@ public class UserMapper implements MapperStrategy<User, UserEntity> {
      * @return uma instância da classe de domínio {@link User}, com seus campos preenchidos com os valores correspondentes da entidade de origem
      */
     @Override
-    public User mapFrom(UserEntity source) {
+    public UserContract mapFrom(UserEntity source) {
         this.validateData(source);
         this.validateData(source.getUserProfile());
         User mappedUser = null;
@@ -68,7 +69,7 @@ public class UserMapper implements MapperStrategy<User, UserEntity> {
      * @see MapperFailureException
      */
     private <T> void validateData(T data) throws UserEntityFailuresException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(data, MapperFailureException.ERROR.formatErrorMessage(USER_ENTITY_CLASS.getSimpleName()), UserEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(data, MapperFailureException.ERROR.formatErrorMessage(USER_ENTITY_CLASS.getSimpleName()), UserEntityFailuresException.class);
     }
 
 }

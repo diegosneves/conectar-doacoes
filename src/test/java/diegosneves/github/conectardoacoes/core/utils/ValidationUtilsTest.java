@@ -28,7 +28,7 @@ class ValidationUtilsTest {
     void isNullOrEmpty() {
         this.value = "Teste";
         try {
-            ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.value, EMPTY_VALUE_ERROR, IllegalArgumentException.class);
+            ValidationUtils.validateNotNullOrEmpty(this.value, EMPTY_VALUE_ERROR, IllegalArgumentException.class);
         } catch (Exception e) {
             fail(UNEXPECTED_EXCEPTION);
         }
@@ -38,7 +38,7 @@ class ValidationUtilsTest {
     void checkStringNotNull() {
         this.value = null;
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.value, NULL_VALUE_ERROR_MESSAGE, IllegalArgumentException.class));
+                () -> ValidationUtils.validateNotNullOrEmpty(this.value, NULL_VALUE_ERROR_MESSAGE, IllegalArgumentException.class));
 
         assertNotNull(exception);
         assertEquals(NULL_VALUE_ERROR_MESSAGE, exception.getMessage());
@@ -49,7 +49,7 @@ class ValidationUtilsTest {
         this.value = null;
 
         ValidationUtilsException exception = assertThrows(ValidationUtilsException.class,
-                () -> ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.value, NULL_VALUE_ERROR_MESSAGE, NoMethodFoundException.class));
+                () -> ValidationUtils.validateNotNullOrEmpty(this.value, NULL_VALUE_ERROR_MESSAGE, NoMethodFoundException.class));
 
         assertNotNull(exception);
         assertEquals(ValidationUtilsException.ERROR.buildMessage(NoMethodFoundException.class.getSimpleName()), exception.getMessage());
@@ -59,7 +59,7 @@ class ValidationUtilsTest {
     void checkStringNotEmptyWithValidateUtilsException() {
 
         ValidationUtilsException exception = assertThrows(ValidationUtilsException.class,
-                () -> ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.value, EMPTY_VALUE_ERROR, NoMethodFoundException.class));
+                () -> ValidationUtils.validateNotNullOrEmpty(this.value, EMPTY_VALUE_ERROR, NoMethodFoundException.class));
 
         assertNotNull(exception);
         assertEquals(ValidationUtilsException.ERROR.buildMessage(NoMethodFoundException.class.getSimpleName()), exception.getMessage());
@@ -68,7 +68,7 @@ class ValidationUtilsTest {
     @Test
     void checkStringNotEmpty() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.value, EMPTY_VALUE_ERROR, IllegalArgumentException.class));
+                () -> ValidationUtils.validateNotNullOrEmpty(this.value, EMPTY_VALUE_ERROR, IllegalArgumentException.class));
 
         assertNotNull(exception);
         assertEquals(EMPTY_VALUE_ERROR, exception.getMessage());

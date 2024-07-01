@@ -76,15 +76,15 @@ public class User implements UserContract {
      *                                      faltando, em branco ou é inválido
      */
     private void validateData() throws UserCreationFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.userProfile, PROFILE_NOT_PROVIDED, UserCreationFailureException.class);
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.userName, String.format(USERNAME_REQUIRED, this.userProfile), UserCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(this.userProfile, PROFILE_NOT_PROVIDED, UserCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(this.userName, String.format(USERNAME_REQUIRED, this.userProfile), UserCreationFailureException.class);
         try {
             UuidUtils.isValidUUID(this.id);
         } catch (UuidUtilsException e) {
             throw new UserCreationFailureException(USER_ID_REQUIRED, e);
         }
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.email, EMAIL_NOT_PROVIDED, UserCreationFailureException.class);
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.userPassword, PASSWORD_NOT_PROVIDED, UserCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(this.email, EMAIL_NOT_PROVIDED, UserCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(this.userPassword, PASSWORD_NOT_PROVIDED, UserCreationFailureException.class);
     }
 
 
@@ -115,13 +115,13 @@ public class User implements UserContract {
 
     @Override
     public void changeUserPassword(String password) throws UserCreationFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(password, PASSWORD_NOT_PROVIDED, UserCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(password, PASSWORD_NOT_PROVIDED, UserCreationFailureException.class);
         this.userPassword = password;
     }
 
     @Override
     public void changeUserName(String updatedUsername) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(updatedUsername, String.format(USERNAME_REQUIRED, this.userProfile), UserCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(updatedUsername, String.format(USERNAME_REQUIRED, this.userProfile), UserCreationFailureException.class);
         this.userName = updatedUsername;
     }
 }

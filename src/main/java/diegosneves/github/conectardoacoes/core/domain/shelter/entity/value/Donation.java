@@ -57,7 +57,7 @@ public class Donation {
         } catch (UuidUtilsException e) {
             throw new DonationRegisterFailureException(INVALID_ID_MESSAGE, e);
         }
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.description, INVALID_DESCRIPTION_ERROR, DonationRegisterFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(this.description, INVALID_DESCRIPTION_ERROR, DonationRegisterFailureException.class);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Donation {
      * @throws DonationRegisterFailureException se a quantia é nula.
      */
     private Integer defaultAmount(Integer amount) throws DonationRegisterFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(amount, INVALID_QUANTITY, DonationRegisterFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(amount, INVALID_QUANTITY, DonationRegisterFailureException.class);
         return (amount < DEFAULT_DONATION_AMOUNT) ? DEFAULT_DONATION_AMOUNT : amount;
     }
 }

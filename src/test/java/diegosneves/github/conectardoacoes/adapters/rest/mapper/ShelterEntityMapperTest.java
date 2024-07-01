@@ -156,7 +156,7 @@ class ShelterEntityMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.mapper.mapFrom(this.shelter));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(Shelter.class.getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntityMapper.SHELTER_CLASS.getSimpleName())), exception.getMessage());
     }
 
     @Test
@@ -170,7 +170,7 @@ class ShelterEntityMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.mapper.mapFrom(this.shelter));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(Shelter.class.getSimpleName())), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntityMapper.SHELTER_CLASS.getSimpleName())), exception.getMessage());
         assertEquals(UserEntityFailuresException.class, exception.getCause().getClass());
     }
 

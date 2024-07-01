@@ -1,6 +1,7 @@
 package diegosneves.github.conectardoacoes.adapters.rest.repository;
 
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.MapperStrategy;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterMapper;
@@ -60,11 +61,11 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
      *
      * @param id O ID que será validado. Deve ser uma string não nula e não vazia representando um UUID válido.
      * @throws ShelterEntityFailuresException se o ID fornecido for nulo, vazio ou não for um UUID válido.
-     * @see ValidationUtils#checkNotNullAndNotEmptyOrThrowException(Object, String, Class)
+     * @see ValidationUtils#validateNotNullOrEmpty(Object, String, Class)
      * @see UuidUtils#isValidUUID(String)
      */
     private void validateId(String id) throws ShelterEntityFailuresException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(id, INVALID_ID_MESSAGE, ShelterEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(id, INVALID_ID_MESSAGE, ShelterEntityFailuresException.class);
         try {
             UuidUtils.isValidUUID(id);
         } catch (UuidUtilsException e) {
@@ -86,7 +87,7 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
         if (entities == null || entities.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Shelter> shelterList = entities.stream().map(this.getShelterMapper()::mapFrom).toList();
+        List<ShelterContract> shelterList = entities.stream().map(this.getShelterMapper()::mapFrom).toList();
         return new ArrayList<>(shelterList);
     }
 
@@ -170,9 +171,9 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
      */
     @Override
     default ShelterContract persist(ShelterContract entity) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(entity, SHELTER_ERROR_MESSAGE, ShelterEntityFailuresException.class);
-        ShelterEntity shelterEntity = new ShelterEntityMapper().mapFrom((Shelter) entity);
-        return new ShelterMapper().mapFrom(this.save(shelterEntity));
+        ValidationUtils.validateNotNullOrEmpty(entity, SHELTER_ERROR_MESSAGE, ShelterEntityFailuresException.class);
+        ShelterEntity shelterEntity = BuilderMapper.mapTo(new ShelterEntityMapper(), entity);
+        return BuilderMapper.mapTo(this.getShelterMapper(), this.save(shelterEntity));
     }
 
     /**

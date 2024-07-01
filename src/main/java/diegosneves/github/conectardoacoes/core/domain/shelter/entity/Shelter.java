@@ -74,9 +74,9 @@ public class Shelter implements ShelterContract {
         } catch (UuidUtilsException e) {
             throw new ShelterCreationFailureException(ID_VALIDATION_FAILURE, e);
         }
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.shelterName, SHELTER_NAME_REQUIRED_ERROR, ShelterCreationFailureException.class);
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.address, ADDRESS_REQUIRED_ERROR, ShelterCreationFailureException.class);
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(this.responsibleUser, RESPONSIBLE_REQUIRED_ERROR, ShelterCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(this.shelterName, SHELTER_NAME_REQUIRED_ERROR, ShelterCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(this.address, ADDRESS_REQUIRED_ERROR, ShelterCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(this.responsibleUser, RESPONSIBLE_REQUIRED_ERROR, ShelterCreationFailureException.class);
     }
 
 
@@ -107,19 +107,19 @@ public class Shelter implements ShelterContract {
 
     @Override
     public void changeShelterName(String shelterName) throws ShelterCreationFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(shelterName, SHELTER_NAME_REQUIRED_ERROR, ShelterCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(shelterName, SHELTER_NAME_REQUIRED_ERROR, ShelterCreationFailureException.class);
         this.shelterName = shelterName;
     }
 
     @Override
     public void changeAddress(Address address) throws ShelterCreationFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(address, ADDRESS_REQUIRED_ERROR, ShelterCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(address, ADDRESS_REQUIRED_ERROR, ShelterCreationFailureException.class);
         this.address = address;
     }
 
     @Override
     public void addDonation(Donation donation) throws ShelterCreationFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(donation, DONATION_REQUIRED_ERROR, ShelterCreationFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(donation, DONATION_REQUIRED_ERROR, ShelterCreationFailureException.class);
         this.donations.add(donation);
     }
 }
