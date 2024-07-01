@@ -11,6 +11,21 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * A classe {@link UserEntityServiceImpl} implementa a interface {@link UserEntityService} e
+ * lida com a lógica de negócios das operações de usuário.
+ * A classe é marcada como um componente do Spring com a anotação {@link Service},
+ * o que permite ao Spring detectar e gerenciar as instâncias dessa classe.
+ * <p>
+ * Além disso, a classe lida com cenários de erros e exceções, lançando uma exceção personalizada
+ * chamada {@link UserEntityFailuresException} quando um problema ocorre.
+ *
+ * @author diegoneves
+ * @since 1.0.0
+ * @see UserEntityService
+ * @see UserEntityFailuresException
+ * @see Service
+ */
 @Service
 public class UserEntityServiceImpl implements UserEntityService {
 

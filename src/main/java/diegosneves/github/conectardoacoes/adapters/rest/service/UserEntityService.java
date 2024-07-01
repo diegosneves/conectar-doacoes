@@ -4,6 +4,12 @@ import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFail
 import diegosneves.github.conectardoacoes.adapters.rest.repository.UserRepository;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 
+/**
+ * Definição da interface para o serviço que lida com operações relacionadas à entidade do usuário.
+ *
+ * @author diegoneves
+ * @since 1.0.0
+ */
 public interface UserEntityService {
 
     /**
