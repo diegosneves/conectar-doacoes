@@ -59,8 +59,8 @@ public class OpenApiConfig {
      */
     private List<Tag> getTags() {
         return List.of(
-                new Tag().name("Doadores").description("Funcionalidades direcionadas para os Doadores"),
-                new Tag().name("Receptores").description("Funcionalidades direcionadas para os Receptores"));
+                new Tag().name("Usuários").description("Funcionalidades direcionadas para os Usuários"),
+                new Tag().name("Abrigos").description("Funcionalidades direcionadas para os Abrigos"));
     }
 
 }
