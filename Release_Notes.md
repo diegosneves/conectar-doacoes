@@ -909,5 +909,63 @@ Nesse commit, cada classe teve alterações substancias em seus comentários, in
 
 ---
 
+**Commit** 9372e7a263787d278e9792c2ef06682a62e83fa1:
 
+Este commit atualiza o README.md para incluir um link direto para a documentação Swagger do projeto e modifica algumas tags em OpenApiConfig.java para refletir melhor as funcionalidades do sistema. Além disso, algumas importações não utilizadas foram removidas do arquivo ShelterEntityServiceImplTest.java para limpar o código.
 
+**Arquivos Alterados:** `README.md`, `OpenApiConfig.java`, `ShelterEntityServiceImplTest.java`
+
+**Alterações:**
+
+- No `README.md`, foi adicionada a seção Swagger, que contém um link direto para a documentação Swagger do projeto.
+- As tags em `OpenApiConfig.java` foram modificado de "Doadores" e "Receptores" para "Usuários" e "Abrigos" para refletir melhor as funcionalidades do sistema.
+- No `ShelterEntityServiceImplTest.java`, foram removidas as importações não utilizadas `ShelterEntityMapper` e `lombok.SneakyThrows`.
+
+**Nota:** A principal ênfase deste commit é atualizar a documentação e limpar o código para melhor manutenção e legibilidade. Ele visa aperfeiçoar a documentação do Swagger e refletir melhor as funcionalidades do sistema nas tags da API. Além disso, também se esforça para manter o código limpo, removendo importações não utilizadas.
+
+---
+
+**Commit** fca44bf9cfc282adf59ead2686be64dd1eb36ae1:
+
+Este commit adiciona um manipulador global de exceções para gerenciar de maneira eficaz as respostas de erro durante o processamento das solicitações. Foi criada uma classe ExceptionDTO para armazenar e transferir detalhes das exceções lançadas.
+
+**Arquivos Adicionados:** `ControllerExceptionHandler.java`, `ExceptionDTO.java`
+
+**Alterações:**
+
+- Implementada a classe `ControllerExceptionHandler.java`, que é um manipulador global de exceções para controladores. Esta classe tem vários métodos anotados com `@ExceptionHandler` para tratar diferentes tipos de exceções que podem ocorrer durante o processamento das solicitações e gera respostas de erro apropriadas.
+- Criada a classe `ExceptionDTO` para representar um objeto de transferência de dados para transportar informações de exceção. Ela contém a mensagem e o código de status da exceção.
+
+**Nota:** A principal ênfase deste commit é melhorar a manipulação de erros, o que contribui para a robustez do sistema. Foi usada a estratégia de manipulação de exceções global para lidar com exceções lançadas por qualquer classe de controlador e fornecer detalhes apropriados do erro na resposta.
+
+---
+
+**Commit** 723e0e1247c062a54a7f2a4ab62fe30a94f54c1b:
+
+Este commit implementa os controladores `ShelterController` e `ShelterControllerImpl` para gerenciar as operações de abrigos. `ShelterController` define a interface de operações, enquanto `ShelterControllerImpl` é a implementação concreta onde os serviços são chamados. Além disso, os testes correspondentes também foram adicionados para `ShelterControllerImpl`.
+
+**Arquivos Adicionados:** `ShelterController.java`, `ShelterControllerImpl.java`, `ShelterControllerImplTest.java`
+
+**Alterações:**
+
+- O arquivo `ShelterController.java` foi adicionado. Este arquivo é uma interface que define as operações de gerenciamento de abrigos.
+- O arquivo `ShelterControllerImpl.java` foi adicionado. Este arquivo é a implementação concreta de `ShelterController` onde os serviços são chamados.
+- O arquivo `ShelterControllerImplTest.java` foi adicionado. Este arquivo contém os testes para a implementação do controlador.
+
+**Nota:** A principal ênfase deste commit é adicionar a criação dos abrigos e os testes correspondentes para a implementação.
+
+---
+
+**Commit** ff973370661a9720fa06f95f77e0edcea5243770
+
+Este commit adicionou arquivos com a documentação do projeto. 
+
+**Arquivos Adicionados:** varios `html`
+
+**Alterações:**
+
+- Foram adicionados arquivos `html` na diretório `docs/javaDoc`. Este arquivo é a documentação gerada pelo Javadoc para a API `ConectarDoacoesApplication`.
+
+**Nota:** A principal ênfase deste commit é adicionar a documentação Javadoc referente a API `ConectarDoacoesApplication`, proporcionando um maior entendimento sobre as classes e seus métodos. 
+
+---
