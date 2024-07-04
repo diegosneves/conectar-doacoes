@@ -42,7 +42,7 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     public static final String SHELTER_CREATION_ERROR_MESSAGE = "Erro na criação do Abrigo. Confirme se todos os campos do Abrigo estão corretos e tente novamente.";
     public static final String ADDRESS_CREATION_ERROR = "Erro na criação do endereço. Confirme se todos os campos do endereço estão corretos e tente novamente.";
     public static final String ERROR_MAPPING_ADDRESS = "Erro durante o mapeamento do endereço para persistência";
-    public static final String USER_NOT_FOUND = "Usuário não encontrado";
+    public static final String USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR = "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.";
 
 
     private final ShelterRepository repository;
@@ -180,7 +180,7 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
         try {
             foundUser = this.userEntityService.searchUserByEmail(responsibleUserEmail);
         } catch (UserEntityFailuresException e) {
-            throw new ShelterEntityFailuresException(USER_NOT_FOUND, e);
+            throw new ShelterEntityFailuresException(USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR, e);
         }
         return foundUser;
     }
