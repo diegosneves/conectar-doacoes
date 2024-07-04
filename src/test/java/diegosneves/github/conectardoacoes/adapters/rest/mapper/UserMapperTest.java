@@ -4,7 +4,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.enums.UserProfileType;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
-import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
+import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +42,7 @@ class UserMapperTest {
 
     @Test
     void shouldMapUserEntityToUser() {
-        User user = this.userMapper.mapFrom(this.userEntity);
+        UserContract user = this.userMapper.mapFrom(this.userEntity);
 
         assertNotNull(user);
         assertEquals(USERNAME, user.getUsername());

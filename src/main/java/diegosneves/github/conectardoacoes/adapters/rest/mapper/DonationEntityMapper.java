@@ -32,7 +32,7 @@ public class DonationEntityMapper implements MapperStrategy<DonationEntity, Dona
      */
     @Override
     public DonationEntity mapFrom(Donation source) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(
+        ValidationUtils.validateNotNullOrEmpty(
                 source,
                 MapperFailureException.ERROR.formatErrorMessage(DONATION_CLASS.getSimpleName()),
                 ShelterEntityFailuresException.class);

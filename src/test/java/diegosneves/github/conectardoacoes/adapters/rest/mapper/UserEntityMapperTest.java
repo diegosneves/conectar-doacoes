@@ -10,14 +10,13 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProf
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserEntityMapperTest {
@@ -56,7 +55,7 @@ class UserEntityMapperTest {
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityMapper.mapFrom(this.user));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(User.class.getSimpleName())), exception.getMessage());
+        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(UserEntityMapper.USER_CLASS.getSimpleName())), exception.getMessage());
     }
 
     @Test
@@ -69,7 +68,7 @@ class UserEntityMapperTest {
             UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityMapper.mapFrom(this.user));
 
             assertNotNull(exception);
-            assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(User.class.getSimpleName())), exception.getMessage());
+            assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(UserEntityMapper.USER_CLASS.getSimpleName())), exception.getMessage());
             assertEquals(ConstructorDefaultUndefinedException.class, exception.getCause().getClass());
         }
     }
@@ -84,7 +83,7 @@ class UserEntityMapperTest {
             UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityMapper.mapFrom(this.user));
 
             assertNotNull(exception);
-            assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(User.class.getSimpleName())), exception.getMessage());
+            assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(UserEntityMapper.USER_CLASS.getSimpleName())), exception.getMessage());
             assertEquals(MapperFailureException.class, exception.getCause().getClass());
         }
     }

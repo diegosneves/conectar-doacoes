@@ -17,21 +17,18 @@ public class ValidationUtils {
     }
 
     /**
-     * Valida se o objeto especificado é nulo ou vazio, caso seja uma instância de String.
+     * Valida a entrada com base nas condições para nulo e vazio (no caso de String).
      * Lança uma exceção com a mensagem de erro fornecida, se uma destas condições for verdadeira.
      * Este método pode ser utilizado para a validação de entradas onde dados são obrigatórios.
      *
      * @param <T>             o tipo de objeto a ser verificado
-     * @param object          o objeto a ser validado
+     * @param input          o objeto a ser validado
      * @param errorMessage    a mensagem de erro a ser anexada à exceção em caso de falhas na validação
      * @param customException a classe da exceção RuntimeException a ser lançada
      * @throws RuntimeException se o objeto fornecido for nulo ou se fora uma instância de String e estiver vazia
      */
-    public static <T> void checkNotNullAndNotEmptyOrThrowException(T object, String errorMessage, Class<? extends RuntimeException> customException) throws RuntimeException {
-        if (object == null) {
-            throwException(errorMessage, customException);
-        }
-        if (object instanceof String && ((String) object).trim().isEmpty()) {
+    public static <T> void validateNotNullOrEmpty(T input, String errorMessage, Class<? extends RuntimeException> customException) {
+        if (input == null || (input instanceof String && ((String) input).trim().isEmpty())) {
             throwException(errorMessage, customException);
         }
     }

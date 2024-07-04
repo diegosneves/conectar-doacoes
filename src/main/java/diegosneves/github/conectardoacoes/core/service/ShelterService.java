@@ -71,7 +71,7 @@ public class ShelterService implements ShelterServiceContract {
 
     /**
      * Valida o ID do abrigo fornecido. Primeiro, verifica se o ID do abrigo é nulo ou vazio usando
-     * {@link ValidationUtils#checkNotNullAndNotEmptyOrThrowException}. Em seguida, tenta verificar se o ID do abrigo é um UUID válido
+     * {@link ValidationUtils#validateNotNullOrEmpty}. Em seguida, tenta verificar se o ID do abrigo é um UUID válido
      * usando {@link UuidUtils#isValidUUID}.
      * Se qualquer uma dessas verificações falhar, ele lançará uma {@link ShelterServiceFailureException} com uma mensagem que indica
      * que o ID do abrigo fornecido é inválido.
@@ -80,7 +80,7 @@ public class ShelterService implements ShelterServiceContract {
      * @throws ShelterServiceFailureException Se o ID do abrigo fornecido for nulo, vazio ou não for um UUID válido.
      */
     private static void validateShelterId(String shelterId) throws ShelterServiceFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(shelterId, INVALID_SHELTER_ID_MESSAGE, ShelterServiceFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(shelterId, INVALID_SHELTER_ID_MESSAGE, ShelterServiceFailureException.class);
         try {
             UuidUtils.isValidUUID(shelterId);
         } catch (UuidUtilsException e) {
@@ -92,7 +92,7 @@ public class ShelterService implements ShelterServiceContract {
      * Este método é usado para alterar o nome do abrigo identificado pelo ID fornecido.
      * <p>
      * Primeiro, o método valida se o novo nome não é nulo nem vazio usando
-     * {@link ValidationUtils#checkNotNullAndNotEmptyOrThrowException}. Se a validação falhar,
+     * {@link ValidationUtils#validateNotNullOrEmpty}. Se a validação falhar,
      * uma {@link ShelterServiceFailureException} é lançada com uma mensagem indicando que o novo nome do abrigo é inválido.
      * <p>
      * O nome do abrigo recuperado é então alterado para o novo nome fornecido usando o método
@@ -107,7 +107,7 @@ public class ShelterService implements ShelterServiceContract {
      */
     @Override
     public void changeShelterName(String shelterId, String newName) throws ShelterServiceFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(newName, INVALID_SHELTER_NAME_ERROR_MESSAGE, ShelterServiceFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(newName, INVALID_SHELTER_NAME_ERROR_MESSAGE, ShelterServiceFailureException.class);
         ShelterContract updatedShelter = this.getShelter(shelterId);
         updatedShelter.changeShelterName(newName);
         this.shelterContractRepository.persist(updatedShelter);
@@ -117,7 +117,7 @@ public class ShelterService implements ShelterServiceContract {
      * Este método é usado para alterar o endereço do abrigo identificado pelo ID fornecido.
      * <p>
      * Primeiro, o método valida se o novo endereço não é nulo usando
-     * {@link ValidationUtils#checkNotNullAndNotEmptyOrThrowException}. Se a validação falhar,
+     * {@link ValidationUtils#validateNotNullOrEmpty}. Se a validação falhar,
      * uma {@link ShelterServiceFailureException} é lançada com uma mensagem indicando que o novo endereço do abrigo é inválido.
      * <p>
      * O endereço do abrigo recuperado é então alterado para o novo endereço fornecido usando o método
@@ -132,7 +132,7 @@ public class ShelterService implements ShelterServiceContract {
      */
     @Override
     public void changeAddress(String shelterId, Address address) throws ShelterServiceFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(address, ERROR_MESSAGE_ADDRESS_NULL, ShelterServiceFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(address, ERROR_MESSAGE_ADDRESS_NULL, ShelterServiceFailureException.class);
         ShelterContract updatedShelter = this.getShelter(shelterId);
         updatedShelter.changeAddress(address);
         this.shelterContractRepository.persist(updatedShelter);
@@ -142,7 +142,7 @@ public class ShelterService implements ShelterServiceContract {
      * Este método é responsável por adicionar uma {@link Donation} a um {@link ShelterContract} específico, identificado por seu id.
      * <p>
      * Primeiro, ele confirma que o objeto {@link Donation} não é nulo usando
-     * {@link ValidationUtils#checkNotNullAndNotEmptyOrThrowException}. Se este objeto {@link Donation} for nulo,
+     * {@link ValidationUtils#validateNotNullOrEmpty}. Se este objeto {@link Donation} for nulo,
      * ele lança uma {@link ShelterServiceFailureException}.
      * <p>
      * Em seguida, ele usa o id do abrigo fornecido para obter o {@link ShelterContract} correspondente.
@@ -157,7 +157,7 @@ public class ShelterService implements ShelterServiceContract {
      */
     @Override
     public void addDonation(String shelterId, Donation donation) throws ShelterServiceFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(donation, DONATION_REQUIRED_ERROR_MESSAGE, ShelterServiceFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(donation, DONATION_REQUIRED_ERROR_MESSAGE, ShelterServiceFailureException.class);
         ShelterContract updatedShelter = this.getShelter(shelterId);
         updatedShelter.addDonation(donation);
         this.shelterContractRepository.persist(updatedShelter);

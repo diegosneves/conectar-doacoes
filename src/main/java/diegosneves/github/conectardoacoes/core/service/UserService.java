@@ -90,7 +90,7 @@ public class UserService implements UserServiceContract {
      *                                     informação contextual adicional quando o UUID não é válido.
      */
     private static void validateUserId(String userId) throws UserServiceFailureException {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(userId, INVALID_IDENTIFIER_ERROR_MESSAGE, UserServiceFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(userId, INVALID_IDENTIFIER_ERROR_MESSAGE, UserServiceFailureException.class);
         try {
             UuidUtils.isValidUUID(userId);
         } catch (UuidUtilsException e) {
@@ -107,9 +107,9 @@ public class UserService implements UserServiceContract {
      */
     @Override
     public void changePassword(String userId, String newPassword) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(newPassword, INVALID_NEW_PASSWORD_MESSAGE, UserServiceFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(newPassword, INVALID_NEW_PASSWORD_MESSAGE, UserServiceFailureException.class);
         UserContract retrievedUser = this.getUser(userId);
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
         retrievedUser.changeUserPassword(newPassword);
         this.userContractRepository.persist(retrievedUser);
     }
@@ -123,9 +123,9 @@ public class UserService implements UserServiceContract {
      */
     @Override
     public void changeUserName(String userId, String newUsername) {
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(newUsername, USERNAME_INVALID_ERROR_MESSAGE, UserServiceFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(newUsername, USERNAME_INVALID_ERROR_MESSAGE, UserServiceFailureException.class);
         UserContract retrievedUser = this.getUser(userId);
-        ValidationUtils.checkNotNullAndNotEmptyOrThrowException(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
+        ValidationUtils.validateNotNullOrEmpty(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
         retrievedUser.changeUserName(newUsername);
         this.userContractRepository.persist(retrievedUser);
     }
