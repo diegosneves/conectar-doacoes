@@ -33,6 +33,10 @@ import lombok.Setter;
  *     <li>{@code userProfile} - O perfil do usuário que determina suas permissões e acessos.</li>
  *     <li>{@code userPassword} - A senha escolhida pelo usuário para acesso seguro ao sistema.</li>
  * </ul>
+ *
+ * @author diegoneves
+ * @since 1.0.0
+ *
  */
 @Entity
 @Table(name = "users")
