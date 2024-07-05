@@ -969,3 +969,37 @@ Este commit adicionou arquivos com a documentação do projeto.
 **Nota:** A principal ênfase deste commit é adicionar a documentação Javadoc referente a API `ConectarDoacoesApplication`, proporcionando um maior entendimento sobre as classes e seus métodos. 
 
 ---
+
+**Commit**: a1a9a415349e9350779d91911ccdcee73a811152:
+
+Neste commit, a mensagem de erro para quando um usuário não é encontrado foi modificada nos arquivos `ShelterEntityServiceImpl.java` e `ShelterEntityServiceImplTest.java`. Anteriormente, a mensagem era apenas "Usuário não encontrado". Agora, a mensagem foi alterada para indicar que o email do usuário responsável não foi encontrado para fornecer mais clareza.
+
+**Arquivos Alterados:** `ShelterEntityServiceImpl.java`, `ShelterEntityServiceImplTest.java`
+
+**Alterações:**
+
+- No arquivo `ShelterEntityServiceImpl.java`, a constante `USER_NOT_FOUND` foi substituída por `USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR`. A nova constante possui a mensagem alterada "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.".
+- A nova mensagem de erro é utilizada ao lançar a exceção `ShelterEntityFailuresException` na situação em que o usuário responsável não é encontrado.
+- Nos dois testes do arquivo `ShelterEntityServiceImplTest.java`, também foi alterada a mensagem de erro esperada.
+
+
+**Nota:** A principal ênfase deste commit é aprimorar a clareza das mensagens de erro, indicando com precisão a falha encontrada ao buscar o usuário responsável por email.
+
+---
+
+**Commit**: e4b26cf1c4f4f3aebabbb2f1b9ae5df670085bac:
+
+Este commit adiciona documentação à classe `UserEntity`. A documentação fornece uma explicação detalhada do propósito desta classe, as anotações usadas e os atributos da classe. Isso inclui informações sobre a representação dos usuários no sistema, os detalhes das anotações do JPA e Lombok, e uma descrição dos atributos do usuário.
+
+**Arquivo Alterado:** `UserEntity.java`
+
+**Alterações:**
+
+- A documentação foi adicionada para explicar o propósito da classe `UserEntity`.
+- Detalhes das anotações usadas na classe são explicados – `@Entity`, `@Table`, `@AllArgsConstructor`, `@NoArgsConstructor`, `@Builder`, `@Getter`, `@Setter`.
+- Os atributos da classe são descritos – `userId`, `userName`, `email`, `userProfile`, `userPassword`.
+
+**Nota:** A principal ênfase desta atualização foi a adição de documentação à classe `UserEntity`, aumentando assim a compreensão do código e facilitando a manutenção.
+
+---
+

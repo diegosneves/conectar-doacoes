@@ -415,7 +415,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.USER_NOT_FOUND), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UserEntityFailuresException.class, exception.getCause().getClass());
     }
@@ -430,7 +430,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.USER_NOT_FOUND), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UserEntityFailuresException.class, exception.getCause().getClass());
     }
