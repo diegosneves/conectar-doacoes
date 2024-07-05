@@ -2,14 +2,22 @@ package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.UserEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.UserMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.UserRepository;
+import diegosneves.github.conectardoacoes.adapters.rest.request.UserEntityCreationRequest;
+import diegosneves.github.conectardoacoes.adapters.rest.response.UserEntityCreatedResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.UserEntityService;
+import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
+import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
+import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * A classe {@link UserEntityServiceImpl} implementa a interface {@link UserEntityService} e
@@ -21,16 +29,20 @@ import org.springframework.stereotype.Service;
  * chamada {@link UserEntityFailuresException} quando um problema ocorre.
  *
  * @author diegoneves
- * @since 1.0.0
  * @see UserEntityService
  * @see UserEntityFailuresException
  * @see Service
+ * @since 1.0.0
  */
 @Service
 public class UserEntityServiceImpl implements UserEntityService {
 
     public static final String INVALID_EMAIL_ERROR_MESSAGE = "Não foi informado nenhum email. Por favor, forneça um email válido.";
     public static final String EMAIL_NOT_FOUND_ERROR_MESSAGE = "Não foi possivel encontrar um usuário com o email [ %s ].";
+    public static final String EMAIL_ALREADY_IN_USE = "Desculpe, o endereço de email fornecido já está associado a uma conta existente. Por favor, tente com um email diferente.";
+    public static final String USER_CREATION_FAILURE_MESSAGE = "Ops! A criação do novo usuário não foi bem-sucedida. Por favor, certifique-se de que seus dados estão corretos e tente novamente.";
+    public static final String USER_PROFILE_VALIDATION_FAILURE = "A validação do Perfil do usuário fornecido falhou.";
+    public static final String MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE = "Por favor, forneça uma requisição de criação de usuário preenchida corretamente.";
 
 
     private final UserRepository userRepository;
@@ -40,22 +52,6 @@ public class UserEntityServiceImpl implements UserEntityService {
         this.userRepository = userRepository;
     }
 
-    /**
-     * Este método é usado para obter uma entidade de usuário pelo seu email.
-     * Primeiramente, o método verifica se o valor do parâmetro de email não é nulo ou vazio.
-     * Se o valor do email for nulo ou vazio, uma exceção {@link UserEntityFailuresException} é lançada ao usuário
-     * com uma mensagem de erro relevante.
-     * <p>
-     * Se o email for válido, o método tentará encontrar uma entidade de usuário que corresponda ao email
-     * usando a interface {@link UserRepository}.
-     * Se não for encontrada uma entidade de usuário para o email fornecido,
-     * o método lançará uma exceção {@link UserEntityFailuresException} com uma mensagem de erro apropriada.
-     *<p></p>
-     * @param email A string que representa o email do usuário que será procurado no repositório.
-     * @return A entidade do usuário correspondente ao email fornecido.
-     * @throws UserEntityFailuresException Se nenhuma entidade de usuário puder ser encontrada para o email fornecido
-     * ou o valor do email for nulo ou vazio.
-     */
     @Override
     public UserContract searchUserByEmail(String email) throws UserEntityFailuresException {
         ValidationUtils.validateNotNullOrEmpty(email, INVALID_EMAIL_ERROR_MESSAGE, UserEntityFailuresException.class);
@@ -63,4 +59,94 @@ public class UserEntityServiceImpl implements UserEntityService {
         return BuilderMapper.mapTo(new UserMapper(), foundUser);
     }
 
+    @Override
+    public UserEntityCreatedResponse createUserEntity(UserEntityCreationRequest request) throws UserEntityFailuresException {
+        ValidationUtils.validateNotNullOrEmpty(request, MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE, UserEntityFailuresException.class);
+        this.checkIfEmailAlreadyInUse(request.getEmail());
+        UserEntity newUser = createUserEntityFromCreationRequest(request);
+        return BuilderMapper.mapTo(UserEntityCreatedResponse.class, this.userRepository.save(newUser));
+    }
+
+    /**
+     * Método auxiliar usado para converter uma instância de {@link UserEntityCreationRequest} para uma instância de {@link UserEntity}.
+     * <p>
+     * Este método recebe uma solicitação de criação de entidade de usuário, gera um contrato de usuário correspondente através de
+     * {@link UserEntityServiceImpl#createUserFromRequest(UserEntityCreationRequest)} e usa um {@link UserEntityMapper} para mapear
+     * o contrato de usuário para uma entidade de usuário.
+     *
+     * @param request Uma instância de {@link UserEntityCreationRequest} representando a solicitação de criação de uma nova entidade de usuário.
+     * @return userEntity Uma instância de {@link UserEntity} representando a entidade de usuário recém-criada.
+     * @throws UserEntityFailuresException Se ocorrer um erro durante a criação do usuário ou mapeamento de contrato de usuário para entidade de usuário.
+     *                                     A exceção encapsula e fornece mais detalhes sobre a natureza específica do erro.
+     * @see UserEntityCreationRequest
+     * @see UserEntity
+     * @see UserEntityMapper
+     */
+    private static UserEntity createUserEntityFromCreationRequest(UserEntityCreationRequest request) {
+        UserContract userContract = createUserFromRequest(request);
+        return BuilderMapper.mapTo(new UserEntityMapper(), userContract);
+    }
+
+    /**
+     * Método auxiliar para criar um {@link User} a partir de uma solicitação de criação de entidade de usuário {@link UserEntityCreationRequest}.
+     * <p>
+     * Este método é utilizado principalmente para transformar a solicitação de criação de entidade de usuário em uma instância concreta de {@link User}.
+     * Ele lida com a validação da solicitação e a criação do usuário, lançando uma exceção {@link UserEntityFailuresException} caso algum problema ocorra.
+     * A exceção lança detalhes específicos sobre a natureza do erro.
+     * O perfil do usuário é validado e convertido para um tipo de enumeração {@link UserProfile} apropriado.
+     * </p>
+     * <h2> Exceções </h2>
+     * <p>
+     * O método lança a exceção {@link UserEntityFailuresException} nas seguintes situações:
+     * <ul>
+     * <li>Quando o campo userProfile da solicitação de criação de entidade de usuário está nulo.</li>
+     * <li> Quando ocorrer uma exceção {@link RuntimeException} durante a criação do usuário no método {@link UserFactory#create}.</li>
+     * </ul>
+     * Nesses casos, uma {@link UserEntityFailuresException} será lançada com uma mensagem de erro adequada.
+     * </p>
+     *
+     * @param request uma solicitação de criação de entidade de usuário formada por userName, email, userProfile e userPassword.
+     * @return User uma instância de {@link User} representando o novo usuário criado.
+     * @throws UserEntityFailuresException lançada quando a validação do userProfile falha ou é impossível criar o usuário devido a uma {@link RuntimeException}.
+     * @see User
+     * @see UserContract
+     * @see UserEntityCreationRequest
+     */
+    private static UserContract createUserFromRequest(UserEntityCreationRequest request) {
+        ValidationUtils.validateNotNullOrEmpty(request.getUserProfile(), USER_PROFILE_VALIDATION_FAILURE, UserEntityFailuresException.class);
+        UserProfile userProfile = Enum.valueOf(UserProfile.class, request.getUserProfile().name());
+        UserContract createdUser;
+        try {
+            createdUser = UserFactory.create(request.getUserName(), request.getEmail(), userProfile, request.getUserPassword());
+        } catch (RuntimeException e) {
+            throw new UserEntityFailuresException(USER_CREATION_FAILURE_MESSAGE, e);
+        }
+        return createdUser;
+    }
+
+    /**
+     * Este método recebe como parâmetro um endereço de email no formato String e verifica se este email já está
+     * registrado no repositório de usuários. A verificação de registro é feita a partir do método
+     * {@link UserRepository#findByEmail(String)}, que retorna um {@link Optional} de {@link UserEntity}.
+     * <p>
+     * Primeiro, o método utiliza a função {@link ValidationUtils#validateNotNullOrEmpty(Object, String, Class)}
+     * para assegurar que o email fornecido não é nulo ou vazio.
+     * <p>
+     * Se a verificação retorna um {@link UserEntity}, isso significa que o endereço de email já existe na base de dados do
+     * sistema, neste caso, uma exceção {@link UserEntityFailuresException} é lançada com uma mensagem predefinida
+     * {@link #EMAIL_ALREADY_IN_USE}.
+     * <p>
+     * Já se a instância de {@link UserEntity} for vazia, ou seja, se o email não foi registrado anteriormente no sistema,
+     * a operação prossegue normalmente sem lançar nenhuma exceção.
+     *
+     * @param email o endereço de email a ser verificado.
+     * @throws UserEntityFailuresException Caso o email fornecido seja nulo ou vazio, ou, caso o email já esteja em uso por um usuário existente.
+     */
+    private void checkIfEmailAlreadyInUse(String email) {
+        ValidationUtils.validateNotNullOrEmpty(email, INVALID_EMAIL_ERROR_MESSAGE, UserEntityFailuresException.class);
+        Optional<UserEntity> existingUser = this.userRepository.findByEmail(email);
+        if (existingUser.isPresent()) {
+            throw new UserEntityFailuresException(EMAIL_ALREADY_IN_USE);
+        }
+    }
 }
