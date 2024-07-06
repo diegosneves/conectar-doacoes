@@ -1003,3 +1003,66 @@ Este commit adiciona documentação à classe `UserEntity`. A documentação for
 
 ---
 
+**Commit** e6a6e737e3b4e80a98df6555bdebbd1d0341aa99:
+
+Este commit otimiza o método `mapEntityList` no `ShelterRepository`. Agora, retorna-se uma lista vazia imutável das Java Collections em vez de instanciar um novo ArrayList. Além disso, a criação de uma lista intermediária durante o mapeamento de entidades foi eliminada.
+
+**Arquivo Alterado:** `ShelterRepository.java`
+
+**Alterações:**
+
+- Foi substituída a instância de um novo ArrayList por uma lista vazia imutável das Java Collections quando as entidades são nulas ou vazias em `mapEntityList`.
+- A criação de uma lista intermediária durante o mapeamento de entidades foi eliminada. Agora, realiza-se diretamente a stream das entidades para a lista de retorno.
+
+**Nota:** A ênfase desta commit é na melhoria da eficiência do método `mapEntityList` no `ShelterRepository`, otimizando a construção da lista de retorno.
+
+---
+
+**Commit** 1c6d58ba5c1711a905c1d944845a4169c8e3afb3:
+
+Este commit adiciona melhorias ao repositório de usuário `UserRepository`, adicionando validações e expandindo as funcionalidades de busca, persistência e deleção de usuários. Além disso, testes unitários correspondentes foram adicionados a `UserRepositoryTest.java` para garantir o funcionamento adequado dos novos métodos.
+
+**Arquivos Alterados:** `UserRepository.java`, `UserRepositoryTest.java`
+
+**Alterações:**
+
+- Novos métodos no `UserRepository.java` foram implementados para melhorar a funcionalidade de busca, persistência e deleção de usuários.
+- Validadores foram adicionados para garantir a integridade dos dados no `UserRepository.java`.
+- Novos testes unitários foram adicionados a `UserRepositoryTest.java` para garantir que os novos métodos estejam funcionando corretamente. 
+
+**Nota:** A ênfase deste commit é expandir a funcionalidade do repositório de usuário, garantindo a integridade dos dados através da implementação de validações. 
+
+---
+
+**Commit** b0b4a3b592edc64541f0d7e7a2ed5820becf058d:
+
+Este commit adiciona uma nova funcionalidade de criação de usuários ao sistema. Novas classes de Request e Response foram adicionadas, novos métodos de serviço foram implementados para a criação de usuários e os testes correspondentes foram criados. Além disso, estratégias para tratar erros durante a criação de usuários, como tentativas de registrar um endereço de e-mail já existente, foram adicionadas.
+
+**Arquivos Alterados:** `UserEntityCreationRequest.java`, `UserEntityCreatedResponse.java`, `UserEntityService.java`, `UserEntityServiceImpl.java`
+
+**Alterações:**
+
+- Implementação da classe `UserEntityCreationRequest` que coleta os dados fornecidos pelo usuário durante a solicitação de criação de um perfil.
+- Implementação da classe `UserEntityCreatedResponse` que é retornada após a criação de uma nova entidade de usuário, contendo informações pertinentes sobre o usuário.
+- Novos métodos foram adicionados na interface `UserEntityService` e implementados em `UserEntityServiceImpl`, para a criação do usuário.
+- Tratamento de erros foi adicionado em `UserEntityServiceImpl` para lidar com cenários onde o endereço de e-mail fornecido pelo usuário já existe no banco de dados.
+
+**Nota:** Esta commit adiciona funcionalidades significativas ao sistema, possibilitando a criação de novos usuários. Testes correspondentes para essas funcionalidades também foram adicionados.
+
+---
+
+**Commit** 669f1809eb4e13ba7113c2362a458c5a6b26f51f:
+
+Este commit adicionou a interface `UserController` e sua implementação na classe `UserControllerImpl`. O foco principal dos novos arquivos é lidar com operações relacionadas aos usuários, principalmente na criação de novos usuários, configurando as respectivas requisições e respostas para esses endpoints.
+
+**Arquivos Criados:** `UserController.java`, `UserControllerImpl.java`
+
+**Alterações:**
+
+- Adicionada a Interface `UserController`, que define o método para criação de um novo usuário.
+- Implementação da classe `UserControllerImpl`, que implementa o método definido pela interface `UserController`. A classe se utiliza dos serviços definidos em `UserEntityService` para criar novos usuários e retorna uma resposta formatada de acordo com a classe `UserEntityCreatedResponse`.
+- Documentação completa, incluindo as anotações para a documentação da API.
+
+**Nota:** A ênfase deste commit é adicionar a funcionalidade de criação de usuário, gerenciando as requisições HTTP e as respostas correspondentes, facilitando a interação de clientes com a criação de novos usuários.
+
+---

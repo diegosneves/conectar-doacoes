@@ -17,6 +17,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,10 +86,9 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
      */
     private List<ShelterContract> mapEntityList(List<ShelterEntity> entities) {
         if (entities == null || entities.isEmpty()) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
-        List<ShelterContract> shelterList = entities.stream().map(this.getShelterMapper()::mapFrom).toList();
-        return new ArrayList<>(shelterList);
+        return entities.stream().map(this.getShelterMapper()::mapFrom).toList();
     }
 
     /**
