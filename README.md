@@ -10,3 +10,10 @@ tecnologia ajudar a fazer a diferença na vida das pessoas, tornando mais fácil
 - **Informações detalhadas sobre necessidades**: As organizações podem detalhar quais tipos de doações são necessárias, permitindo aos doadores direcionarem suas doações de maneira mais efetiva.
 
 - **Facilitação do processo de doação**: Nossa plataforma se propõem a tornar a doação uma atividade fácil e simples de ser realizada, incentivando cada vez mais pessoas a participarem.
+
+---
+
+## Swagger
+- [API Conectar Doações - Swagger](http://localhost:8080/swagger-ui/index.html)
+
+---
