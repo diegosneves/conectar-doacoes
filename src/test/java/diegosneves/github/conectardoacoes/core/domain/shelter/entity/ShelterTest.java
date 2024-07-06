@@ -26,6 +26,9 @@ class ShelterTest {
 
     private static final String UUID_TEST = "4658a51c-3840-453e-bc69-e2b4cff191a4";
     public static final String UUID_ERROR_MESSAGE = "UUID deve ser informado";
+    public static final String DONATION_ID = "6a43fefb-5035-4a9d-83fe-fb5035ea9de7";
+    public static final String DESCRIPTION = "Doação";
+    public static final String ADDRESS_ID = "23dc581a-0900-4a62-9c58-1a09008a62a9";
 
     private Shelter shelter;
     private Address address;
@@ -33,20 +36,20 @@ class ShelterTest {
 
     @BeforeEach
     void setUp() {
-        this.address = new Address("Rua", "377", "Bairro", "Sapucaia", "RS", "93000000");
+        this.address = new Address(ADDRESS_ID, "Rua", "377", "Bairro", "Sapucaia", "RS", "93000000");
         this.user = new User(UuidUtils.generateUuid(), "User", "teste@teste.com", UserProfile.BENEFICIARY, "senha");
         this.shelter = new Shelter(UUID_TEST, "Abrigo", this.address, this.user);
     }
 
     @Test
     void shouldCreateShelterWithGivenDetails() {
-        Shelter shelter = ShelterFactory.create("Casa 1", this.address, this.user);
+        Shelter shelterTeste = ShelterFactory.create("Casa 1", this.address, this.user);
 
-        assertNotNull(shelter);
-        assertTrue(UuidUtils.isValidUUID(shelter.getId()));
-        assertEquals("Casa 1", shelter.getShelterName());
-        assertEquals(this.address, shelter.getAddress());
-        assertEquals(this.user, shelter.getUser());
+        assertNotNull(shelterTeste);
+        assertTrue(UuidUtils.isValidUUID(shelterTeste.getId()));
+        assertEquals("Casa 1", shelterTeste.getShelterName());
+        assertEquals(this.address, shelterTeste.getAddress());
+        assertEquals(this.user, shelterTeste.getUser());
     }
 
     @Test
@@ -161,7 +164,7 @@ class ShelterTest {
     @Test
     @SneakyThrows
     void shouldChangeAddress() {
-        Address newAddress = new Address("Rua", "3924", "Bairro2", "Esteio", "RS", "94000000");
+        Address newAddress = new Address(ADDRESS_ID, "Rua", "3924", "Bairro2", "Esteio", "RS", "94000000");
         Field field = Shelter.class.getDeclaredField("address");
         field.setAccessible(true);
 
@@ -185,7 +188,7 @@ class ShelterTest {
     @Test
     @SneakyThrows
     void shouldAddDonation() {
-        Donation newDonation = new Donation("Doação", 1);
+        Donation newDonation = new Donation(DONATION_ID, DESCRIPTION, 1);
 
         this.shelter.addDonation(newDonation);
 

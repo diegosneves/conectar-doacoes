@@ -26,14 +26,14 @@ public interface RepositoryContract<T> {
      * @param id o identificador único da entidade que deve ser procurada.
      * @return a entidade encontrada ou {@code null} se nenhuma entidade com o identificador especificado pôde ser encontrada.
      */
-    T findById(String id);
+    T findEntityById(String id);
 
     /**
      * Encontra todas as entidades de um determinado tipo.
      *
      * @return uma lista contendo todas as entidades ou uma lista vazia se não houver entidades.
      */
-    List<T> findAll();
+    List<T> retrieveAll();
 
     /**
      * Salva uma entidade.
@@ -42,7 +42,7 @@ public interface RepositoryContract<T> {
      * @return a entidade salva.
      * @throws IllegalArgumentException se a entidade passada como parâmetro for {@code null}.
      */
-    T save(T entity);
+    T persist(T entity);
 
     /**
      * Deleta uma entidade pelo seu identificador.
@@ -50,6 +50,6 @@ public interface RepositoryContract<T> {
      * @param id o identificador único da entidade que deve ser deletada.
      * @throws NoSuchElementException se nenhuma entidade com o identificador especificado pôde ser encontrada.
      */
-    void deleteById(String id);
+    void deleteEntityById(String id);
 
 }
