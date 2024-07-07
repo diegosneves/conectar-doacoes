@@ -56,7 +56,7 @@ public class ShelterMapper implements MapperStrategy<ShelterContract, ShelterEnt
     public ShelterContract mapFrom(ShelterEntity source) {
         ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(SHELTER_ENTITY_CLASS.getSimpleName()), ShelterEntityFailuresException.class);
 
-        Shelter constructedShelter = null;
+        Shelter constructedShelter;
         try {
             constructedShelter = new Shelter(
                     source.getId(),

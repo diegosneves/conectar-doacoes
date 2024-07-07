@@ -9,16 +9,13 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.shared.repository.UserContractRepository;
-
-import java.util.ArrayList;
-import java.util.Collections;
-
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,9 +24,6 @@ import java.util.Optional;
  * <p>
  *
  * @author diegoneves
- * @Repository - Esta anotação é uma especialização da anotação @Component, permitindo detecção automática de classes.
- * Isso também traduzirá qualquer exceção de tempo de execução lançada por classes de repositório,
- * back-end de dados ou suporte de persistência para a exceção específica do Spring {@link org.springframework.dao.DataAccessException}.
  * @see UserContractRepository
  * @see CrudRepository
  * @since 1.0.0

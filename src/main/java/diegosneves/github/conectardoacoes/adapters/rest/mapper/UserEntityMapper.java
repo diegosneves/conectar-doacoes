@@ -44,7 +44,7 @@ public class UserEntityMapper implements MapperStrategy<UserEntity, UserContract
     @Override
     public UserEntity mapFrom(UserContract source) {
         ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(USER_CLASS.getSimpleName()), UserEntityFailuresException.class);
-        UserEntity userEntity = null;
+        UserEntity userEntity;
         try {
             userEntity = BuilderMapper.mapTo(UserEntity.class, source);
             userEntity.setUserProfile(Enum.valueOf(UserProfileType.class, source.getUserProfile().name()));
