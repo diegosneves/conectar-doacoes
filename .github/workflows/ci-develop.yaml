@@ -8,8 +8,8 @@ jobs:
   check-application:
     strategy:
       matrix:
-        ubuntu: ['ubuntu-latest']
-        java: ['17']
+        ubuntu: [ 'ubuntu-latest' ]
+        java: [ '17' ]
     runs-on: ${{ matrix.ubuntu }}
 
     services:
@@ -23,6 +23,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=10
 
     env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       DB_NAME: ${{ secrets.DB_NAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
@@ -41,7 +42,7 @@ jobs:
 
       - name: Setup Maven
         run: |
-            sudo apt-get install -y maven
+          sudo apt-get install -y maven
 
       - name: Install Dependencies
         run: mvn clean install -DskipTests
