@@ -10,6 +10,8 @@ import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureExce
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -147,20 +149,10 @@ class UserMapperTest {
         assertEquals(UserCreationFailureException.class, exception.getCause().getClass());
     }
 
-    @Test
-    void shouldThrowExceptionWhenUserEntityIdIsEmpty() {
-        this.userEntity.setId("          ");
-
-        UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userMapper.mapFrom(this.userEntity));
-
-        assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(UserMapper.USER_ENTITY_CLASS.getSimpleName())), exception.getMessage());
-        assertEquals(UserCreationFailureException.class, exception.getCause().getClass());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenUserEntityIdIsInvalid() {
-        this.userEntity.setId("null");
+    @ParameterizedTest
+    @ValueSource(strings = {"", "   ", "null"})
+    void shouldThrowExceptionWhenUserEntityIdIsBlackOrInvalid(String value) {
+        this.userEntity.setId(value);
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userMapper.mapFrom(this.userEntity));
 

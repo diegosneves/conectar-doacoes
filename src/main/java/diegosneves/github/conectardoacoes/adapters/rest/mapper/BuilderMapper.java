@@ -83,8 +83,7 @@ public class BuilderMapper {
                 var sourceField = source.getClass().getDeclaredField(field.getName());
                 sourceField.setAccessible(true);
                 field.set(mappedInstance, sourceField.get(source));
-            } catch (Exception ignored) {
-            }
+            } catch (Exception ignored) {}
         }
 
         return mappedInstance;

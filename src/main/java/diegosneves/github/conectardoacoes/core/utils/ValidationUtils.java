@@ -28,7 +28,7 @@ public class ValidationUtils {
      * @throws RuntimeException se o objeto fornecido for nulo ou se fora uma instância de String e estiver vazia
      */
     public static <T> void validateNotNullOrEmpty(T input, String errorMessage, Class<? extends RuntimeException> customException) {
-        if (input == null || (input instanceof String && ((String) input).trim().isEmpty())) {
+        if (input == null || (input instanceof String string && string.trim().isEmpty())) {
             throwException(errorMessage, customException);
         }
     }

@@ -10,7 +10,6 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
-import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 
@@ -56,7 +55,7 @@ public class ShelterEntityMapper implements MapperStrategy<ShelterEntity, Shelte
                     .id(source.getId())
                     .shelterName(source.getShelterName())
                     .address(new AddressEntityMapper().mapFrom(source.getAddress()))
-                    .responsibleUser(new UserEntityMapper().mapFrom((User) source.getUser()))
+                    .responsibleUser(new UserEntityMapper().mapFrom(source.getUser()))
                     .donations(getDonationEntities(source.getDonations()))
                     .build();
         } catch (RuntimeException e) {
