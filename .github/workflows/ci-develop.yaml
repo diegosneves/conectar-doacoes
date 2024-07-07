@@ -50,8 +50,6 @@ jobs:
       - name: Run Tests
         run: mvn test
 
-      - name: Build and analyze
-        run: mvn verify sonar:sonar \
-                -Dsonar.host.url=https://sonarcloud.io \
-                -Dsonar.organization=diegosneves \
-                -Dsonar.projectKey=diegosneves_conectar-doacoes
+#      - name: Build and analyze
+#        run: mvn clean verify sonar:sonar -Dsonar.token=${SONAR_TOKEN}
+
