@@ -1066,3 +1066,59 @@ Este commit adicionou a interface `UserController` e sua implementação na clas
 **Nota:** A ênfase deste commit é adicionar a funcionalidade de criação de usuário, gerenciando as requisições HTTP e as respostas correspondentes, facilitando a interação de clientes com a criação de novos usuários.
 
 ---
+
+
+---
+
+## **_Release 1.1.0_**
+
+**Commit** 0ce258ee8e9583aa5415cdb39ce45f53416eb354
+
+Este commit remove inicializações desnecessárias de objetos em várias classes de mapeamento. Configurações de exclusão de cobertura de código foram incluídas e propriedades para Sonar e JaCoCo foram adicionadas ao `pom.xml` para melhor gerenciamento e análise de qualidade de código.
+
+**Arquivos alterados:** `.gitignore`, `pom.xml`, `UserEntityFailuresException.java`, `BuilderMapper.java`, `DonationMapper.java`, `ShelterEntityMapper.java`, `ShelterMapper.java`, `UserEntityMapper.java`, `UserMapper.java`, `AddressRepository.java`, `DonationRepository.java`.
+
+**Alterações:**
+
+- Adicionado `qodana.sarif.json` ao arquivo `.gitignore`.
+- Configurações para Sonar e JaCoCo foram adicionadas ao `pom.xml`, junto com as configurações de exclusão de cobertura de código.
+- Removida inicialização desnecessária de objetos nas classes `BuilderMapper`, `DonationMapper`, `ShelterEntityMapper`, `ShelterMapper`, `UserEntityMapper` e `UserMapper`.
+- Corrigida formatação no Javadoc das classes `AddressRepository` e `DonationRepository`.
+
+**Nota:** Essa commit é focada em refatorar o mapeamento de objetos e melhorar a configuração do JaCoCo e Sonar para análise de qualidade de código.
+
+---
+
+**Commit** 09b07b152878ed06ce99a36fe1a93fc2c82ff070:
+
+Este commit adiciona a ferramenta de análise de código Qodana ao projeto. Adicionamos o arquivo de configuração `qodana.yaml`, que define várias inspeções a serem realizadas e o arquivo `.github/workflows/qodana_code_quality.yml` para executar a verificação de qualidade de código usando GitHub Actions.
+
+**Arquivos Alterados:** `.github/workflows/qodana_code_quality.yml`, `qodana.yaml`
+
+**Alterações:**
+
+- No arquivo `.github/workflows/qodana_code_quality.yml`, foram definidas as ações de verificação de qualidade de código a serem executadas quando um pull request é criado ou quando qualquer push é feito para os branches `main`, `develop`, e `release/*`.
+- O arquivo `qodana.yaml` foi adicionado. Nele, foi definida a inspeção do perfil `qodana.starter` para a análise do código, e foram ativas as inspeções `JvmCoverageInspection`, `UNUSED_IMPORT` e `JavadocDeclaration`.
+
+**Nota:** A principal ênfase desta confirmação é adicionar a análise de código Qodana ao projeto para melhorar a qualidade do código.
+
+---
+
+**Commit** 13886a0aa1e828ef88348ab7e54758768a8d3eca:
+
+Este commit introduz um novo workflow do GitHub Actions que permite a integração com o SonarCloud. A cada push ou pull request nas branches `main`, `develop` e `release/*`, o projeto será construído e analisado pelo SonarCloud. O fluxo também inclui a configuração para a versão 17 do JDK e para o cache dos pacotes do SonarCloud e Maven.
+
+**Arquivos Alterados:** `.github/workflows/sonar-cloud.yaml`
+
+**Alterações:**
+
+- Foi adicionado o arquivo `sonar-cloud.yaml` no diretório `.github/workflows/`. Este arquivo contém a configuração do workflow do SonarCloud.
+- No workflow, foi configurada a versão 17 do JDK.
+- Foram incluídas etapas para o cache dos pacotes do SonarCloud e do Maven.
+- O projeto é construído e analisado pelo SonarCloud na última etapa do workflow.
+
+**Nota:** A principal ênfase deste commit é adicionar a integração com o SonarCloud ao projeto para ajudar na melhoria da qualidade do código.
+
+---
+
+
