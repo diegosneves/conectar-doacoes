@@ -51,7 +51,7 @@ public class DonationMapper implements MapperStrategy<Donation, DonationEntity> 
                 MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName()),
                 ShelterEntityFailuresException.class);
 
-        Donation donation = null;
+        Donation donation;
         try {
             donation = new Donation(source.getId(), source.getDescription(), source.getAmount());
         } catch (DonationRegisterFailureException e) {

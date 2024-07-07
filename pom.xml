@@ -15,6 +15,28 @@
     <description>conectar-doacoes</description>
     <properties>
         <java.version>17</java.version>
+        <!-- properties for Sonar -->
+        <sonar.projectKey>diegosneves_conectar-doacoes</sonar.projectKey>
+        <sonar.organization>diegosneves</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <!-- path to jacoco reports -->
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+
+        <!-- properties for JaCoCo -->
+        <jacoco.version>0.8.10</jacoco.version>
+        <sonar.coverage.exclusions>
+            **/dto/**,
+            **/model/**,
+            **/response/**,
+            **/request/**,
+            **/config/**,
+            **/controller/**,
+            **/enums/**,
+            **/exception/**,
+            **/mapper/**,
+            **/utils/**
+        </sonar.coverage.exclusions>
     </properties>
     <dependencies>
         <dependency>
@@ -108,6 +130,33 @@
                         <goals>
                             <goal>generate</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Include JaCoCo plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- attached to Maven test phase -->
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

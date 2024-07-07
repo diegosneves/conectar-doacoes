@@ -41,7 +41,7 @@ public class UserMapper implements MapperStrategy<UserContract, UserEntity> {
     public UserContract mapFrom(UserEntity source) {
         this.validateData(source);
         this.validateData(source.getUserProfile());
-        User mappedUser = null;
+        User mappedUser;
         try {
             mappedUser = new User(
                     source.getId(),

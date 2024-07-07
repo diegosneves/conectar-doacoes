@@ -49,7 +49,7 @@ public class ShelterEntityMapper implements MapperStrategy<ShelterEntity, Shelte
     @Override
     public ShelterEntity mapFrom(ShelterContract source) {
         ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(SHELTER_CLASS.getSimpleName()), ShelterEntityFailuresException.class);
-        ShelterEntity shelterEntity = null;
+        ShelterEntity shelterEntity;
 
         try {
             shelterEntity = ShelterEntity.builder()

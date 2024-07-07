@@ -1,9 +1,7 @@
 package diegosneves.github.conectardoacoes.adapters.rest.exception;
 
 import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
-import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
-import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 
 /**

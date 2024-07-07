@@ -38,7 +38,7 @@ public class BuilderMapper {
 
         var destinationFields = destinationClass.getDeclaredFields();
 
-        T mappedInstance = null;
+        T mappedInstance;
 
         try {
             Constructor<?>[] constructors = destinationClass.getConstructors();

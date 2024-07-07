@@ -11,8 +11,8 @@ import java.util.Optional;
  * Esta interface estende {@link CrudRepository}, que fornece métodos como save(…), findOne(…), findAll(), count(), delete(…) etc.
  * <p>
  * Aciona consultas de banco de dados relacionadas a {@link AddressEntity}.
- *
- * @Repository indica que esta interface é um Repositório Spring Data JPA, um mecanismo que fornece
+ * <p>
+ * {@code @Repository} indica que esta interface é um Repositório Spring Data JPA, um mecanismo que fornece
  * métodos de manipulação de dados comuns sem a necessidade de escrever nossa própria lógica de consulta.
  * O Spring Data JPA também se integra bem ao Hibernate, uma implementação popular do padrão Java Persistence API.
  *
