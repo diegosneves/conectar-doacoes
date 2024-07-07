@@ -1104,21 +1104,5 @@ Este commit adiciona a ferramenta de análise de código Qodana ao projeto. Adic
 
 ---
 
-**Commit** 13886a0aa1e828ef88348ab7e54758768a8d3eca:
-
-Este commit introduz um novo workflow do GitHub Actions que permite a integração com o SonarCloud. A cada push ou pull request nas branches `main`, `develop` e `release/*`, o projeto será construído e analisado pelo SonarCloud. O fluxo também inclui a configuração para a versão 17 do JDK e para o cache dos pacotes do SonarCloud e Maven.
-
-**Arquivos Alterados:** `.github/workflows/sonar-cloud.yaml`
-
-**Alterações:**
-
-- Foi adicionado o arquivo `sonar-cloud.yaml` no diretório `.github/workflows/`. Este arquivo contém a configuração do workflow do SonarCloud.
-- No workflow, foi configurada a versão 17 do JDK.
-- Foram incluídas etapas para o cache dos pacotes do SonarCloud e do Maven.
-- O projeto é construído e analisado pelo SonarCloud na última etapa do workflow.
-
-**Nota:** A principal ênfase deste commit é adicionar a integração com o SonarCloud ao projeto para ajudar na melhoria da qualidade do código.
-
----
 
 
