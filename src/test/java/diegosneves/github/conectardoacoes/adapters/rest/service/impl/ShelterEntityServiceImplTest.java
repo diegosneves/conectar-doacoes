@@ -100,7 +100,6 @@ class ShelterEntityServiceImplTest {
     private User user;
     private Shelter shelter;
     private Address address;
-    private Donation donation;
 
     @BeforeEach
     void setUp() {
@@ -121,7 +120,6 @@ class ShelterEntityServiceImplTest {
 
         this.address = new Address(ADDRESS_ID, STREET, NUMBER, NEIGHBORHOOD, CITY, STATE, ZIP);
         this.user = new User(USER_ID, USER_NAME, USER_EMAIL, UserProfile.DONOR, USER_PASSWORD);
-        this.donation = new Donation(DONATION_ID, DONATION_DESCRIPTION, AMOUNT);
         this.shelter = new Shelter(SHELTER_ID, SHELTER_NAME, this.address, this.user);
     }
 

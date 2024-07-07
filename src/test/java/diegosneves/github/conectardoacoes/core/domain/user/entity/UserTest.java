@@ -5,21 +5,20 @@ import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 class UserTest {
 
     private static final String UUID_TEST = "4658a51c-3840-453e-bc69-e2b4cff191a4";
 
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     void shouldCorrectlyCreateAndValidateUserWithGivenParameters() {

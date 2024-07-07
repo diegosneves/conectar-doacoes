@@ -11,7 +11,6 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.AddressRepository;
-import diegosneves.github.conectardoacoes.adapters.rest.repository.DonationRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
@@ -46,14 +45,12 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
 
 
     private final ShelterRepository repository;
-    private final DonationRepository donationRepository;
     private final AddressRepository addressRepository;
     private final UserEntityService userEntityService;
 
     @Autowired
-    public ShelterEntityServiceImpl(ShelterRepository repository, DonationRepository donationRepository, AddressRepository addressRepository, UserEntityService userEntityService) {
+    public ShelterEntityServiceImpl(ShelterRepository repository, AddressRepository addressRepository, UserEntityService userEntityService) {
         this.repository = repository;
-        this.donationRepository = donationRepository;
         this.addressRepository = addressRepository;
         this.userEntityService = userEntityService;
     }
