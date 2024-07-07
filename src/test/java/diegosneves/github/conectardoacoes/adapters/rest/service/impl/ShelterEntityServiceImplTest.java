@@ -17,7 +17,6 @@ import diegosneves.github.conectardoacoes.adapters.rest.service.UserEntityServic
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
-import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;

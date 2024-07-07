@@ -7,8 +7,6 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
-import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
-import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
