@@ -42,6 +42,7 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     public static final String ADDRESS_CREATION_ERROR = "Erro na criação do endereço. Confirme se todos os campos do endereço estão corretos e tente novamente.";
     public static final String ERROR_MAPPING_ADDRESS = "Erro durante o mapeamento do endereço para persistência";
     public static final String USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR = "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.";
+    public static final String REQUEST_VALIDATION_ERROR_MESSAGE = "Por favor, forneça uma requisição de criação de Abrigo preenchida corretamente.";
 
 
     private final ShelterRepository repository;
@@ -77,6 +78,7 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
      */
     @Override
     public ShelterCreatedResponse createShelter(ShelterCreationRequest request) {
+        ValidationUtils.validateNotNullOrEmpty(request, REQUEST_VALIDATION_ERROR_MESSAGE, ShelterEntityFailuresException.class);
         ShelterContract shelterContract = this.createAndReturnShelterInstance(request);
         ShelterEntity shelterEntity = this.mapShelterAndSaveToRepository(shelterContract);
         return constructShelterCreatedResponse(shelterEntity);
