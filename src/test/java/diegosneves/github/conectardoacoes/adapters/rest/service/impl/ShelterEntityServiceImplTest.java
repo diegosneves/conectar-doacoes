@@ -66,11 +66,6 @@ class ShelterEntityServiceImplTest {
     public static final String STATE = "Estado";
     public static final String ZIP = "98456123";
 
-    public static final String DONATION_ID = "bf9b8d38-c6b3-4fd6-9b8d-38c6b3bfd69f";
-    public static final String DONATION_DESCRIPTION = "Descrição";
-    public static final int AMOUNT = 1;
-
-    public static final String ENTITY_ID = "b7a89acb-c03f-4f87-a89a-cbc03fef8755";
 
 
     @InjectMocks
@@ -467,6 +462,19 @@ class ShelterEntityServiceImplTest {
         assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenCreatingShelterWithNullArgument() {
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(null));
+
+        verify(this.addressRepository, never()).save(any(AddressEntity.class));
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.REQUEST_VALIDATION_ERROR_MESSAGE), exception.getMessage());
+        assertNull(exception.getCause());
     }
 
 }
