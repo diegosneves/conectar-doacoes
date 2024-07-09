@@ -1,4 +1,5 @@
-# Conectar Doações
+# Conectar Doações [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=conectar-doacoes&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=conectar-doacoes) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=conectar-doacoes&metric=coverage)](https://sonarcloud.io/summary/new_code?id=conectar-doacoes) [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=conectar-doacoes&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=conectar-doacoes)
+
 
 O `Conectar Doações` é uma plataforma de conexão de doadores e organizações/receptores de doações. Buscamos junto à
 tecnologia ajudar a fazer a diferença na vida das pessoas, tornando mais fácil a prática de doações a quem precisa. 
