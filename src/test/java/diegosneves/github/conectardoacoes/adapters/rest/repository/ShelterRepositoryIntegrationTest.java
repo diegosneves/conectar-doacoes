@@ -27,6 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -405,6 +406,34 @@ class ShelterRepositoryIntegrationTest {
         assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterRepository.INVALID_ID_MESSAGE), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UuidUtilsException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldFindShelterEntityByUserEmailWhenEmailIsCorrect() {
+        persistEntity(new AddressEntityMapper(), this.address);
+        persistEntity(new UserEntityMapper(), this.user);
+        persistEntity(new ShelterEntityMapper(), this.shelter);
+
+        Optional<ShelterEntity> shelterEntitiesByResponsibleUserEmail = this.shelterRepository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
+
+        assertTrue(shelterEntitiesByResponsibleUserEmail.isPresent());
+        assertEquals(this.shelter.getId(), shelterEntitiesByResponsibleUserEmail.get().getId());
+        assertEquals(this.shelter.getShelterName(), shelterEntitiesByResponsibleUserEmail.get().getShelterName());
+        assertNotNull(this.shelter.getUser());
+        assertNotNull(this.shelter.getAddress());
+
+    }
+
+    @Test
+    void shouldNotFindShelterEntityByUserEmailWhenEmailIsIncorrect() {
+        persistEntity(new AddressEntityMapper(), this.address);
+        persistEntity(new UserEntityMapper(), this.user);
+        persistEntity(new ShelterEntityMapper(), this.shelter);
+
+        Optional<ShelterEntity> shelterEntitiesByResponsibleUserEmail = this.shelterRepository.findShelterEntitiesByResponsibleUser_Email("USER_EMAIL");
+
+        assertFalse(shelterEntitiesByResponsibleUserEmail.isPresent());
+
     }
 
 }

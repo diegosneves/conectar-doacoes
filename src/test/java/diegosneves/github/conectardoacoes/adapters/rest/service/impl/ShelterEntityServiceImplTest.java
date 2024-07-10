@@ -7,6 +7,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityF
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
@@ -30,6 +31,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -105,7 +108,7 @@ class ShelterEntityServiceImplTest {
                 .build();
 
         this.address = new Address(ADDRESS_ID, STREET, NUMBER, NEIGHBORHOOD, CITY, STATE, ZIP);
-        this.user = new User(USER_ID, USER_NAME, USER_EMAIL, UserProfile.DONOR, USER_PASSWORD);
+        this.user = new User(USER_ID, USER_NAME, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD);
         this.shelter = new Shelter(SHELTER_ID, SHELTER_NAME, this.address, this.user);
     }
 
@@ -134,7 +137,7 @@ class ShelterEntityServiceImplTest {
         assertEquals(USER_NAME, response.getResponsibleUser().getUserName());
         assertEquals(USER_EMAIL, response.getResponsibleUser().getEmail());
         assertNotNull(response.getResponsibleUser().getUserProfile());
-        assertEquals(UserProfileType.DONOR, response.getResponsibleUser().getUserProfile());
+        assertEquals(UserProfileType.BENEFICIARY, response.getResponsibleUser().getUserProfile());
         assertNotNull(this.shelterCaptor.getValue());
         assertTrue(UuidUtils.isValidUUID(this.shelterCaptor.getValue().getId()));
         assertEquals(SHELTER_NAME, this.shelterCaptor.getValue().getShelterName());
@@ -151,7 +154,7 @@ class ShelterEntityServiceImplTest {
         assertTrue(UuidUtils.isValidUUID(this.shelterCaptor.getValue().getUser().getId()));
         assertEquals(USER_NAME, this.shelterCaptor.getValue().getUser().getUsername());
         assertEquals(USER_EMAIL, this.shelterCaptor.getValue().getUser().getEmail());
-        assertEquals(UserProfile.DONOR, this.shelterCaptor.getValue().getUser().getUserProfile());
+        assertEquals(UserProfile.BENEFICIARY, this.shelterCaptor.getValue().getUser().getUserProfile());
         assertEquals(USER_PASSWORD, this.shelterCaptor.getValue().getUser().getUserPassword());
     }
 
@@ -159,10 +162,12 @@ class ShelterEntityServiceImplTest {
     @ValueSource(strings = {"", "  "})
     void shouldThrowExceptionWhenShelterNameIsBlank(String shelterName) {
         this.request.setShelterName(shelterName);
+        when(this.userEntityService.searchUserByEmail(USER_EMAIL)).thenReturn(this.user);
 
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
 
         verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.userEntityService, times(1)).searchUserByEmail(USER_EMAIL);
 
         assertNotNull(exception);
         assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
@@ -173,10 +178,12 @@ class ShelterEntityServiceImplTest {
     @Test
     void shouldThrowExceptionWhenShelterNameIsNull() {
         this.request.setShelterName(null);
+        when(this.userEntityService.searchUserByEmail(USER_EMAIL)).thenReturn(this.user);
 
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
 
         verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.userEntityService, times(1)).searchUserByEmail(USER_EMAIL);
 
         assertNotNull(exception);
         assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
@@ -271,6 +278,40 @@ class ShelterEntityServiceImplTest {
             assertNotNull(exception.getCause());
             assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
         }
+    }
+
+    @Test
+    void shouldThrowExceptionWhenCreatingShelterWithDonorProfileUser() {
+        this.user = new User(USER_ID, USER_NAME, USER_EMAIL, UserProfile.DONOR, USER_PASSWORD);
+        when(this.userEntityService.searchUserByEmail(USER_EMAIL)).thenReturn(this.user);
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.addressService, never()).createAndSaveAddressFromDto(any(AddressDTO.class));
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.userEntityService, times(1)).searchUserByEmail(USER_EMAIL);
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.RESPONSIBLE_USER_PROFILE_INVALID), exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void should() {
+
+        when(this.userEntityService.searchUserByEmail(USER_EMAIL)).thenReturn(this.user);
+        when(this.repository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL)).thenReturn(Optional.of(new ShelterEntity()));
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.createShelter(this.request));
+
+        verify(this.addressService, never()).createAndSaveAddressFromDto(any(AddressDTO.class));
+        verify(this.repository, never()).persist(any(ShelterContract.class));
+        verify(this.userEntityService, times(1)).searchUserByEmail(USER_EMAIL);
+        verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.RESPONSIBLE_USER_ALREADY_IN_USE), exception.getMessage());
+        assertNull(exception.getCause());
     }
 
 }
