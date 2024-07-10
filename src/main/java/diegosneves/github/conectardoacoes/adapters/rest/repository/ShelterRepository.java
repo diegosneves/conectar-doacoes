@@ -200,4 +200,15 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
         }
         this.delete(targetEntity);
     }
+
+    /**
+     * Este método é usado para buscar uma entidade {@link Shelter} pelo e-mail do usuário responsável.
+     *
+     * @param responsibleUserEmail O e-mail do usuário responsável. Este é um parâmetro de entrada usado para filtrar a busca pela entidade Shelter. Deve ser um e-mail válido em formato de string.
+     * @return Um objeto {@link Optional} que inclui a instância de {@link ShelterEntity} se o usuário responsável com o e-mail fornecido for encontrado.
+     * Se não houver uma correspondência para o e-mail fornecido, um {@link Optional} vazio será retornado. Note que {@link Optional} é usado para evitar erros de {@link NullPointerException}.
+     * @throws IllegalArgumentException se o parâmetro de e-mail fornecido for nulo, vazio ou não em um formato de e-mail válido.
+     */
+    Optional<ShelterEntity> findShelterEntitiesByResponsibleUser_Email(String responsibleUserEmail);
+
 }

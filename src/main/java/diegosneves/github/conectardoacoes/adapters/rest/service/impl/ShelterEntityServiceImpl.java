@@ -20,16 +20,19 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterCont
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.domain.shelter.factory.ShelterFactory;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
+import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * Esta classe é responsável pela implementação dos métodos necessários para gerenciar abrigos no sistema.
  *
  * @author diegoneves
- * @since 1.0.0
  * @see ShelterEntityService
+ * @since 1.0.0
  */
 @Service
 public class ShelterEntityServiceImpl implements ShelterEntityService {
@@ -37,6 +40,8 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     public static final String SHELTER_CREATION_ERROR_MESSAGE = "Erro na criação do Abrigo. Confirme se todos os campos do Abrigo estão corretos e tente novamente.";
     public static final String USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR = "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.";
     public static final String REQUEST_VALIDATION_ERROR_MESSAGE = "Por favor, forneça uma requisição de criação de Abrigo preenchida corretamente.";
+    public static final String RESPONSIBLE_USER_PROFILE_INVALID = "O usuário deve possuir o perfil de responsável.";
+    public static final String RESPONSIBLE_USER_ALREADY_IN_USE = "Este usuário já possui responsabilidade sobre outro abrigo.";
 
 
     private final ShelterRepository repository;
@@ -137,7 +142,7 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
      *                                        erro na própria criação do Shelter.
      */
     private Shelter createAndReturnShelterInstance(ShelterCreationRequest request) throws ShelterEntityFailuresException {
-        UserContract userContract = this.findUserByResponsibleEmail(request.getResponsibleUserEmail());
+        UserContract userContract = this.validateResponsibleUSer(request.getResponsibleUserEmail());
         Shelter newShelter;
         try {
             Address address = this.addressService.createAndSaveAddressFromDto(request.getAddress());
@@ -146,6 +151,45 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
             throw new ShelterEntityFailuresException(SHELTER_CREATION_ERROR_MESSAGE, e);
         }
         return newShelter;
+    }
+
+    /**
+     * Valida um usuário responsável por meio do seu e-mail.
+     * Esse método busca um {@link UserContract} com base no e-mail fornecido, verifica se seu perfil de usuário é {@code DONOR} e também verifica se este usuário já é responsável por algum abrigo.
+     *
+     * @param responsibleUserEmail um {@link String} que representa o e-mail do usuário responsável. Este parâmetro é usado para localizar o {@link UserContract} apropriado.
+     * @return {@link UserContract} que corresponde ao e-mail fornecido, se todas as validações passarem.
+     * @throws ShelterEntityFailuresException se o perfil do usuário responsável for {@code DONOR} ou se um {@link UserContract} com o e-mail especificado já estiver em uso como um responsável por abrigo.
+     * @implNote Este método utiliza o seguinte fluxo de lógica:
+     * <ol>
+     *     <li>Localiza um {@link UserContract} usando {@link #findUserByResponsibleEmail(String)}.</li>
+     *     <li>Verifica se este {@link UserContract} é um {@code DONOR} usando {@code UserProfile.DONOR.equals(Object)}.</li>
+     *     <li>Verifica se este {@link UserContract} já existe como um usuário responsável por um abrigo usando {@link ShelterRepository#findShelterEntitiesByResponsibleUser_Email(String)}.</li>
+     *     <li>Lança uma {@link ShelterEntityFailuresException} se qualquer uma das condições acima for verdadeira.</li>
+     * </ol>
+     */
+    private UserContract validateResponsibleUSer(String responsibleUserEmail) throws ShelterEntityFailuresException {
+        UserContract responsibleUser = this.findUserByResponsibleEmail(responsibleUserEmail);
+        Optional<ShelterEntity> shelterOptional = this.repository.findShelterEntitiesByResponsibleUser_Email(responsibleUserEmail);
+        throwShelterEntityFailuresExceptionIfNecessary(UserProfile.DONOR.equals(responsibleUser.getUserProfile()), RESPONSIBLE_USER_PROFILE_INVALID);
+        throwShelterEntityFailuresExceptionIfNecessary(shelterOptional.isPresent(), RESPONSIBLE_USER_ALREADY_IN_USE);
+        return responsibleUser;
+    }
+
+    /**
+     * Este método verifica uma condição e lança uma exceção personalizada com uma mensagem de erro passada quando
+     * a condição é atendida (ou seja, quando o parâmetro {@code needToThrowAnException} for verdadeiro).
+     *
+     * @param needToThrowAnException a condição Booleana segundo a qual a exceção deve ser lançada.
+     *                               Se for verdadeiro, a {@link ShelterEntityFailuresException} será lançada.
+     * @param errorMessage           a String que representa a mensagem detalhada da exceção. Esta mensagem é utilizada
+     *                               quando a exceção é lançada.
+     * @throws ShelterEntityFailuresException a exceção customizada que será lançada quando {@code needToThrowAnException} for verdadeiro.
+     */
+    private static void throwShelterEntityFailuresExceptionIfNecessary(Boolean needToThrowAnException, String errorMessage) throws ShelterEntityFailuresException {
+        if (Boolean.TRUE.equals(needToThrowAnException)) {
+            throw new ShelterEntityFailuresException(errorMessage);
+        }
     }
 
     /**
