@@ -7,6 +7,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A classe {@code UserEntityMapper} implementa a interface {@link MapperStrategy} e é usada para mapear um objeto do tipo {@link User} para um objeto de entidade {@link UserEntity}.
@@ -17,9 +18,11 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
  * @author diegoneves
  * @since 1.0.0
  */
+@Slf4j
 public class UserEntityMapper implements MapperStrategy<UserEntity, UserContract> {
 
     public static final Class<UserContract> USER_CLASS = UserContract.class;
+    public static final String MAPPING_ERROR_LOG = "Ocorreu um erro durante o processo de mapeamento do objeto UserContract para UserEntity. Detalhes do erro: {}";
 
     /**
      * Este método é usado para mapear um objeto de origem do tipo {@link User} para um objeto de entidade {@link UserEntity}.
@@ -49,6 +52,7 @@ public class UserEntityMapper implements MapperStrategy<UserEntity, UserContract
             userEntity = BuilderMapper.mapTo(UserEntity.class, source);
             userEntity.setUserProfile(Enum.valueOf(UserProfileType.class, source.getUserProfile().name()));
         } catch (RuntimeException e) {
+            log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
             throw new UserEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(USER_CLASS.getSimpleName()), e);
         }
         return userEntity;

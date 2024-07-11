@@ -11,6 +11,7 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Addre
 import diegosneves.github.conectardoacoes.core.domain.shelter.factory.AddressFactory;
 import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -39,10 +40,15 @@ import org.springframework.stereotype.Service;
  * @since 1.1.0
  */
 @Service
+@Slf4j
 public class AddressEntityServiceImpl implements AddressEntityService {
 
     public static final String ADDRESS_CREATION_ERROR = "Erro na criação do endereço. Confirme se todos os campos do endereço estão corretos e tente novamente.";
     public static final String ERROR_MAPPING_ADDRESS = "Erro durante o mapeamento do endereço para persistência";
+
+    public static final String CREATION_FAILURE_LOG = "Falha na tentativa de criação de um novo Endereço. Causa do erro: {}";
+    public static final String ADDRESS_MAPPING_ERROR_LOG = "Ocorreu uma falha ao tentar mapear o Endereço. Causa do erro: {}";
+    public static final String ADDRESS_REGISTRATION_SUCCESS_LOG = "Novo endereço registrado com êxito! Identificador do endereço (ID): {} - Código Postal (ZIPCODE): {}";
 
 
     private final AddressRepository repository;
@@ -58,6 +64,7 @@ public class AddressEntityServiceImpl implements AddressEntityService {
         try {
             newAddress = AddressFactory.create(address.getStreet(), address.getNumber(), address.getNeighborhood(), address.getCity(), address.getState(), address.getZip());
         } catch (AddressCreationFailureException e) {
+            log.error(CREATION_FAILURE_LOG, e.getMessage(), e);
             throw new AddressEntityFailuresException(ADDRESS_CREATION_ERROR, e);
         }
         this.mapAddressAndSaveToRepository(newAddress);
@@ -77,9 +84,11 @@ public class AddressEntityServiceImpl implements AddressEntityService {
         try {
             addressEntity = BuilderMapper.mapTo(new AddressEntityMapper(), address);
         } catch (RuntimeException e) {
+            log.error(ADDRESS_MAPPING_ERROR_LOG, e.getMessage(), e);
             throw new AddressEntityFailuresException(ERROR_MAPPING_ADDRESS, e);
         }
         this.repository.save(addressEntity);
+        log.info(ADDRESS_REGISTRATION_SUCCESS_LOG, address.getId(), address.getZip());
     }
 
 }

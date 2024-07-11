@@ -12,6 +12,7 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Addre
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,11 @@ import java.util.List;
  * @author diegoneves
  * @since 1.0.0
  */
+@Slf4j
 public class ShelterEntityMapper implements MapperStrategy<ShelterEntity, ShelterContract> {
 
     public static final Class<ShelterContract> SHELTER_CLASS = ShelterContract.class;
+    public static final String MAPPING_ERROR_LOG = "Ocorreu um erro durante o processo de mapeamento do objeto ShelterContract para ShelterEntity. Detalhes do erro: {}";
 
     /**
      * Método que converte a fonte, um objeto da classe {@link ShelterContract}, para um novo objeto da classe {@link ShelterEntity}.
@@ -59,6 +62,7 @@ public class ShelterEntityMapper implements MapperStrategy<ShelterEntity, Shelte
                     .donations(getDonationEntities(source.getDonations()))
                     .build();
         } catch (RuntimeException e) {
+            log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
             throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(SHELTER_CLASS.getSimpleName()), e);
         }
         return shelterEntity;
