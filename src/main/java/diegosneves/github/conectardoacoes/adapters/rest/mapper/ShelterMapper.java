@@ -12,6 +12,7 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donat
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.exception.DonationRegisterFailureException;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementação da interface {@link MapperStrategy} para a conversão entre a entidade {@link ShelterEntity} e a classe de domínio {@link ShelterContract}.
@@ -22,9 +23,11 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
  * @see MapperStrategy
  * @since 1.0.0
  */
+@Slf4j
 public class ShelterMapper implements MapperStrategy<ShelterContract, ShelterEntity> {
 
     public static final Class<ShelterEntity> SHELTER_ENTITY_CLASS = ShelterEntity.class;
+    public static final String MAPPING_ERROR_LOG = "Ocorreu um erro durante o processo de mapeamento do objeto ShelterEntity para ShelterContract. Detalhes do erro: {}";
 
 
     /**
@@ -64,6 +67,7 @@ public class ShelterMapper implements MapperStrategy<ShelterContract, ShelterEnt
                     new AddressMapper().mapFrom(source.getAddress()),
                     new UserMapper().mapFrom(source.getResponsibleUser()));
         } catch (RuntimeException e) {
+            log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
             throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(SHELTER_ENTITY_CLASS.getSimpleName()), e);
         }
         this.mappedDonationsToShelter(source, constructedShelter);
@@ -96,6 +100,7 @@ public class ShelterMapper implements MapperStrategy<ShelterContract, ShelterEnt
             try {
                 constructedShelter.addDonation(new Donation(donationEntity.getId(), donationEntity.getDescription(), donationEntity.getAmount()));
             } catch (DonationRegisterFailureException e) {
+                log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
                 throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(Donation.class.getSimpleName()), e);
             }
         }
