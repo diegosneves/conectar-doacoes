@@ -71,6 +71,7 @@ jobs:
 
       - name: Build and push
         id: docker_build
+        if: github.event.pull_request.merged == true && github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v4
         with:
           push: true

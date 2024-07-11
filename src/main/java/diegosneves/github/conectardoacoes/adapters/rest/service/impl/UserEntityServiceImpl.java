@@ -14,6 +14,7 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Service
+@Slf4j
 public class UserEntityServiceImpl implements UserEntityService {
 
     public static final String INVALID_EMAIL_ERROR_MESSAGE = "Não foi informado nenhum email. Por favor, forneça um email válido.";
@@ -43,6 +45,10 @@ public class UserEntityServiceImpl implements UserEntityService {
     public static final String USER_CREATION_FAILURE_MESSAGE = "Ops! A criação do novo usuário não foi bem-sucedida. Por favor, certifique-se de que seus dados estão corretos e tente novamente.";
     public static final String USER_PROFILE_VALIDATION_FAILURE = "A validação do Perfil do usuário fornecido falhou.";
     public static final String MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE = "Por favor, forneça uma requisição de criação de usuário preenchida corretamente.";
+
+    public static final String USER_CREATION_ERROR_LOG = "Ocorreu um erro ao tentar criar um usuário a partir da solicitação de criação UserEntityCreationRequest: {}";
+    public static final String EMAIL_DUPLICATE_LOG = "O endereço de email {} já está associado a uma conta existente";
+    public static final String USER_CREATION_SUCCESS_LOG = "Usuario criado com sucesso. Detalhes: ID: {} - Email: {}";
 
 
     private final UserRepository userRepository;
@@ -118,7 +124,9 @@ public class UserEntityServiceImpl implements UserEntityService {
         UserContract createdUser;
         try {
             createdUser = UserFactory.create(request.getUserName(), request.getEmail(), userProfile, request.getUserPassword());
+            log.info(USER_CREATION_SUCCESS_LOG, createdUser.getId(), createdUser.getEmail());
         } catch (RuntimeException e) {
+            log.error(USER_CREATION_ERROR_LOG, e.getMessage(), e);
             throw new UserEntityFailuresException(USER_CREATION_FAILURE_MESSAGE, e);
         }
         return createdUser;
@@ -146,6 +154,7 @@ public class UserEntityServiceImpl implements UserEntityService {
         ValidationUtils.validateNotNullOrEmpty(email, INVALID_EMAIL_ERROR_MESSAGE, UserEntityFailuresException.class);
         Optional<UserEntity> existingUser = this.userRepository.findByEmail(email);
         if (existingUser.isPresent()) {
+            log.error(EMAIL_DUPLICATE_LOG, email);
             throw new UserEntityFailuresException(EMAIL_ALREADY_IN_USE);
         }
     }

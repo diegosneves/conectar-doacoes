@@ -8,6 +8,7 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementação da interface {@link MapperStrategy} para a conversão entre a entidade {@link UserEntity} e a classe de domínio {@link User}.
@@ -22,9 +23,11 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
  * @see MapperStrategy
  * @since 1.0.0
  */
+@Slf4j
 public class UserMapper implements MapperStrategy<UserContract, UserEntity> {
 
     public static final Class<UserEntity> USER_ENTITY_CLASS = UserEntity.class;
+    public static final String MAPPING_ERROR_LOG = "Ocorreu um erro durante o processo de mapeamento do objeto UserEntity para UserContract. Detalhes do erro: {}";
 
     /**
      * Mapeia uma entidade de usuário ({@link UserEntity}) para um objeto de usuário de domínio ({@link User}).
@@ -50,6 +53,7 @@ public class UserMapper implements MapperStrategy<UserContract, UserEntity> {
                     Enum.valueOf(UserProfile.class, source.getUserProfile().name()),
                     source.getUserPassword());
         } catch (UserCreationFailureException e) {
+            log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
             throw new UserEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(USER_ENTITY_CLASS.getSimpleName()), e);
         }
         return mappedUser;
