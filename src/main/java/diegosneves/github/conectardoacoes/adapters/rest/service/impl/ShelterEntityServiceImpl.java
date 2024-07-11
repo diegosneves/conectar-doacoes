@@ -22,6 +22,7 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.factory.ShelterFac
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Service
+@Slf4j
 public class ShelterEntityServiceImpl implements ShelterEntityService {
 
     public static final String SHELTER_CREATION_ERROR_MESSAGE = "Erro na criação do Abrigo. Confirme se todos os campos do Abrigo estão corretos e tente novamente.";
@@ -42,6 +44,13 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     public static final String REQUEST_VALIDATION_ERROR_MESSAGE = "Por favor, forneça uma requisição de criação de Abrigo preenchida corretamente.";
     public static final String RESPONSIBLE_USER_PROFILE_INVALID = "O usuário deve possuir o perfil de responsável.";
     public static final String RESPONSIBLE_USER_ALREADY_IN_USE = "Este usuário já possui responsabilidade sobre outro abrigo.";
+
+    public static final String SHELTER_CREATION_SUCCESS_LOG = "Novo abrigo criado com sucesso. Detalhes: ID do Abrigo: {} - Email do Usuário Responsável: {}";
+    public static final String SHELTER_CREATION_FAILURE_LOG = "Falha ao instanciar e retornar um Abrigo. Causa: {}";
+    public static final String RESPONSIBLE_USER_VERIFICATION_ERROR_LOG = "Falha na verificação do usuário responsável. A causa do erro é: {}";
+    public static final String USER_NOT_FOUND_ERROR_LOG = "Não foi possível localizar o usuário com o email: {}. Motivo: {}";
+    public static final String SHELTER_REGISTRATION_SUCCESS_LOG = "O Abrigo foi registrado e armazenado com sucesso. ID do Abrigo: {} - Email do usuário responsável {}";
+    public static final String SHELTER_DATA_MAPPING_SAVING_FAILED_LOG = "Falha ao mapear e salvar os dados do Abrigo: {}";
 
 
     private final ShelterRepository repository;
@@ -147,7 +156,9 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
         try {
             Address address = this.addressService.createAndSaveAddressFromDto(request.getAddress());
             newShelter = ShelterFactory.create(request.getShelterName(), address, userContract);
+            log.info(SHELTER_CREATION_SUCCESS_LOG, newShelter.getId(), newShelter.getUser().getEmail());
         } catch (RuntimeException e) {
+            log.error(SHELTER_CREATION_FAILURE_LOG, e.getMessage(), e);
             throw new ShelterEntityFailuresException(SHELTER_CREATION_ERROR_MESSAGE, e);
         }
         return newShelter;
@@ -188,6 +199,7 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
      */
     private static void throwShelterEntityFailuresExceptionIfNecessary(Boolean needToThrowAnException, String errorMessage) throws ShelterEntityFailuresException {
         if (Boolean.TRUE.equals(needToThrowAnException)) {
+            log.error(RESPONSIBLE_USER_VERIFICATION_ERROR_LOG, errorMessage);
             throw new ShelterEntityFailuresException(errorMessage);
         }
     }
@@ -217,6 +229,7 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
         try {
             foundUser = this.userEntityService.searchUserByEmail(responsibleUserEmail);
         } catch (UserEntityFailuresException e) {
+            log.error(USER_NOT_FOUND_ERROR_LOG, responsibleUserEmail, e.getMessage(), e);
             throw new ShelterEntityFailuresException(USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR, e);
         }
         return foundUser;
@@ -239,7 +252,9 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
         try {
             ShelterContract savedContract = this.repository.persist(shelterContract);
             newShelterEntity = BuilderMapper.mapTo(new ShelterEntityMapper(), savedContract);
+            log.info(SHELTER_REGISTRATION_SUCCESS_LOG, newShelterEntity.getId(), newShelterEntity.getResponsibleUser().getEmail());
         } catch (RuntimeException e) {
+            log.error(SHELTER_DATA_MAPPING_SAVING_FAILED_LOG, e.getMessage(), e);
             throw new ShelterEntityFailuresException(SHELTER_CREATION_ERROR_MESSAGE, e);
         }
         return newShelterEntity;
