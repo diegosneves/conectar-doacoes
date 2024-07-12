@@ -9,6 +9,7 @@ on:
 jobs:
   build-push-image:
     runs-on: ubuntu-latest
+
     env:
       DB_NAME: ${{ secrets.DB_NAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -30,9 +31,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push to Docker Hub
-        run: |
-          if [[ "${{ github.event.pull_request.merged == 'true' }}" ]]; then
-            docker build -t diegoneves/conectar-doacoes:latest . --build-arg DB_NAME=${{ env.DB_NAME }} --build-arg DB_PASSWORD=${{ env.DB_PASSWORD }} --build-arg DB_USERNAME=${{ env.DB_USERNAME }}
-            docker push diegoneves/conectar-doacoes:latest
-          fi
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: diegoneves/conectar-doacoes:latest
+          build-args: |
+            DB_NAME=${{ env.DB_NAME }}
+            DB_PASSWORD=${{ env.DB_PASSWORD }}
+            DB_USERNAME=${{ env.DB_USERNAME }}
