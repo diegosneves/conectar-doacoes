@@ -10,6 +10,11 @@ jobs:
   build-push-image:
     runs-on: ubuntu-latest
 
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v2
@@ -30,9 +35,20 @@ jobs:
         shell: bash
         run: echo "BRANCH_NAME=$(echo ${GITHUB_BASE_REF#release/} | cut -d'/' -f2)" >> $GITHUB_ENV
 
-      - name: Push to Docker Hub
-        run: |
-          if [[ "${{ github.event.pull_request.merged == 'true' }}" ]]; then
-            docker build -t diegoneves/conectar-doacoes:${{ env.BRANCH_NAME }} . --build-arg DB_NAME=${{ env.DB_NAME }} --build-arg DB_PASSWORD=${{ env.DB_PASSWORD }} --build-arg DB_USERNAME=${{ env.DB_USERNAME }}
-            docker push diegoneves/conectar-doacoes:${{ env.BRANCH_NAME }}
-          fi
+      - name: Build and push
+        id: docker_build
+#        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.ref == 'refs/heads/release/*'
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: diegoneves/conectar-doacoes:${{ env.BRANCH_NAME }}
+          build-args: |
+            DB_NAME=${{ env.DB_NAME }}
+            DB_PASSWORD=${{ env.DB_PASSWORD }}
+            DB_USERNAME=${{ env.DB_USERNAME }}
+#      - name: Push to Docker Hub
+#        run: |
+#          if [[ "${{ github.event.pull_request.merged == 'true' }}" ]]; then
+#            docker build -t diegoneves/conectar-doacoes:${{ env.BRANCH_NAME }} . --build-arg DB_NAME=${{ env.DB_NAME }} --build-arg DB_PASSWORD=${{ env.DB_PASSWORD }} --build-arg DB_USERNAME=${{ env.DB_USERNAME }}
+#            docker push diegoneves/conectar-doacoes:${{ env.BRANCH_NAME }}
+#          fi
