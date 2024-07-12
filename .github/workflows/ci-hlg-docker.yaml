@@ -10,6 +10,11 @@ jobs:
   build-push-image:
     runs-on: ubuntu-latest
 
+    env:
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v2
