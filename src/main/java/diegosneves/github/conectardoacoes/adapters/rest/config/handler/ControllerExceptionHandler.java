@@ -3,6 +3,7 @@ package diegosneves.github.conectardoacoes.adapters.rest.config.handler;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.ExceptionDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ConstructorDefaultUndefinedException;
+import diegosneves.github.conectardoacoes.adapters.rest.exception.DonationEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
@@ -163,6 +164,22 @@ public class ControllerExceptionHandler {
     public ResponseEntity<ExceptionDTO> handleUserEntityFailures(UserEntityFailuresException exception) {
         ExceptionDTO dto = new ExceptionDTO(exception.getMessage(), UserEntityFailuresException.ERROR.getStatusCodeValue());
         return ResponseEntity.status(UserEntityFailuresException.ERROR.getHttpStatusCode()).body(dto);
+    }
+
+    /**
+     * Manipula exceções lançadas quando há falhas com as entidades de doação.
+     *
+     * @param exception A instância da {@link DonationEntityFailuresException} lançada durante operações de entidade de doação.
+     *                  Este parâmetro já encapsula a mensagem de erro e os detalhes do erro. Normalmente, esta exceção é lançada quando uma operação realizada numa entidade de doação falha.
+     * @return Um objeto {@link ResponseEntity} contendo o corpo personalizado da resposta HTTP e o código de status.
+     * O corpo desta resposta é um objeto da classe {@link ExceptionDTO} que envolve a mensagem de erro obtida da exceção e o código de status.
+     * O código de status da resposta é derivado do erro associado com a instância do DonationEntityFailuresException.
+     * @throws DonationEntityFailuresException Se houver um erro durante o processamento de operações sobre a entidade de doação.
+     */
+    @ExceptionHandler(DonationEntityFailuresException.class)
+    public ResponseEntity<ExceptionDTO> handleDonationEntityFailures(DonationEntityFailuresException exception) {
+        ExceptionDTO dto = new ExceptionDTO(exception.getMessage(), DonationEntityFailuresException.ERROR.getStatusCodeValue());
+        return ResponseEntity.status(DonationEntityFailuresException.ERROR.getHttpStatusCode()).body(dto);
     }
 
 }
