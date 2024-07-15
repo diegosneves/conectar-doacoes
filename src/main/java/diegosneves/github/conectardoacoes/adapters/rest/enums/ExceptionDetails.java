@@ -15,6 +15,7 @@ public enum ExceptionDetails {
     CONSTRUCTOR_DEFAULT_UNDEFINED("Classe [ %s ] deve declarar um construtor padrão.", HttpStatus.NOT_IMPLEMENTED),
     CLASS_MAPPING_FAILURE("Falha ao tentar mapear a classe [ %s ].", HttpStatus.BAD_REQUEST),
     SHELTER_OPERATION_FAILURE("Ocorreu um erro ao realizar uma operação no Abrigo. Motivo: %s", HttpStatus.BAD_REQUEST),
+    DONATION_OPERATION_FAILURE("Ocorreu um erro ao registrar uma doação. Motivo: %s", HttpStatus.BAD_REQUEST),
     ADDRESS_OPERATION_FAILURE("Ocorreu um erro ao realizar uma operação no Endereço. Motivo: %s", HttpStatus.BAD_REQUEST),
     USER_OPERATION_FAILURE("Ocorreu um erro ao realizar uma operação com o Usuário. Motivo: %s", HttpStatus.BAD_REQUEST),
     INVALID_UUID_FORMAT_MESSAGE("O ID %s precisa estar no formato UUID", HttpStatus.INTERNAL_SERVER_ERROR);
