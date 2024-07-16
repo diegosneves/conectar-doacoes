@@ -4,7 +4,6 @@ import diegosneves.github.conectardoacoes.adapters.rest.dto.DonationDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.DonationEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.DonationRepository;
-import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.exception.DonationRegisterFailureException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +17,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -58,7 +61,7 @@ class DonationEntityServiceImplTest {
     void shouldConvertDonationDTOANDSaveDonationEntityANDValidateSavedDonation() {
         when(this.repository.save(any(DonationEntity.class))).thenReturn(this.entity);
 
-        Donation actual = this.service.convertAndSaveDonationDTO(this.donationDTO);
+        DonationEntity actual = this.service.convertAndSaveDonationDTO(this.donationDTO);
 
         verify(this.repository, times(1)).save(this.donationCaptor.capture());
 
