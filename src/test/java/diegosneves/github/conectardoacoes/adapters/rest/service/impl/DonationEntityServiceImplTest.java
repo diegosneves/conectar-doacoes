@@ -58,7 +58,7 @@ class DonationEntityServiceImplTest {
     }
 
     @Test
-    void shouldConvertDonationDTOANDSaveDonationEntityANDValidateSavedDonation() {
+    void shouldConvertDonationDtoToEntitySaveAndValidate() {
         when(this.repository.save(any(DonationEntity.class))).thenReturn(this.entity);
 
         DonationEntity actual = this.service.convertAndSaveDonationDTO(this.donationDTO);
@@ -73,6 +73,26 @@ class DonationEntityServiceImplTest {
         assertTrue(UuidUtils.isValidUUID(this.donationCaptor.getValue().getId()));
         assertEquals(DESCRIPTION, this.donationCaptor.getValue().getDescription());
         assertEquals(AMOUNT, donationCaptor.getValue().getAmount());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, -1, -2})
+    void shouldConvertDonationDtoWithZeroAmountToEntitySaveAndValidateAsOne(Integer amount) {
+        this.donationDTO.setAmount(amount);
+        when(this.repository.save(any(DonationEntity.class))).thenReturn(this.entity);
+
+        DonationEntity actual = this.service.convertAndSaveDonationDTO(this.donationDTO);
+
+        verify(this.repository, times(1)).save(this.donationCaptor.capture());
+
+        assertNotNull(actual);
+        assertEquals(DESCRIPTION, actual.getDescription());
+        assertEquals(AMOUNT, actual.getAmount());
+        assertEquals(this.entity.getId(), actual.getId());
+        assertNotNull(this.donationCaptor.getValue());
+        assertTrue(UuidUtils.isValidUUID(this.donationCaptor.getValue().getId()));
+        assertEquals(DESCRIPTION, this.donationCaptor.getValue().getDescription());
+        assertEquals(1, donationCaptor.getValue().getAmount());
     }
 
     @Test
