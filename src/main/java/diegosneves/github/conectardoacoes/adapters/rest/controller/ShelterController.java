@@ -1,6 +1,8 @@
 package diegosneves.github.conectardoacoes.adapters.rest.controller;
 
+import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -76,5 +78,50 @@ public interface ShelterController {
             )
     })
     ResponseEntity<ShelterCreatedResponse> createShelter(@RequestBody ShelterCreationRequest request);
+
+    /**
+     * Método POST para o recebimento de doações.
+     * <p>
+     * Este método recebe um objeto JSON que representa uma solicitação de recebimento de doação,
+     * o registro da doação é realizado no back-end, e retorna uma resposta que inclui os detalhes da doação recebida.
+     * </p>
+     * <p>
+     * O objeto de solicitação deve ser fornecido no corpo da solicitação, com os seguintes campos:
+     * <ul>
+     * <li> {@code responsibleEmail}: O e-mail do usuário responsável pelo recebimento da doação.</li>
+     * <li> {@code donationDTOS}: Uma lista de doações que o abrigo está recebendo.</li>
+     * </ul>
+     * <p>
+     * O método retornará um objeto JSON com os seguintes campos:
+     * <ul>
+     *      <li> {@code shelterName}: O nome do abrigo que recebeu a doação.</li>
+     *      <li> {@code responsibleName}: O nome da pessoa que está gerenciando as doações no abrigo.</li>
+     *      <li> {@code responsibleEmail}: O e-mail do responsável pelo recebimento das doações.</li>
+     *      <li> {@code donationDTOS}: Uma lista de objetos representando as doações recebidas.</li>
+     * </ul>
+     *
+     * @param request objeto {@link ReceiveDonationRequest} que representa a solicitação de recebimento de
+     *                uma doação que é mapeada do corpo da solicitação JSON.
+     * @return Retorna um {@link ResponseEntity} que encapsula a resposta do recebimento da doação. Esta
+     * resposta inclui o status HTTP da operação, bem como um corpo que é uma representação JSON
+     * das doações recebidas.
+     * @throws ResponseStatusException será lançada se o recebimento da doação falhar devido a
+     *                                 problemas de validação ou problemas no servidor. A mensagem de erro será incluída na
+     *                                 exceção.
+     */
+    @PostMapping(value = "/donation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Registrar doações",
+            description = "Este endpoint recebe e registra novas doações no sistema por meio de uma requisição POST",
+            tags = "Abrigos"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Registro de doações foi bem-sucedido!",
+                    content = @Content(schema = @Schema(implementation = ReceiveDonationResponse.class))
+            )
+    })
+    ResponseEntity<ReceiveDonationResponse> receiveDonation(@RequestBody ReceiveDonationRequest request);
 
 }
