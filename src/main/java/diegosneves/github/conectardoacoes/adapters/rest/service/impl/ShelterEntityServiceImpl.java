@@ -1,18 +1,24 @@
 package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
+import diegosneves.github.conectardoacoes.adapters.rest.dto.DonationDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.UserEntityDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.ReceiveDonationResponseFromShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
+import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
+import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
+import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.ShelterEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.UserEntityService;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
@@ -26,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -44,6 +52,9 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     public static final String REQUEST_VALIDATION_ERROR_MESSAGE = "Por favor, forneça uma requisição de criação de Abrigo preenchida corretamente.";
     public static final String RESPONSIBLE_USER_PROFILE_INVALID = "O usuário deve possuir o perfil de responsável.";
     public static final String RESPONSIBLE_USER_ALREADY_IN_USE = "Este usuário já possui responsabilidade sobre outro abrigo.";
+    public static final String DONATION_VALIDATION_ERROR = "Para o cadastro de doações, é indispensável fornecer informações válidas e completas.";
+    public static final String EMPTY_DONATION_LIST = "Até o momento, não há doações listadas.";
+    public static final String RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER = "Por favor, verifique se o e-mail do usuário responsável está correto e associado a um abrigo. Caso contrário, certifique-se de que o usuário responsável tenha um e-mail válido em nosso sistema.";
 
     public static final String SHELTER_CREATION_SUCCESS_LOG = "Novo abrigo criado com sucesso. Detalhes: ID do Abrigo: {} - Email do Usuário Responsável: {}";
     public static final String SHELTER_CREATION_FAILURE_LOG = "Falha ao instanciar e retornar um Abrigo. Causa: {}";
@@ -56,12 +67,14 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     private final ShelterRepository repository;
     private final AddressEntityService addressService;
     private final UserEntityService userEntityService;
+    private final DonationEntityService donationEntityService;
 
     @Autowired
-    public ShelterEntityServiceImpl(ShelterRepository repository, AddressEntityService addressService, UserEntityService userEntityService) {
+    public ShelterEntityServiceImpl(ShelterRepository repository, AddressEntityService addressService, UserEntityService userEntityService, DonationEntityService donationEntityService) {
         this.repository = repository;
         this.addressService = addressService;
         this.userEntityService = userEntityService;
+        this.donationEntityService = donationEntityService;
     }
 
     /**
@@ -258,6 +271,75 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
             throw new ShelterEntityFailuresException(SHELTER_CREATION_ERROR_MESSAGE, e);
         }
         return newShelterEntity;
+    }
+
+    @Override
+    public ReceiveDonationResponse receiveDonation(ReceiveDonationRequest request) {
+        ValidationUtils.validateNotNullOrEmpty(request, DONATION_VALIDATION_ERROR, ShelterEntityFailuresException.class);
+        ShelterEntity currentShelter = this.getCurrentShelterByResponsibleEmail(request.getResponsibleEmail());
+        this.appendDonationsToShelter(request, currentShelter);
+        return BuilderMapper.mapTo(new ReceiveDonationResponseFromShelterEntityMapper(), this.repository.save(currentShelter));
+    }
+
+    /**
+     * Este método é responsável por adicionar uma lista de doações à uma determinada instituição.
+     * <p>
+     * Primeiro, verifica se a lista de doações fornecidas na solicitação não está vazia ou é nula.
+     * Se a lista for nula ou vazia, uma exceção do tipo {@link ShelterEntityFailuresException} será lançada.
+     * <p>
+     * Em seguida, cada doação na lista de doações fornecida é convertida e salva usando o método
+     * {@link DonationEntityService#convertAndSaveDonationDTO(DonationDTO) convertAndSaveDonationDTO} do serviço {@code donationEntityService}.
+     * <p>
+     * A lista de doações existente da instituição é então obtida, e a lista de doações convertidas
+     * é combinada com a lista existente usando o método {@link #mergeDonationLists}.
+     * <p>
+     * Finalmente, a lista de doações combinadas é salva na entidade instituição.
+     *
+     * @param request        a solicitação de receber doação que contém a lista de doações a serem anexadas.
+     *                       Não deve ser nula e deve conter pelo menos uma doação.
+     * @param currentShelter a entidade de instituição cujas doações serão anexadas. Não deve ser nula.
+     * @throws ShelterEntityFailuresException se a lista de doações na requisição for nula ou vazia.
+     */
+    private void appendDonationsToShelter(ReceiveDonationRequest request, ShelterEntity currentShelter) {
+        ValidationUtils.ensureListIsNotNullOrEmpty(request.getDonationDTOS(), EMPTY_DONATION_LIST, ShelterEntityFailuresException.class);
+        List<DonationEntity> convertedDonations = request.getDonationDTOS().stream().map(this.donationEntityService::convertAndSaveDonationDTO).toList();
+        List<DonationEntity> appendedDonations = this.mergeDonationLists(currentShelter.getDonations(), convertedDonations);
+        currentShelter.setDonations(appendedDonations);
+    }
+
+    /**
+     * Este método serve para unir duas listas de objetos {@link DonationEntity}, retornando uma nova lista que é a combinação das duas listas.
+     * <p>
+     * A operação de combinação adiciona todos os elementos da segunda lista para a primeira. Antes de adicionar os elementos,
+     * o método garante que as listas não sejam nulas, usando o utilitário {@link ValidationUtils#ensureListIsNotNull(List) ensureListIsNotNull}.
+     * Se alguma das listas for nula, {@link ValidationUtils#ensureListIsNotNull(List) ensureListIsNotNull} garante que essa lista seja transformada em uma lista vazia,
+     * evitando assim um {@link NullPointerException}.
+     * <p>
+     * Note que a combinação de doações não muda as listas originais de doações. Em vez disso, uma nova lista é criada e retornada.
+     *
+     * @param donations          Lista original de objetos {@link DonationEntity}.
+     * @param convertedDonations Lista de objetos {@link DonationEntity} a serem adicionados à lista original de doações.
+     * @return Uma nova lista contendo a combinação de ambas as listas de doações. Esta lista pode ser vazia, mas nunca será nula.
+     */
+    private List<DonationEntity> mergeDonationLists(List<DonationEntity> donations, List<DonationEntity> convertedDonations) {
+        List<DonationEntity> combinedDonations = new ArrayList<>(ValidationUtils.ensureListIsNotNull(donations));
+        combinedDonations.addAll(ValidationUtils.ensureListIsNotNull(convertedDonations));
+        return combinedDonations;
+    }
+
+    /**
+     * Este método é usado para recuperar a entidade {@link ShelterEntity Shelter} atual, localizada no repositório de entities {@link ShelterEntity Shelters},
+     * associada ao e-mail do responsável passado como parâmetro.
+     *
+     * @param responsibleUserEmail Um {@code String} que representa o e-mail do responsável pelo {@link ShelterEntity Shelter}.
+     *                             Este e-mail é usado como critério de pesquisa na base de dados.
+     * @return {@link ShelterEntity} que representa o objeto Shelter atual no repositório associado ao e-mail do responsável passado.
+     * Se não houver um objeto {@link ShelterEntity Shelter} associado ao e-mail fornecido, o método lançará uma {@link ShelterEntityFailuresException}.
+     * @throws ShelterEntityFailuresException Se o e-mail do responsável fornecido não estiver associado a nenhuma entidade {@link ShelterEntity Shelter} no repositório.
+     */
+    private ShelterEntity getCurrentShelterByResponsibleEmail(String responsibleUserEmail) {
+        Optional<ShelterEntity> shelterEntity = this.repository.findShelterEntitiesByResponsibleUser_Email(responsibleUserEmail);
+        return shelterEntity.orElseThrow(() -> new ShelterEntityFailuresException(RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER));
     }
 
 }

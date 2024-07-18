@@ -2,6 +2,7 @@ package diegosneves.github.conectardoacoes.adapters.rest.service;
 
 import diegosneves.github.conectardoacoes.adapters.rest.dto.DonationDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.DonationEntityFailuresException;
+import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 
 /**
@@ -30,9 +31,9 @@ public interface DonationEntityService {
      * </p>
      *
      * @param donationDTO Uma instância de {@link DonationDTO} que precisa ser convertida e persistida.
-     * @return A instância da entidade {@link Donation} que foi convertida do {@link DonationDTO} e persistida no banco de dados.
+     * @return A instância da entidade {@link DonationEntity} que foi convertida do {@link DonationDTO} e persistida no banco de dados.
      * @throws DonationEntityFailuresException Se o {@link DonationDTO} fornecido for nulo ou não contiver as informações necessárias.
      */
-    Donation convertAndSaveDonationDTO(DonationDTO donationDTO) throws DonationEntityFailuresException;
+    DonationEntity convertAndSaveDonationDTO(DonationDTO donationDTO) throws DonationEntityFailuresException;
 
 }
