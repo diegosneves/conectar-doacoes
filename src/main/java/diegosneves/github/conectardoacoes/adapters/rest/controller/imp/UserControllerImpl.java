@@ -38,4 +38,10 @@ public class UserControllerImpl implements UserController {
         UserEntityCreatedResponse newUserResponse = this.service.createUserEntity(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUserResponse);
     }
+
+    @Override
+    public ResponseEntity<UserEntityCreatedResponse> findUserByEmail(String email) {
+        UserEntityCreatedResponse userByEmail = service.findUserByEmail(email);
+        return ResponseEntity.ok(userByEmail);
+    }
 }

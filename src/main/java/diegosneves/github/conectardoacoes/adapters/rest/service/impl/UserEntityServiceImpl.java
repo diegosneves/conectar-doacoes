@@ -14,6 +14,7 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,6 +73,16 @@ public class UserEntityServiceImpl implements UserEntityService {
         UserEntity newUser = createUserEntityFromCreationRequest(request);
         return BuilderMapper.mapTo(UserEntityCreatedResponse.class, this.userRepository.save(newUser));
     }
+
+    @Override
+    public UserEntityCreatedResponse findUserByEmail(String email) {
+
+        UserEntity foundedUserByEmail = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserEntityFailuresException(String.format(EMAIL_NOT_FOUND_ERROR_MESSAGE, email)));
+
+        return BuilderMapper.mapTo(UserEntityCreatedResponse.class, foundedUserByEmail);
+    }
+
 
     /**
      * Método auxiliar usado para converter uma instância de {@link UserEntityCreationRequest} para uma instância de {@link UserEntity}.

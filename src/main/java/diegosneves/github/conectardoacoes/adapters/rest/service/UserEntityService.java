@@ -51,4 +51,6 @@ public interface UserEntityService {
      */
     UserEntityCreatedResponse createUserEntity(UserEntityCreationRequest request) throws UserEntityFailuresException;
 
+    UserEntityCreatedResponse findUserByEmail(String email);
+
 }
