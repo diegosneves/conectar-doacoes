@@ -4,7 +4,6 @@ import diegosneves.github.conectardoacoes.adapters.rest.dto.DonationDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.DonationEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.DonationEntityMapper;
-import diegosneves.github.conectardoacoes.adapters.rest.mapper.DonationMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.DonationRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
@@ -47,9 +46,9 @@ public class DonationEntityServiceImpl implements DonationEntityService {
 
 
     @Override
-    public Donation convertAndSaveDonationDTO(DonationDTO donationDTO) {
+    public DonationEntity convertAndSaveDonationDTO(DonationDTO donationDTO) {
         ValidationUtils.validateNotNullOrEmpty(donationDTO, INVALID_DONATION_INFO_ERROR, DonationEntityFailuresException.class);
-        return this.convertDonationEntityToDonation(this.convertDonationDTOToDonationEntity(donationDTO));
+        return this.convertDonationDTOToDonationEntity(donationDTO);
     }
 
     /**
@@ -64,7 +63,8 @@ public class DonationEntityServiceImpl implements DonationEntityService {
      */
     private DonationEntity convertDonationDTOToDonationEntity(DonationDTO donationDTO) {
         Donation newDonation = createDonation(donationDTO);
-        return BuilderMapper.mapTo(this.getDonationEntityMapperInstance(), newDonation);
+        DonationEntity donationEntityOutput = BuilderMapper.mapTo(this.getDonationEntityMapperInstance(), newDonation);
+        return this.repository.save(donationEntityOutput);
     }
 
     /**
@@ -104,33 +104,4 @@ public class DonationEntityServiceImpl implements DonationEntityService {
         return new DonationEntityMapper();
     }
 
-    /**
-     * Converte uma entidade de doação ({@link DonationEntity}) para um objeto de doação ({@link Donation}).
-     * <p>
-     * Este método mapeia uma entidade de doação para um objeto de doação através do método {@code mapTo} do {@link BuilderMapper}
-     * e persiste a entidade de doação no banco de dados chamando o método {@code save} do {@link DonationRepository repository}.
-     *
-     * @param donationEntity A entidade de doação que será convertida em um objeto de doação.
-     * @return {@link Donation} Retorna um objeto de doação convertido.
-     * @throws IllegalArgumentException Caso a entidade de doação fornecida seja null.
-     */
-    private Donation convertDonationEntityToDonation(DonationEntity donationEntity) {
-        return BuilderMapper.mapTo(this.getDonationMapperInstance(), this.repository.save(donationEntity));
-    }
-
-    /**
-     * Método utilizado para obter uma nova instância da classe {@link DonationMapper}.
-     * <p>
-     * Este método não recebe nenhum parâmetro e é utilizado para instanciar um novo objeto do tipo {@link DonationMapper}. Este novo objeto pode então ser utilizado para mapear
-     * informações de doação de uma forma para outra conforme definido na classe {@link DonationMapper}.
-     * <p>
-     * Por exemplo, o objeto retornado pode ser usado para converter objetos de entidade de doação para DTOs de doação, ou vice-versa.
-     *
-     * @return uma nova instância da classe {@link DonationMapper}.
-     *
-     * @see diegosneves.github.conectardoacoes.adapters.rest.mapper.MapperStrategy
-     */
-    private DonationMapper getDonationMapperInstance() {
-        return new DonationMapper();
-    }
 }

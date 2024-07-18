@@ -1,17 +1,23 @@
 package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
+import diegosneves.github.conectardoacoes.adapters.rest.dto.DonationDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.enums.UserProfileType;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
+import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
+import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
+import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.UserEntityService;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
@@ -32,6 +38,8 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,6 +75,9 @@ class ShelterEntityServiceImplTest {
     public static final String STATE = "Estado";
     public static final String ZIP = "98456123";
 
+    public static final String DONATION_ID = "b6d38f1a-22a2-4d49-938f-1a22a22d4966";
+    public static final String DESCRIPTION = "Mochila";
+    public static final int AMOUNT = 2;
 
 
     @InjectMocks
@@ -81,6 +92,9 @@ class ShelterEntityServiceImplTest {
     @Mock
     private AddressEntityService addressService;
 
+    @Mock
+    private DonationEntityService donationEntityService;
+
     @Captor
     private ArgumentCaptor<ShelterContract> shelterCaptor;
 
@@ -89,6 +103,7 @@ class ShelterEntityServiceImplTest {
     private User user;
     private Shelter shelter;
     private Address address;
+    private DonationEntity donation;
 
     @BeforeEach
     void setUp() {
@@ -107,6 +122,7 @@ class ShelterEntityServiceImplTest {
                 .responsibleUserEmail(USER_EMAIL)
                 .build();
 
+        this.donation = new DonationEntity(DONATION_ID, DESCRIPTION, AMOUNT);
         this.address = new Address(ADDRESS_ID, STREET, NUMBER, NEIGHBORHOOD, CITY, STATE, ZIP);
         this.user = new User(USER_ID, USER_NAME, USER_EMAIL, UserProfile.BENEFICIARY, USER_PASSWORD);
         this.shelter = new Shelter(SHELTER_ID, SHELTER_NAME, this.address, this.user);
@@ -297,7 +313,7 @@ class ShelterEntityServiceImplTest {
     }
 
     @Test
-    void should() {
+    void shouldThrowExceptionWhenCreatingShelterWithSameResponsibleEmail() {
 
         when(this.userEntityService.searchUserByEmail(USER_EMAIL)).thenReturn(this.user);
         when(this.repository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL)).thenReturn(Optional.of(new ShelterEntity()));
@@ -311,6 +327,124 @@ class ShelterEntityServiceImplTest {
 
         assertNotNull(exception);
         assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.RESPONSIBLE_USER_ALREADY_IN_USE), exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void shouldReceiveDonationForSpecificShelter() {
+        ShelterEntity shelterEntity = generateShelterEntity();
+        ReceiveDonationRequest donationRequest = generateReceiveDonationRequest();
+
+        when(this.donationEntityService.convertAndSaveDonationDTO(any(DonationDTO.class))).thenReturn(this.donation);
+        when(this.repository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL)).thenReturn(Optional.of(shelterEntity));
+        when(this.repository.save(any(ShelterEntity.class))).thenReturn(shelterEntity);
+
+        ReceiveDonationResponse response = this.service.receiveDonation(donationRequest);
+
+        verify(this.donationEntityService, times(1)).convertAndSaveDonationDTO(any(DonationDTO.class));
+        verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
+        verify(this.repository, times(1)).save(any(ShelterEntity.class));
+
+        assertNotNull(response);
+        assertEquals(SHELTER_NAME, response.getShelterName());
+        assertEquals(USER_NAME, response.getResponsibleName());
+        assertEquals(USER_EMAIL, response.getResponsibleEmail());
+        assertNotNull(response.getDonationDTOS());
+        assertEquals(1, response.getDonationDTOS().size());
+        assertEquals(DESCRIPTION, response.getDonationDTOS().get(0).getDescription());
+        assertEquals(AMOUNT, response.getDonationDTOS().get(0).getAmount());
+    }
+
+
+    private static UserEntity generateUserEntity() {
+        return UserEntity.builder()
+                .userName(USER_NAME)
+                .email(USER_EMAIL)
+                .userProfile(UserProfileType.BENEFICIARY)
+                .build();
+    }
+
+    private static ShelterEntity generateShelterEntity() {
+        return ShelterEntity.builder()
+                .shelterName(SHELTER_NAME)
+                .responsibleUser(generateUserEntity())
+                .donations(new ArrayList<>())
+                .build();
+    }
+
+    private static DonationDTO generateDonationDTO() {
+        return new DonationDTO(DESCRIPTION, AMOUNT);
+    }
+
+    private static ReceiveDonationRequest generateReceiveDonationRequest() {
+        return ReceiveDonationRequest.builder()
+                .responsibleEmail(USER_EMAIL)
+                .donationDTOS(List.of(generateDonationDTO()))
+                .build();
+    }
+
+    @Test
+    void shouldThrowExceptionWhenReceiveDonationRequestIsNull() {
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.receiveDonation(null));
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.DONATION_VALIDATION_ERROR), exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenReceiveDonationDTOListIsNull() {
+        ShelterEntity shelterEntity = generateShelterEntity();
+        ReceiveDonationRequest donationRequest = generateReceiveDonationRequest();
+        donationRequest.setDonationDTOS(null);
+
+        when(this.repository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL)).thenReturn(Optional.of(shelterEntity));
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.receiveDonation(donationRequest));
+
+        verify(this.repository, never()).save(any(ShelterEntity.class));
+        verify(this.donationEntityService, never()).convertAndSaveDonationDTO(any(DonationDTO.class));
+        verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.EMPTY_DONATION_LIST), exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenReceiveDonationDTOListIsEmpty() {
+        ShelterEntity shelterEntity = generateShelterEntity();
+        ReceiveDonationRequest donationRequest = generateReceiveDonationRequest();
+        donationRequest.setDonationDTOS(new ArrayList<>());
+
+        when(this.repository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL)).thenReturn(Optional.of(shelterEntity));
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.receiveDonation(donationRequest));
+
+        verify(this.repository, never()).save(any(ShelterEntity.class));
+        verify(this.donationEntityService, never()).convertAndSaveDonationDTO(any(DonationDTO.class));
+        verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.EMPTY_DONATION_LIST), exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void shouldThrowExceptionWhen() {
+        ReceiveDonationRequest donationRequest = generateReceiveDonationRequest();
+
+        when(this.repository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL)).thenReturn(Optional.empty());
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.receiveDonation(donationRequest));
+
+        verify(this.repository, never()).save(any(ShelterEntity.class));
+        verify(this.donationEntityService, never()).convertAndSaveDonationDTO(any(DonationDTO.class));
+        verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
+
+        assertNotNull(exception);
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER), exception.getMessage());
         assertNull(exception.getCause());
     }
 

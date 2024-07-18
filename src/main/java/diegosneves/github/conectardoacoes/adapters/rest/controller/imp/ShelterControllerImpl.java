@@ -3,7 +3,9 @@ package diegosneves.github.conectardoacoes.adapters.rest.controller.imp;
 
 import diegosneves.github.conectardoacoes.adapters.rest.controller.ShelterController;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
+import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.ShelterEntityService;
 import org.springframework.http.HttpStatus;
@@ -42,4 +44,9 @@ public class ShelterControllerImpl implements ShelterController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Override
+    public ResponseEntity<ReceiveDonationResponse> receiveDonation(ReceiveDonationRequest request) {
+        ReceiveDonationResponse response = this.shelterEntityService.receiveDonation(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
