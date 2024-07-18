@@ -327,7 +327,7 @@ class UserEntityServiceImplTest {
 
         when(userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.ofNullable(this.userEntity));
         UserEntityCreatedResponse userByEmail = userEntityService.findUserByEmail(USER_EMAIL);
-
+        assertNotNull(userByEmail);
         assertEquals(USER_ID, userByEmail.getId());
         assertEquals(USERNAME, userByEmail.getUserName());
         assertEquals(USER_EMAIL, userByEmail.getEmail());

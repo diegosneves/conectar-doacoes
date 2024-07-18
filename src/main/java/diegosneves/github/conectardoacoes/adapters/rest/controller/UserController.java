@@ -92,8 +92,6 @@ public interface UserController {
      *
      * <p>
      * Em qualquer caso de violação das validações de integridade do modelo da entidade, um erro HTTP apropriado é retornado junto com os detalhes do erro.
-     *
-     * @param request um objeto {@link String}.
      *                Este parâmetro deve estar presente na url da solicitação GET e é deserializado para o tipo {@link UserEntityCreatedResponse}.
      * @return {@link ResponseEntity} que encapsula o {@link UserEntityCreatedResponse} se o email do usuário for encontrado com sucesso.
      * @see UserEntityCreatedResponse
