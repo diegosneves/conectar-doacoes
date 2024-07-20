@@ -26,10 +26,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 class UserEntityServiceImplTest {
@@ -289,6 +286,51 @@ class UserEntityServiceImplTest {
         assertNotNull(exception);
         assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE), exception.getMessage());
         assertNull(exception.getCause());
+    }
+
+    @Test
+    void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassedIsNotFound(){
+
+        String email = "email@teste.com";
+
+        UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () ->
+                this.userEntityService.findUserByEmail(email));
+
+        assertNotNull(exception);
+        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(
+                String.format(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE, email)), exception.getMessage());
+        assertNull(exception.getCause());
+
+    }
+
+    @Test
+    void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassIsNull(){
+
+        String email = null;
+
+        UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () ->
+                this.userEntityService.findUserByEmail(email));
+
+        assertNotNull(exception);
+        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(
+                String.format(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE, email)), exception.getMessage());
+        assertNull(exception.getCause());
+
+    }
+
+    @Test
+    void testFindByEmail_WhenEmailIsValid_ShouldReturnUserEntityCreatedResponseObject(){
+
+        when(userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.ofNullable(this.userEntity));
+        UserEntityCreatedResponse userByEmail = userEntityService.findUserByEmail(USER_EMAIL);
+        assertNotNull(userByEmail);
+        assertEquals(USER_ID, userByEmail.getId());
+        assertEquals(USERNAME, userByEmail.getUserName());
+        assertEquals(USER_EMAIL, userByEmail.getEmail());
+        assertEquals(UserProfileType.BENEFICIARY, userByEmail.getUserProfile());
+
+        verify(userRepository, times(1)).findByEmail(USER_EMAIL);
+
     }
 
 }
