@@ -117,7 +117,7 @@ public interface UserController {
                     content = @Content(schema = @Schema(implementation = UserEntityCreatedResponse.class))
             )
     })
-    public ResponseEntity<UserEntityCreatedResponse> findUserByEmail(@PathVariable("email") String Email);
+    public ResponseEntity<UserEntityCreatedResponse> findUserByEmail(@PathVariable("email") String email);
 
 
 }

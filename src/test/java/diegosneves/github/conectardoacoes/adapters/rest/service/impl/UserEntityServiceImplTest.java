@@ -10,7 +10,6 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
-import jakarta.validation.constraints.Email;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,10 +26,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 class UserEntityServiceImplTest {
@@ -293,7 +289,7 @@ class UserEntityServiceImplTest {
     }
 
     @Test
-    void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassIsInvalid(){
+    void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassedIsNotFound(){
 
         String email = "email@teste.com";
 
