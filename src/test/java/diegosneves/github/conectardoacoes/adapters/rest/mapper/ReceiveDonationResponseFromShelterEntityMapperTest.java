@@ -3,7 +3,7 @@ package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,18 +27,18 @@ class ReceiveDonationResponseFromShelterEntityMapperTest {
     public static final String USER_EMAIL = "fulano@gmail.com";
 
 
-    private ReceiveDonationResponseFromShelterEntityMapper mapper;
+    private ShelterInformationResponseFromShelterEntityMapper mapper;
 
     @BeforeEach
     void setUp() {
-        this.mapper = new ReceiveDonationResponseFromShelterEntityMapper();
+        this.mapper = new ShelterInformationResponseFromShelterEntityMapper();
     }
 
     @Test
     void shouldMapToDonationResponse() {
         ShelterEntity shelterEntity = generateShelterEntity();
 
-        ReceiveDonationResponse response = this.mapper.mapFrom(shelterEntity);
+        ShelterInformationResponse response = this.mapper.mapFrom(shelterEntity);
 
         assertNotNull(response);
         assertEquals(SHELTER_NAME, response.getShelterName());
@@ -78,7 +78,7 @@ class ReceiveDonationResponseFromShelterEntityMapperTest {
         ShelterEntity shelterEntity = generateShelterEntity();
         shelterEntity.setDonations(null);
 
-        ReceiveDonationResponse response = this.mapper.mapFrom(shelterEntity);
+        ShelterInformationResponse response = this.mapper.mapFrom(shelterEntity);
 
         assertNotNull(response);
         assertEquals(SHELTER_NAME, response.getShelterName());
@@ -93,7 +93,7 @@ class ReceiveDonationResponseFromShelterEntityMapperTest {
         ShelterEntity shelterEntity = generateShelterEntity();
         shelterEntity.setDonations(new ArrayList<>());
 
-        ReceiveDonationResponse response = this.mapper.mapFrom(shelterEntity);
+        ShelterInformationResponse response = this.mapper.mapFrom(shelterEntity);
 
         assertNotNull(response);
         assertEquals(SHELTER_NAME, response.getShelterName());

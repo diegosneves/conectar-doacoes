@@ -14,7 +14,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
@@ -339,7 +339,7 @@ class ShelterEntityServiceImplTest {
         when(this.repository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL)).thenReturn(Optional.of(shelterEntity));
         when(this.repository.save(any(ShelterEntity.class))).thenReturn(shelterEntity);
 
-        ReceiveDonationResponse response = this.service.receiveDonation(donationRequest);
+        ShelterInformationResponse response = this.service.receiveDonation(donationRequest);
 
         verify(this.donationEntityService, times(1)).convertAndSaveDonationDTO(any(DonationDTO.class));
         verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);

@@ -3,13 +3,13 @@ package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.DonationDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Esta classe é responsável pela conversão de objetos do tipo {@link ShelterEntity} para {@link ReceiveDonationResponse}.
+ * Esta classe é responsável pela conversão de objetos do tipo {@link ShelterEntity} para {@link ShelterInformationResponse}.
  * Esta conversão é especialmente útil na camada de serviço, quando obtemos dados da entidade Shelter (Abrigo) do banco de dados
  * e precisamos converter esses dados para um formato de resposta (DTO) que será enviado ao cliente.
  * <p>
@@ -17,19 +17,19 @@ import java.util.List;
  * de algoritmos, coloque cada um deles em uma classe separada, e torna as instâncias desses algoritmos intercambiáveis.
  * <p>
  * Esta estratégia específica é utilizada quando se deseja converter um {@link ShelterEntity} (que contém dados do Abrigo e Doações),
- * para uma {@link ReceiveDonationResponse} que é uma resposta padrão para o cliente que contém os detalhes de um abrigo e suas doações.
+ * para uma {@link ShelterInformationResponse} que é uma resposta padrão para o cliente que contém os detalhes de um abrigo e suas doações.
  *
  * @author diegoneves
  * @see MapperStrategy
  * @see <a href="https://refactoring.guru/design-patterns/strategy">Padrão Strategy</a> para mais detalhes sobre a estratégia de mapeamento utilizada.
  * @since 1.1.0
  */
-public class ReceiveDonationResponseFromShelterEntityMapper implements MapperStrategy<ReceiveDonationResponse, ShelterEntity> {
+public class ShelterInformationResponseFromShelterEntityMapper implements MapperStrategy<ShelterInformationResponse, ShelterEntity> {
 
 
     @Override
-    public ReceiveDonationResponse mapFrom(ShelterEntity source) {
-        return ReceiveDonationResponse.builder()
+    public ShelterInformationResponse mapFrom(ShelterEntity source) {
+        return ShelterInformationResponse.builder()
                 .shelterName(source.getShelterName())
                 .responsibleName(source.getResponsibleUser().getUserName())
                 .responsibleEmail(source.getResponsibleUser().getEmail())

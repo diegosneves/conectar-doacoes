@@ -5,7 +5,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.controller.ShelterContro
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.ShelterEntityService;
 import org.springframework.http.HttpStatus;
@@ -45,8 +45,15 @@ public class ShelterControllerImpl implements ShelterController {
     }
 
     @Override
-    public ResponseEntity<ReceiveDonationResponse> receiveDonation(ReceiveDonationRequest request) {
-        ReceiveDonationResponse response = this.shelterEntityService.receiveDonation(request);
+    public ResponseEntity<ShelterInformationResponse> receiveDonation(ReceiveDonationRequest request) {
+        ShelterInformationResponse response = this.shelterEntityService.receiveDonation(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @Override
+    public ResponseEntity<ShelterInformationResponse> findShelterByUserResponsibleEmail(String userResponsibleEmail) {
+        ShelterInformationResponse shelterRecoveryByUserResponsibleEmail =
+                shelterEntityService.findShelterByUserResponsibleEmail(userResponsibleEmail);
+        return ResponseEntity.ok(shelterRecoveryByUserResponsibleEmail);
     }
 }

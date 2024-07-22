@@ -29,7 +29,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-public class ReceiveDonationResponse {
+public class ShelterInformationResponse {
 
     private String shelterName;
     private String responsibleName;

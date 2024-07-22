@@ -6,7 +6,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.dto.UserEntityDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
-import diegosneves.github.conectardoacoes.adapters.rest.mapper.ReceiveDonationResponseFromShelterEntityMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterInformationResponseFromShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
@@ -15,7 +15,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
@@ -274,11 +274,17 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     }
 
     @Override
-    public ReceiveDonationResponse receiveDonation(ReceiveDonationRequest request) {
+    public ShelterInformationResponse receiveDonation(ReceiveDonationRequest request) {
         ValidationUtils.validateNotNullOrEmpty(request, DONATION_VALIDATION_ERROR, ShelterEntityFailuresException.class);
         ShelterEntity currentShelter = this.getCurrentShelterByResponsibleEmail(request.getResponsibleEmail());
         this.appendDonationsToShelter(request, currentShelter);
-        return BuilderMapper.mapTo(new ReceiveDonationResponseFromShelterEntityMapper(), this.repository.save(currentShelter));
+        return BuilderMapper.mapTo(new ShelterInformationResponseFromShelterEntityMapper(), this.repository.save(currentShelter));
+    }
+
+    @Override
+    public ShelterInformationResponse findShelterByUserResponsibleEmail(String userResponsibleEmail) {
+        ShelterEntity currentShelterByResponsibleEmail = getCurrentShelterByResponsibleEmail(userResponsibleEmail);
+        return BuilderMapper.mapTo(new ShelterInformationResponseFromShelterEntityMapper(), currentShelterByResponsibleEmail);
     }
 
     /**
