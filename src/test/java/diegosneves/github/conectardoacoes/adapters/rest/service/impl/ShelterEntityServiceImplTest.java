@@ -2,6 +2,7 @@ package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.DonationDTO;
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.enums.UserProfileType;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
@@ -186,7 +187,7 @@ class ShelterEntityServiceImplTest {
         verify(this.userEntityService, times(1)).searchUserByEmail(USER_EMAIL);
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
     }
@@ -202,7 +203,7 @@ class ShelterEntityServiceImplTest {
         verify(this.userEntityService, times(1)).searchUserByEmail(USER_EMAIL);
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
     }
@@ -219,7 +220,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UserEntityFailuresException.class, exception.getCause().getClass());
     }
@@ -234,7 +235,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UserEntityFailuresException.class, exception.getCause().getClass());
     }
@@ -256,7 +257,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressEntityFailuresException.class, exception.getCause().getClass());
     }
@@ -270,7 +271,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, never()).persist(any(ShelterContract.class));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.REQUEST_VALIDATION_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.REQUEST_VALIDATION_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -290,7 +291,7 @@ class ShelterEntityServiceImplTest {
             verify(this.repository, times(1)).persist(any(ShelterContract.class));
 
             assertNotNull(exception);
-            assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE), exception.getMessage());
+            assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.SHELTER_CREATION_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
             assertNotNull(exception.getCause());
             assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
         }
@@ -308,7 +309,7 @@ class ShelterEntityServiceImplTest {
         verify(this.userEntityService, times(1)).searchUserByEmail(USER_EMAIL);
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.RESPONSIBLE_USER_PROFILE_INVALID), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_USER_PROFILE_INVALID).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -326,7 +327,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.RESPONSIBLE_USER_ALREADY_IN_USE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_USER_ALREADY_IN_USE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -389,7 +390,7 @@ class ShelterEntityServiceImplTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.service.receiveDonation(null));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.DONATION_VALIDATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.DONATION_VALIDATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -408,7 +409,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.EMPTY_DONATION_LIST), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.EMPTY_DONATION_LIST).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -427,7 +428,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.EMPTY_DONATION_LIST), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.EMPTY_DONATION_LIST).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -444,7 +445,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 

@@ -3,6 +3,7 @@ package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.DonationDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.UserEntityDTO;
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
@@ -47,14 +48,14 @@ import java.util.Optional;
 @Slf4j
 public class ShelterEntityServiceImpl implements ShelterEntityService {
 
-    public static final String SHELTER_CREATION_ERROR_MESSAGE = "Erro na criação do Abrigo. Confirme se todos os campos do Abrigo estão corretos e tente novamente.";
-    public static final String USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR = "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.";
-    public static final String REQUEST_VALIDATION_ERROR_MESSAGE = "Por favor, forneça uma requisição de criação de Abrigo preenchida corretamente.";
-    public static final String RESPONSIBLE_USER_PROFILE_INVALID = "O usuário deve possuir o perfil de responsável.";
-    public static final String RESPONSIBLE_USER_ALREADY_IN_USE = "Este usuário já possui responsabilidade sobre outro abrigo.";
-    public static final String DONATION_VALIDATION_ERROR = "Para o cadastro de doações, é indispensável fornecer informações válidas e completas.";
-    public static final String EMPTY_DONATION_LIST = "Até o momento, não há doações listadas.";
-    public static final String RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER = "Por favor, verifique se o e-mail do usuário responsável está correto e associado a um abrigo. Caso contrário, certifique-se de que o usuário responsável tenha um e-mail válido em nosso sistema.";
+    public static final Integer SHELTER_CREATION_ERROR_MESSAGE = 5;
+    public static final Integer USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR = 11;
+    public static final Integer REQUEST_VALIDATION_ERROR_MESSAGE = 3;
+    public static final Integer RESPONSIBLE_USER_PROFILE_INVALID = 7;
+    public static final Integer RESPONSIBLE_USER_ALREADY_IN_USE = 9;
+    public static final Integer DONATION_VALIDATION_ERROR = 13;
+    public static final Integer EMPTY_DONATION_LIST = 15;
+    public static final Integer RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER = 17;
 
     public static final String SHELTER_CREATION_SUCCESS_LOG = "Novo abrigo criado com sucesso. Detalhes: ID do Abrigo: {} - Email do Usuário Responsável: {}";
     public static final String SHELTER_CREATION_FAILURE_LOG = "Falha ao instanciar e retornar um Abrigo. Causa: {}";
@@ -206,14 +207,14 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
      *
      * @param needToThrowAnException a condição Booleana segundo a qual a exceção deve ser lançada.
      *                               Se for verdadeiro, a {@link ShelterEntityFailuresException} será lançada.
-     * @param errorMessage           a String que representa a mensagem detalhada da exceção. Esta mensagem é utilizada
+     * @param errorCode           o Integer que representa a mensagem detalhada da exceção. Esta mensagem é utilizada
      *                               quando a exceção é lançada.
      * @throws ShelterEntityFailuresException a exceção customizada que será lançada quando {@code needToThrowAnException} for verdadeiro.
      */
-    private static void throwShelterEntityFailuresExceptionIfNecessary(Boolean needToThrowAnException, String errorMessage) throws ShelterEntityFailuresException {
+    private static void throwShelterEntityFailuresExceptionIfNecessary(Boolean needToThrowAnException, Integer errorCode) throws ShelterEntityFailuresException {
         if (Boolean.TRUE.equals(needToThrowAnException)) {
-            log.error(RESPONSIBLE_USER_VERIFICATION_ERROR_LOG, errorMessage);
-            throw new ShelterEntityFailuresException(errorMessage);
+            log.error(RESPONSIBLE_USER_VERIFICATION_ERROR_LOG, ExceptionDetails.getExceptionDetails(errorCode).formatErrorMessage());
+            throw new ShelterEntityFailuresException(errorCode);
         }
     }
 
