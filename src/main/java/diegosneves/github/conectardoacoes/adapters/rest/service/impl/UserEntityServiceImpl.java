@@ -14,7 +14,6 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,11 +75,25 @@ public class UserEntityServiceImpl implements UserEntityService {
 
     @Override
     public UserEntityCreatedResponse findUserByEmail(String email) {
+        UserEntity entity = BuilderMapper.mapTo(getUserEntityMapper(), this.searchUserByEmail(email));
+        return BuilderMapper.mapTo(UserEntityCreatedResponse.class, entity);
+    }
 
-        UserEntity foundedUserByEmail = userRepository.findByEmail(email).orElseThrow(
-                () -> new UserEntityFailuresException(String.format(EMAIL_NOT_FOUND_ERROR_MESSAGE, email)));
-
-        return BuilderMapper.mapTo(UserEntityCreatedResponse.class, foundedUserByEmail);
+    /**
+     * Retorna uma nova instância de {@link UserEntityMapper}.
+     *
+     * <p>
+     * Este método cria e retorna uma nova instância de {@link UserEntityMapper}.
+     * É usado para transformar {@link User} em {@link UserEntity} e vice-versa.
+     * A classe {@code UserEntityMapper} é um mapper (conversor) usado no contexto
+     * de persistência de dados da aplicação, convertendo objetos de domínio em entidades
+     * de banco de dados e vice versa em operações de CRUD.
+     *
+     * @return uma nova instância de {@link UserEntityMapper}
+     * @see UserEntityMapper
+     */
+    private static UserEntityMapper getUserEntityMapper() {
+        return new UserEntityMapper();
     }
 
 
@@ -101,7 +114,7 @@ public class UserEntityServiceImpl implements UserEntityService {
      */
     private static UserEntity createUserEntityFromCreationRequest(UserEntityCreationRequest request) {
         UserContract userContract = createUserFromRequest(request);
-        return BuilderMapper.mapTo(new UserEntityMapper(), userContract);
+        return BuilderMapper.mapTo(getUserEntityMapper(), userContract);
     }
 
     /**

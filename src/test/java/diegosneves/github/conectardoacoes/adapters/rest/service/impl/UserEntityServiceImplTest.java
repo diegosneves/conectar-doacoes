@@ -302,8 +302,7 @@ class UserEntityServiceImplTest {
                 this.userEntityService.findUserByEmail(email));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(
-                String.format(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE, email)), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE).formatErrorMessage(email), exception.getMessage());
         assertNull(exception.getCause());
 
     }
@@ -311,14 +310,12 @@ class UserEntityServiceImplTest {
     @Test
     void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassIsNull(){
 
-        String email = null;
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () ->
-                this.userEntityService.findUserByEmail(email));
+                this.userEntityService.findUserByEmail(null));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(
-                String.format(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE, email)), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
 
     }
@@ -327,7 +324,9 @@ class UserEntityServiceImplTest {
     void testFindByEmail_WhenEmailIsValid_ShouldReturnUserEntityCreatedResponseObject(){
 
         when(userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.ofNullable(this.userEntity));
+
         UserEntityCreatedResponse userByEmail = userEntityService.findUserByEmail(USER_EMAIL);
+
         assertNotNull(userByEmail);
         assertEquals(USER_ID, userByEmail.getId());
         assertEquals(USERNAME, userByEmail.getUserName());
