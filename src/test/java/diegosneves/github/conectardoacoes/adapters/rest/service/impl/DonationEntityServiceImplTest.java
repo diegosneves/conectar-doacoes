@@ -104,7 +104,7 @@ class DonationEntityServiceImplTest {
         verify(this.repository, never()).save(any(DonationEntity.class));
 
         assertNotNull(exception);
-        assertEquals(DonationEntityFailuresException.ERROR.formatErrorMessage(DonationEntityServiceImpl.INVALID_DONATION_INFO_ERROR), exception.getMessage());
+        assertEquals(exception.getErrorDetails().formatErrorMessage(DonationEntityServiceImpl.INVALID_DONATION_INFO_ERROR), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -119,7 +119,7 @@ class DonationEntityServiceImplTest {
         verify(this.repository, never()).save(any(DonationEntity.class));
 
         assertNotNull(exception);
-        assertEquals(DonationEntityFailuresException.ERROR.formatErrorMessage(DonationEntityServiceImpl.DONATION_CREATION_FAILURE), exception.getMessage());
+        assertEquals(exception.getErrorDetails().formatErrorMessage(DonationEntityServiceImpl.DONATION_CREATION_FAILURE), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(DonationRegisterFailureException.class, exception.getCause().getClass());
     }
@@ -134,7 +134,7 @@ class DonationEntityServiceImplTest {
         verify(this.repository, never()).save(any(DonationEntity.class));
 
         assertNotNull(exception);
-        assertEquals(DonationEntityFailuresException.ERROR.formatErrorMessage(DonationEntityServiceImpl.DONATION_CREATION_FAILURE), exception.getMessage());
+        assertEquals(exception.getErrorDetails().formatErrorMessage(DonationEntityServiceImpl.DONATION_CREATION_FAILURE), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(DonationRegisterFailureException.class, exception.getCause().getClass());
     }

@@ -47,7 +47,7 @@ public class DonationEntityServiceImpl implements DonationEntityService {
 
     @Override
     public DonationEntity convertAndSaveDonationDTO(DonationDTO donationDTO) {
-        ValidationUtils.validateNotNullOrEmpty(donationDTO, INVALID_DONATION_INFO_ERROR, DonationEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(donationDTO, 5, INVALID_DONATION_INFO_ERROR, DonationEntityFailuresException.class);
         return this.convertDonationDTOToDonationEntity(donationDTO);
     }
 
@@ -86,7 +86,7 @@ public class DonationEntityServiceImpl implements DonationEntityService {
             created = DonationFactory.created(donationDTO.getDescription(), donationDTO.getAmount());
         } catch (RuntimeException e) {
             log.error(DONATION_CREATION_ERROR_LOG, e.getMessage(), e);
-            throw new DonationEntityFailuresException(DONATION_CREATION_FAILURE, e);
+            throw new DonationEntityFailuresException(5, DONATION_CREATION_FAILURE, e);
         }
         return created;
     }
