@@ -31,8 +31,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends UserContractRepository, CrudRepository<UserEntity, String> {
 
-    String USER_ID_ERROR_MESSAGE = "Operação não realizada. Um ID de usuário válido deve ser fornecido.";
-    String REQUIRED_USER_ERROR_MESSAGE = "Um usuário válido é requerido para efetuar a persistência.";
+    Integer INVALID_ID_MESSAGE = 19;
+    Integer REQUIRED_USER_ERROR_MESSAGE = 35;
+    Integer INVALID_UUID_FORMAT_MESSAGE = 6;
 
     /**
      * Este método busca um usuário pelo email fornecido e retorna um {@link Optional} de {@link UserEntity}.
@@ -99,11 +100,11 @@ public interface UserRepository extends UserContractRepository, CrudRepository<U
      * @throws UserEntityFailuresException Se o ID do usuário for nulo, vazio ou não for um UUID válido.
      */
     private void validateUserId(String id) throws UserEntityFailuresException {
-        ValidationUtils.validateNotNullOrEmpty(id, USER_ID_ERROR_MESSAGE, UserEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(id, INVALID_ID_MESSAGE, UserEntityFailuresException.class);
         try {
             UuidUtils.isValidUUID(id);
         } catch (UuidUtilsException e) {
-            throw new UserEntityFailuresException(USER_ID_ERROR_MESSAGE, e);
+            throw new UserEntityFailuresException(INVALID_UUID_FORMAT_MESSAGE, id, e);
         }
     }
 
