@@ -2,7 +2,6 @@ package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
 
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
@@ -35,7 +34,7 @@ public class AddressEntityMapper implements MapperStrategy<AddressEntity, Addres
      */
     @Override
     public AddressEntity mapFrom(Address source) {
-        ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(ADDRESS_CLASS.getSimpleName()), AddressEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(source, CLASS_MAPPING_FAILURE, ADDRESS_CLASS.getSimpleName(), AddressEntityFailuresException.class);
         return BuilderMapper.mapTo(AddressEntity.class, source);
     }
 
