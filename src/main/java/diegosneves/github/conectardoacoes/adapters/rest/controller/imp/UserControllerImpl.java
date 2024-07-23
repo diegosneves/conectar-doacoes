@@ -41,7 +41,7 @@ public class UserControllerImpl implements UserController {
 
     @Override
     public ResponseEntity<UserEntityCreatedResponse> findUserByEmail(String email) {
-        UserEntityCreatedResponse userByEmail = service.findUserByEmail(email);
+        UserEntityCreatedResponse userByEmail = this.service.findUserByEmail(email);
         return ResponseEntity.ok(userByEmail);
     }
 }
