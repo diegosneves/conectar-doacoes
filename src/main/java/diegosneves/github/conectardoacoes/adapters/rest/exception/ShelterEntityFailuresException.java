@@ -1,6 +1,5 @@
 package diegosneves.github.conectardoacoes.adapters.rest.exception;
 
-import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
 
@@ -14,9 +13,11 @@ import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
  * @author diegoneves
  * @since 1.0.0
  */
-public class ShelterEntityFailuresException extends RuntimeException {
+public class ShelterEntityFailuresException extends CustomException {
 
-    public static final ExceptionDetails ERROR = ExceptionDetails.SHELTER_OPERATION_FAILURE;
+    public ShelterEntityFailuresException(Integer term) {
+        super(obtainExceptionDetails(term));
+    }
 
     /**
     * Uma exceção que será lançada quando ocorrer uma falha em uma operação relacionada ao {@link ShelterEntity}.
@@ -24,8 +25,12 @@ public class ShelterEntityFailuresException extends RuntimeException {
     *
     * @param message A mensagem específica da exceção.
     */
-    public ShelterEntityFailuresException(String message) {
-        super(ERROR.formatErrorMessage(message));
+    public ShelterEntityFailuresException(Integer term, String message) {
+        super(message, obtainExceptionDetails(term));
+    }
+
+    public ShelterEntityFailuresException(Integer term, Throwable cause) {
+        super(cause, obtainExceptionDetails(term));
     }
 
     /**
@@ -35,8 +40,8 @@ public class ShelterEntityFailuresException extends RuntimeException {
     * @param message A mensagem específica da exceção.
     * @param cause A causa original do erro.
     */
-    public ShelterEntityFailuresException(String message, Throwable cause) {
-        super(ERROR.formatErrorMessage(message), cause);
+    public ShelterEntityFailuresException(Integer term, String message, Throwable cause) {
+        super(message, cause, obtainExceptionDetails(term));
     }
 
 }
