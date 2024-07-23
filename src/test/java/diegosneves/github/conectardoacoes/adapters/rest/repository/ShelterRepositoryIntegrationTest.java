@@ -1,6 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.repository;
 
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.AddressEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.DonationEntityMapper;
@@ -186,7 +186,7 @@ class ShelterRepositoryIntegrationTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.findEntityById(null));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterRepository.INVALID_ID_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterRepository.INVALID_ID_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -200,21 +200,22 @@ class ShelterRepositoryIntegrationTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.findEntityById(""));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterRepository.INVALID_ID_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterRepository.INVALID_ID_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
     @Test
     void shouldThrowExceptionAndHaveCauseWhenFindingEntityByIdGivenInvalidId() {
+        String invalidId = "invalidId";
         persistEntity(new AddressEntityMapper(), this.address);
         persistEntity(new UserEntityMapper(), this.user);
         persistEntity(new DonationEntityMapper(), this.donation);
         persistEntity(new ShelterEntityMapper(), this.shelter);
 
-        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.findEntityById("null"));
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.findEntityById(invalidId));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterRepository.INVALID_ID_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterRepository.INVALID_UUID_FORMAT_MESSAGE).formatErrorMessage(invalidId), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UuidUtilsException.class, exception.getCause().getClass());
     }
@@ -266,7 +267,7 @@ class ShelterRepositoryIntegrationTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.retrieveAll());
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(ShelterEntity.class.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(ShelterEntity.class.getSimpleName()), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(ShelterCreationFailureException.class, exception.getCause().getClass());
     }
@@ -347,7 +348,7 @@ class ShelterRepositoryIntegrationTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.persist(null));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterRepository.SHELTER_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterRepository.SHELTER_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -383,7 +384,7 @@ class ShelterRepositoryIntegrationTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.deleteEntityById(""));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterRepository.INVALID_ID_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterRepository.INVALID_ID_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -393,17 +394,18 @@ class ShelterRepositoryIntegrationTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.deleteEntityById(null));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterRepository.INVALID_ID_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterRepository.INVALID_ID_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
     @Test
     void shouldThrowExceptionWhenIdIsInvalid() {
+        String invalidId = "invalidId";
 
-        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.deleteEntityById("null"));
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.shelterRepository.deleteEntityById(invalidId));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterRepository.INVALID_ID_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterRepository.INVALID_UUID_FORMAT_MESSAGE).formatErrorMessage(invalidId), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UuidUtilsException.class, exception.getCause().getClass());
     }

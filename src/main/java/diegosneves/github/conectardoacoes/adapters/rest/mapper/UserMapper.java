@@ -1,5 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
@@ -54,7 +55,7 @@ public class UserMapper implements MapperStrategy<UserContract, UserEntity> {
                     source.getUserPassword());
         } catch (UserCreationFailureException e) {
             log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
-            throw new UserEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(USER_ENTITY_CLASS.getSimpleName()), e);
+            throw new UserEntityFailuresException(CLASS_MAPPING_FAILURE, USER_ENTITY_CLASS.getSimpleName(), e);
         }
         return mappedUser;
     }
@@ -67,13 +68,13 @@ public class UserMapper implements MapperStrategy<UserContract, UserEntity> {
      * @param <T>  o tipo de dado a ser validado. Como este é um método genérico, ele pode aceitar qualquer tipo de objeto.
      * @param data o dado a ser validado.
      * @throws UserEntityFailuresException se o dado fornecido for nulo ou, no caso de Strings, estiver vazio.
-     *                                     A mensagem da exceção será uma mensagem de erro formatada a partir do {@link MapperFailureException#ERROR} anexada com a
+     *                                     A mensagem da exceção será uma mensagem de erro formatada a partir do {@link ExceptionDetails} anexada com a
      *                                     simplificação do nome da classe {@link UserEntity}.
      * @see ValidationUtils
      * @see MapperFailureException
      */
     private <T> void validateData(T data) throws UserEntityFailuresException {
-        ValidationUtils.validateNotNullOrEmpty(data, MapperFailureException.ERROR.formatErrorMessage(USER_ENTITY_CLASS.getSimpleName()), UserEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(data, CLASS_MAPPING_FAILURE, USER_ENTITY_CLASS.getSimpleName(), UserEntityFailuresException.class);
     }
 
 }

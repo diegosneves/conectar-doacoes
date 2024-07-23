@@ -1,6 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class DonationEntityMapperTest {
@@ -47,7 +49,7 @@ class DonationEntityMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.mapper.mapFrom(null));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(Donation.class.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(Donation.class.getSimpleName()), exception.getMessage());
     }
 
 }

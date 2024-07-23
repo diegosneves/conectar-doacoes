@@ -43,8 +43,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AddressEntityServiceImpl implements AddressEntityService {
 
-    public static final String ADDRESS_CREATION_ERROR = "Erro na criação do endereço. Confirme se todos os campos do endereço estão corretos e tente novamente.";
-    public static final String ERROR_MAPPING_ADDRESS = "Erro durante o mapeamento do endereço para persistência";
+    public static final Integer ADDRESS_CREATION_ERROR = 23;
+    public static final Integer ERROR_MAPPING_ADDRESS = 25;
 
     public static final String CREATION_FAILURE_LOG = "Falha na tentativa de criação de um novo Endereço. Causa do erro: {}";
     public static final String ADDRESS_MAPPING_ERROR_LOG = "Ocorreu uma falha ao tentar mapear o Endereço. Causa do erro: {}";

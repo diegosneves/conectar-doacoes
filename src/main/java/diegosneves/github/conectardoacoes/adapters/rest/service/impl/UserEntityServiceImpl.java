@@ -14,7 +14,6 @@ import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,12 +39,12 @@ import java.util.Optional;
 @Slf4j
 public class UserEntityServiceImpl implements UserEntityService {
 
-    public static final String INVALID_EMAIL_ERROR_MESSAGE = "Não foi informado nenhum email. Por favor, forneça um email válido.";
-    public static final String EMAIL_NOT_FOUND_ERROR_MESSAGE = "Não foi possivel encontrar um usuário com o email [ %s ].";
-    public static final String EMAIL_ALREADY_IN_USE = "Desculpe, o endereço de email fornecido já está associado a uma conta existente. Por favor, tente com um email diferente.";
-    public static final String USER_CREATION_FAILURE_MESSAGE = "Ops! A criação do novo usuário não foi bem-sucedida. Por favor, certifique-se de que seus dados estão corretos e tente novamente.";
-    public static final String USER_PROFILE_VALIDATION_FAILURE = "A validação do Perfil do usuário fornecido falhou.";
-    public static final String MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE = "Por favor, forneça uma requisição de criação de usuário preenchida corretamente.";
+    public static final Integer INVALID_EMAIL_ERROR_MESSAGE = 29;
+    public static final Integer EMAIL_NOT_FOUND_ERROR_MESSAGE = 8;
+    public static final Integer EMAIL_ALREADY_IN_USE = 10;
+    public static final Integer USER_CREATION_FAILURE_MESSAGE = 31;
+    public static final Integer USER_PROFILE_VALIDATION_FAILURE = 33;
+    public static final Integer MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE = 27;
 
     public static final String USER_CREATION_ERROR_LOG = "Ocorreu um erro ao tentar criar um usuário a partir da solicitação de criação UserEntityCreationRequest: {}";
     public static final String EMAIL_DUPLICATE_LOG = "O endereço de email {} já está associado a uma conta existente";
@@ -62,7 +61,7 @@ public class UserEntityServiceImpl implements UserEntityService {
     @Override
     public UserContract searchUserByEmail(String email) throws UserEntityFailuresException {
         ValidationUtils.validateNotNullOrEmpty(email, INVALID_EMAIL_ERROR_MESSAGE, UserEntityFailuresException.class);
-        UserEntity foundUser = this.userRepository.findByEmail(email).orElseThrow(() -> new UserEntityFailuresException(String.format(EMAIL_NOT_FOUND_ERROR_MESSAGE, email)));
+        UserEntity foundUser = this.userRepository.findByEmail(email).orElseThrow(() -> new UserEntityFailuresException(EMAIL_NOT_FOUND_ERROR_MESSAGE, email));
         return BuilderMapper.mapTo(new UserMapper(), foundUser);
     }
 
@@ -76,11 +75,25 @@ public class UserEntityServiceImpl implements UserEntityService {
 
     @Override
     public UserEntityCreatedResponse findUserByEmail(String email) {
+        UserEntity entity = BuilderMapper.mapTo(getUserEntityMapper(), this.searchUserByEmail(email));
+        return BuilderMapper.mapTo(UserEntityCreatedResponse.class, entity);
+    }
 
-        UserEntity foundedUserByEmail = userRepository.findByEmail(email).orElseThrow(
-                () -> new UserEntityFailuresException(String.format(EMAIL_NOT_FOUND_ERROR_MESSAGE, email)));
-
-        return BuilderMapper.mapTo(UserEntityCreatedResponse.class, foundedUserByEmail);
+    /**
+     * Retorna uma nova instância de {@link UserEntityMapper}.
+     *
+     * <p>
+     * Este método cria e retorna uma nova instância de {@link UserEntityMapper}.
+     * É usado para transformar {@link User} em {@link UserEntity} e vice-versa.
+     * A classe {@code UserEntityMapper} é um mapper (conversor) usado no contexto
+     * de persistência de dados da aplicação, convertendo objetos de domínio em entidades
+     * de banco de dados e vice versa em operações de CRUD.
+     *
+     * @return uma nova instância de {@link UserEntityMapper}
+     * @see UserEntityMapper
+     */
+    private static UserEntityMapper getUserEntityMapper() {
+        return new UserEntityMapper();
     }
 
 
@@ -101,7 +114,7 @@ public class UserEntityServiceImpl implements UserEntityService {
      */
     private static UserEntity createUserEntityFromCreationRequest(UserEntityCreationRequest request) {
         UserContract userContract = createUserFromRequest(request);
-        return BuilderMapper.mapTo(new UserEntityMapper(), userContract);
+        return BuilderMapper.mapTo(getUserEntityMapper(), userContract);
     }
 
     /**
@@ -166,7 +179,7 @@ public class UserEntityServiceImpl implements UserEntityService {
         Optional<UserEntity> existingUser = this.userRepository.findByEmail(email);
         if (existingUser.isPresent()) {
             log.error(EMAIL_DUPLICATE_LOG, email);
-            throw new UserEntityFailuresException(EMAIL_ALREADY_IN_USE);
+            throw new UserEntityFailuresException(EMAIL_ALREADY_IN_USE, email);
         }
     }
 }

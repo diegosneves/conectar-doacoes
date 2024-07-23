@@ -101,14 +101,7 @@ public interface UserController {
     @Operation(
             summary = "Encontra um usuário pelo email",
             description = "Este endpoint é responsável por encontrar um Usuário no sistema pelo seu email utilizando os dados recebidos por meio de uma requisição do tipo GET",
-            tags = "Usuários",
-            parameters = {
-                    @Parameter(
-                            name = "Perfil do usuário",
-                            description = "O campo 'userProfile' só permite dois valores possíveis: 'Doador' ou 'Beneficiário'.",
-                            schema = @Schema(implementation = UserProfileType.class)
-                    )
-            }
+            tags = "Usuários"
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -117,7 +110,7 @@ public interface UserController {
                     content = @Content(schema = @Schema(implementation = UserEntityCreatedResponse.class))
             )
     })
-    public ResponseEntity<UserEntityCreatedResponse> findUserByEmail(@PathVariable("email") String email);
+    ResponseEntity<UserEntityCreatedResponse> findUserByEmail(@PathVariable("email") String email);
 
 
 }

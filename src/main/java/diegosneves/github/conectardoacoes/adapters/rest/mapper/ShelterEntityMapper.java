@@ -1,7 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
 
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
@@ -50,7 +49,7 @@ public class ShelterEntityMapper implements MapperStrategy<ShelterEntity, Shelte
      */
     @Override
     public ShelterEntity mapFrom(ShelterContract source) {
-        ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(SHELTER_CLASS.getSimpleName()), ShelterEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(source, CLASS_MAPPING_FAILURE, SHELTER_CLASS.getSimpleName(), ShelterEntityFailuresException.class);
         ShelterEntity shelterEntity;
 
         try {
@@ -63,7 +62,7 @@ public class ShelterEntityMapper implements MapperStrategy<ShelterEntity, Shelte
                     .build();
         } catch (RuntimeException e) {
             log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
-            throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(SHELTER_CLASS.getSimpleName()), e);
+            throw new ShelterEntityFailuresException(CLASS_MAPPING_FAILURE, SHELTER_CLASS.getSimpleName(), e);
         }
         return shelterEntity;
     }

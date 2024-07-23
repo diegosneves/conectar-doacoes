@@ -38,8 +38,9 @@ import java.util.Optional;
 public interface ShelterRepository extends ShelterContractRepository, CrudRepository<ShelterEntity, String> {
 
 
-    String INVALID_ID_MESSAGE = "Deve ser fornecido um ID válido!";
-    String SHELTER_ERROR_MESSAGE = "Um objeto Abrigo válido deve ser fornecido para persistência!";
+    Integer INVALID_ID_MESSAGE = 19;
+    Integer SHELTER_ERROR_MESSAGE = 21;
+    Integer INVALID_UUID_FORMAT_MESSAGE = 6;
 
     /**
      * Retorna uma nova instância do {@link MapperStrategy} para mapear uma entidade {@link ShelterEntity} para a classe de domínio {@link Shelter}.
@@ -69,7 +70,7 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
         try {
             UuidUtils.isValidUUID(id);
         } catch (UuidUtilsException e) {
-            throw new ShelterEntityFailuresException(INVALID_ID_MESSAGE, e);
+            throw new ShelterEntityFailuresException(INVALID_UUID_FORMAT_MESSAGE, id, e);
         }
     }
 
