@@ -1,8 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.exception;
 
 
-import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
-
 /**
  * {@link MapperFailureException} é uma classe de exceção personalizada. Ela tem como finalidade gerenciar
  * falhas ocorridas durante o processo de mapeamento, e proporcionar mensagens de erro mais detalhadas.
@@ -13,9 +11,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
  * @author diegoneves
  * @since 1.0.0
  */
-public class MapperFailureException extends RuntimeException {
-
-    public static final ExceptionDetails ERROR = ExceptionDetails.CLASS_MAPPING_FAILURE;
+public class MapperFailureException extends CustomException {
 
     /**
      * Esta é uma classe de exceção personalizada usada para gerenciar e fornecer mensagens mais
@@ -24,8 +20,8 @@ public class MapperFailureException extends RuntimeException {
      * @param message A mensagem específica da exceção.
      * @param e       A exceção generica causada durante o mapeamento.
      */
-    public MapperFailureException(String message, Throwable e) {
-        super(ERROR.formatErrorMessage(message), e);
+    public MapperFailureException(Integer term, String message, Throwable e) {
+        super(message, e, obtainExceptionDetails(term));
     }
 
 }

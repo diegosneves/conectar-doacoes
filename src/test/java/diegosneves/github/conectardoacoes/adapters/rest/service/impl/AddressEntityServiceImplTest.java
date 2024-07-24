@@ -1,6 +1,7 @@
 package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.AddressEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
@@ -104,7 +105,7 @@ class AddressEntityServiceImplTest {
             verify(this.repository, never()).save(any(AddressEntity.class));
 
             assertNotNull(exception);
-            assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ERROR_MAPPING_ADDRESS), exception.getMessage());
+            assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ERROR_MAPPING_ADDRESS).formatErrorMessage(), exception.getMessage());
             assertNotNull(exception.getCause());
             assertEquals(IllegalArgumentException.class, exception.getCause().getClass());
         }
@@ -119,7 +120,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -132,7 +133,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -147,7 +148,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -161,7 +162,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -176,7 +177,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -190,7 +191,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -205,7 +206,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -219,7 +220,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -234,7 +235,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -248,7 +249,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -263,7 +264,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -277,7 +278,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }
@@ -292,7 +293,7 @@ class AddressEntityServiceImplTest {
         verify(this.repository, never()).save(any(AddressEntity.class));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
     }

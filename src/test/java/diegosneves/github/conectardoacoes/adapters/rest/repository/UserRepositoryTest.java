@@ -1,7 +1,7 @@
 package diegosneves.github.conectardoacoes.adapters.rest.repository;
 
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.enums.UserProfileType;
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.MapperStrategy;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.UserEntityMapper;
@@ -114,10 +114,11 @@ class UserRepositoryTest {
 
     @Test
     void verifyExceptionThrownWhenInvalidIdIsProviedToFindEntityById() {
-        UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.findEntityById("USER_ID"));
+        String invalidId = "invalidId";
+        UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.findEntityById(invalidId));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserRepository.USER_ID_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserRepository.INVALID_UUID_FORMAT_MESSAGE).formatErrorMessage(invalidId), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UuidUtilsException.class, exception.getCause().getClass());
     }
@@ -128,7 +129,7 @@ class UserRepositoryTest {
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.findEntityById(value));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserRepository.USER_ID_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserRepository.INVALID_ID_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -137,7 +138,7 @@ class UserRepositoryTest {
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.findEntityById(null));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserRepository.USER_ID_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserRepository.INVALID_ID_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -181,7 +182,7 @@ class UserRepositoryTest {
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.retrieveAll());
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(UserEntity.class.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(UserEntity.class.getSimpleName()), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UserCreationFailureException.class, exception.getCause().getClass());
     }
@@ -203,7 +204,7 @@ class UserRepositoryTest {
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.persist(null));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserRepository.REQUIRED_USER_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserRepository.REQUIRED_USER_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -233,7 +234,7 @@ class UserRepositoryTest {
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.deleteEntityById(null));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserRepository.USER_ID_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserRepository.INVALID_ID_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -244,17 +245,18 @@ class UserRepositoryTest {
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.deleteEntityById(id));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserRepository.USER_ID_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserRepository.INVALID_ID_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
     @Test
     void shouldThrowExceptionWhenDeletingEntityWithNullIdAndCatchUuidException() {
+        String invalidId = "777e9377";
 
-        UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.deleteEntityById("null"));
+        UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.repository.deleteEntityById(invalidId));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserRepository.USER_ID_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserRepository.INVALID_UUID_FORMAT_MESSAGE).formatErrorMessage(invalidId), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UuidUtilsException.class, exception.getCause().getClass());
     }

@@ -34,7 +34,8 @@ public class DonationEntityMapper implements MapperStrategy<DonationEntity, Dona
     public DonationEntity mapFrom(Donation source) {
         ValidationUtils.validateNotNullOrEmpty(
                 source,
-                MapperFailureException.ERROR.formatErrorMessage(DONATION_CLASS.getSimpleName()),
+                CLASS_MAPPING_FAILURE,
+                DONATION_CLASS.getSimpleName(),
                 ShelterEntityFailuresException.class);
         return BuilderMapper.mapTo(DonationEntity.class, source);
     }

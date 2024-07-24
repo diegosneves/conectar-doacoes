@@ -1,5 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.enums.UserProfileType;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
@@ -23,7 +24,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -93,7 +98,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, times(1)).findByEmail(anyString());
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(String.format(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE, email)), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE).formatErrorMessage(email), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -107,7 +112,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).findByEmail(anyString());
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -120,7 +125,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).findByEmail(anyString());
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -159,7 +164,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.EMAIL_ALREADY_IN_USE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.EMAIL_ALREADY_IN_USE).formatErrorMessage(USER_EMAIL), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -174,7 +179,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -190,7 +195,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -205,7 +210,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.USER_CREATION_FAILURE_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.USER_CREATION_FAILURE_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UserCreationFailureException.class, exception.getCause().getClass());
     }
@@ -222,7 +227,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.USER_CREATION_FAILURE_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.USER_CREATION_FAILURE_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UserCreationFailureException.class, exception.getCause().getClass());
     }
@@ -238,7 +243,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.USER_CREATION_FAILURE_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.USER_CREATION_FAILURE_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UserCreationFailureException.class, exception.getCause().getClass());
     }
@@ -255,7 +260,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.USER_CREATION_FAILURE_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.USER_CREATION_FAILURE_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(UserCreationFailureException.class, exception.getCause().getClass());
     }
@@ -271,7 +276,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.USER_PROFILE_VALIDATION_FAILURE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.USER_PROFILE_VALIDATION_FAILURE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -284,7 +289,7 @@ class UserEntityServiceImplTest {
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(UserEntityServiceImpl.MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -297,8 +302,7 @@ class UserEntityServiceImplTest {
                 this.userEntityService.findUserByEmail(email));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(
-                String.format(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE, email)), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE).formatErrorMessage(email), exception.getMessage());
         assertNull(exception.getCause());
 
     }
@@ -306,14 +310,12 @@ class UserEntityServiceImplTest {
     @Test
     void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassIsNull(){
 
-        String email = null;
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () ->
-                this.userEntityService.findUserByEmail(email));
+                this.userEntityService.findUserByEmail(null));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(
-                String.format(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE, email)), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
 
     }
@@ -322,7 +324,9 @@ class UserEntityServiceImplTest {
     void testFindByEmail_WhenEmailIsValid_ShouldReturnUserEntityCreatedResponseObject(){
 
         when(userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.ofNullable(this.userEntity));
+
         UserEntityCreatedResponse userByEmail = userEntityService.findUserByEmail(USER_EMAIL);
+
         assertNotNull(userByEmail);
         assertEquals(USER_ID, userByEmail.getId());
         assertEquals(USERNAME, userByEmail.getUserName());

@@ -1,7 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;
@@ -44,13 +43,13 @@ public class AddressMapper implements MapperStrategy<Address, AddressEntity> {
      */
     @Override
     public Address mapFrom(AddressEntity source) {
-        ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(ADDRESS_ENTITY_TYPE.getSimpleName()), AddressEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(source, CLASS_MAPPING_FAILURE, ADDRESS_ENTITY_TYPE.getSimpleName(), AddressEntityFailuresException.class);
         Address address;
         try {
             address = new Address(source.getId(), source.getStreet(), source.getNumber(), source.getNeighborhood(), source.getCity(), source.getState(), source.getZip());
         } catch (AddressCreationFailureException e) {
             log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
-            throw new AddressEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(ADDRESS_ENTITY_TYPE.getSimpleName()), e);
+            throw new AddressEntityFailuresException(CLASS_MAPPING_FAILURE, ADDRESS_ENTITY_TYPE.getSimpleName(), e);
         }
         return address;
     }
