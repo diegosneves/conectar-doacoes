@@ -36,6 +36,7 @@ import org.mockito.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -434,5 +435,82 @@ class ShelterEntityServiceImplTest {
         assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
+
+    @Test
+    void testFindShelterByResponsibleEmail_WhenEmailIsValid_ShouldReturnShelterInformationResponse() {
+
+        DonationEntity firstDonation = new DonationEntity();
+        firstDonation.setDescription(DESCRIPTION);
+        firstDonation.setAmount(AMOUNT);
+
+        DonationEntity secondDonation = new DonationEntity();
+        secondDonation.setDescription("Arroz");
+        secondDonation.setAmount(2);
+
+        List<DonationEntity> donations = Arrays.asList(firstDonation, secondDonation);
+
+        UserEntity responsibleUser = new UserEntity();
+        responsibleUser.setUserName(USER_NAME);
+        responsibleUser.setEmail(USER_EMAIL);
+
+        ShelterEntity shelterEntity = new ShelterEntity();
+        shelterEntity.setShelterName(SHELTER_NAME);
+        shelterEntity.setResponsibleUser(responsibleUser);
+        shelterEntity.setDonations(donations);
+
+        when(repository.findShelterEntitiesByResponsibleUser_Email(anyString()))
+                .thenReturn(Optional.of(shelterEntity));
+
+        ShelterInformationResponse shelterByUserResponsibleEmail = service.findShelterByUserResponsibleEmail(USER_EMAIL);
+
+
+        assertNotNull(shelterByUserResponsibleEmail);
+        assertEquals(SHELTER_NAME, shelterByUserResponsibleEmail.getShelterName());
+        assertEquals(USER_NAME, shelterByUserResponsibleEmail.getResponsibleName());
+        assertEquals(USER_EMAIL, shelterByUserResponsibleEmail.getResponsibleEmail());
+
+        List<DonationDTO> expectedDonations = donations.stream()
+                .map(d -> new DonationDTO(d.getDescription(), d.getAmount()))
+                .toList();
+
+        List<DonationDTO> actualDonations = shelterByUserResponsibleEmail.getDonationDTOS();
+
+        assertEquals(expectedDonations.size(), actualDonations.size());
+
+        for (int i = 0; i < expectedDonations.size(); i++) {
+            assertEquals(expectedDonations.get(i).getDescription(), actualDonations.get(i).getDescription());
+            assertEquals(expectedDonations.get(i).getAmount(), actualDonations.get(i).getAmount());
+        }
+    }
+
+    @Test
+    void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassedIsNotFound(){
+
+        String email = "email@teste.com";
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () ->
+                this.service.findShelterByUserResponsibleEmail(email));
+
+        assertNotNull(exception);
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)
+                        .formatErrorMessage(), exception.getMessage());
+        assertNull(exception.getCause());
+
+    }
+
+    @Test
+    void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassIsNull(){
+
+        String email = null;
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () ->
+                this.service.findShelterByUserResponsibleEmail(email));
+
+        assertNotNull(exception);
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)
+                .formatErrorMessage(), exception.getMessage());
+        assertNull(exception.getCause());
+
+    }
+
 
 }
