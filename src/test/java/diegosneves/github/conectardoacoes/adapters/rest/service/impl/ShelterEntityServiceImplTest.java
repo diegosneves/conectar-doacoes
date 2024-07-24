@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static diegosneves.github.conectardoacoes.adapters.rest.service.impl.ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -431,7 +432,7 @@ class ShelterEntityServiceImplTest {
         verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER), exception.getMessage());
+        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER), exception.getMessage());
         assertNull(exception.getCause());
     }
 
@@ -494,7 +495,7 @@ class ShelterEntityServiceImplTest {
 
         assertNotNull(exception);
         assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(
-                String.format(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)), exception.getMessage());
+                String.format(RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)), exception.getMessage());
 
         assertNull(exception.getCause());
 
@@ -510,7 +511,7 @@ class ShelterEntityServiceImplTest {
 
         assertNotNull(exception);
         assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(
-                String.format(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)), exception.getMessage());
+                String.format(RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)), exception.getMessage());
 
         assertNull(exception.getCause());
 
