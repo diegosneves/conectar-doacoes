@@ -36,7 +36,6 @@ import org.mockito.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -443,11 +442,7 @@ class ShelterEntityServiceImplTest {
         firstDonation.setDescription(DESCRIPTION);
         firstDonation.setAmount(AMOUNT);
 
-        DonationEntity secondDonation = new DonationEntity();
-        secondDonation.setDescription("Arroz");
-        secondDonation.setAmount(2);
-
-        List<DonationEntity> donations = Arrays.asList(firstDonation, secondDonation);
+        List<DonationEntity> donations = List.of(firstDonation);
 
         UserEntity responsibleUser = new UserEntity();
         responsibleUser.setUserName(USER_NAME);
@@ -463,28 +458,22 @@ class ShelterEntityServiceImplTest {
 
         ShelterInformationResponse shelterByUserResponsibleEmail = service.findShelterByUserResponsibleEmail(USER_EMAIL);
 
+        verify(repository, times(1)).findShelterEntitiesByResponsibleUser_Email(anyString());
 
         assertNotNull(shelterByUserResponsibleEmail);
+        assertNotNull(shelterByUserResponsibleEmail.getDonationDTOS());
+
         assertEquals(SHELTER_NAME, shelterByUserResponsibleEmail.getShelterName());
         assertEquals(USER_NAME, shelterByUserResponsibleEmail.getResponsibleName());
         assertEquals(USER_EMAIL, shelterByUserResponsibleEmail.getResponsibleEmail());
+        assertEquals(1, shelterByUserResponsibleEmail.getDonationDTOS().size());
+        assertEquals(DESCRIPTION, shelterByUserResponsibleEmail.getDonationDTOS().get(0).getDescription());
+        assertEquals(AMOUNT, shelterByUserResponsibleEmail.getDonationDTOS().get(0).getAmount());
 
-        List<DonationDTO> expectedDonations = donations.stream()
-                .map(d -> new DonationDTO(d.getDescription(), d.getAmount()))
-                .toList();
-
-        List<DonationDTO> actualDonations = shelterByUserResponsibleEmail.getDonationDTOS();
-
-        assertEquals(expectedDonations.size(), actualDonations.size());
-
-        for (int i = 0; i < expectedDonations.size(); i++) {
-            assertEquals(expectedDonations.get(i).getDescription(), actualDonations.get(i).getDescription());
-            assertEquals(expectedDonations.get(i).getAmount(), actualDonations.get(i).getAmount());
-        }
     }
 
     @Test
-    void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassedIsNotFound(){
+    void shouldThrowShelterEntityFailuresExceptionWhenTheEmailPassedIsNotFound(){
 
         String email = "email@teste.com";
 
@@ -499,11 +488,10 @@ class ShelterEntityServiceImplTest {
     }
 
     @Test
-    void shouldThrowUserEntityFailuresExceptionWhenTheEmailPassIsNull(){
+    void shouldThrowShelterEntityFailuresExceptionWhenTheEmailPassIsNull(){
 
-        String email = null;
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () ->
-                this.service.findShelterByUserResponsibleEmail(email));
+                this.service.findShelterByUserResponsibleEmail(null));
 
         assertNotNull(exception);
         assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)
