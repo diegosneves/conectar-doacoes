@@ -5,7 +5,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityF
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
 
 /**
@@ -45,13 +45,30 @@ public interface ShelterEntityService {
      * <p> Depois de encontrar o abrigo, o método procede à conversão dos {@link DonationDTO} em {@link DonationEntity}
      * que são então adicionados à lista de doações do abrigo. Finalmente, o abrigo atualizado é salvo no repositório.
      *
-     * <p> O método retorna um {@link ReceiveDonationResponse} que contém informações detalhadas sobre as doações
+     * <p> O método retorna um {@link ShelterInformationResponse} que contém informações detalhadas sobre as doações
      * recebidas, incluindo o nome do abrigo, o nome e e-mail do responsável e a lista de doações recebidas.
      *
      * @param request um objeto {@link ReceiveDonationRequest} que contém as informações da doação.
-     * @return um objeto {@link ReceiveDonationResponse} que contém informações das doações recebidas,
+     * @return um objeto {@link ShelterInformationResponse} que contém informações das doações recebidas,
      * ou null se o abrigo correspondente ao e-mail fornecido não for encontrado.
      */
-    ReceiveDonationResponse receiveDonation(ReceiveDonationRequest request);
+    ShelterInformationResponse receiveDonation(ReceiveDonationRequest request);
+
+    /**
+     * Método para encontrar um abrigo pelo email do responsável.
+     * <p>
+     * Este método aceita um objeto {@link String}, que contém o e-mail do responsável pelo abrigo,
+     * com base no e-mail fornecido, e retorna uma resposta detalhando as informações deste abrigo.
+     * <p>
+     * O método retorna um {@link ShelterInformationResponse} que contém informações detalhadas sobre o abrigo
+     * e as doações recebidas, incluindo o nome do abrigo, o nome e e-mail do responsável, e a lista de doações recebidas.
+     *
+     * @return um objeto {@link ShelterInformationResponse} que contém informações das doações recebidas.
+     *
+     * @throws ShelterEntityFailuresException se o usuário informado não for do tipo beneficiário ou não estiver cadastrado na base de dados.
+     * A mensagem de erro será incluída na exceção.
+     */
+
+    ShelterInformationResponse findShelterByUserResponsibleEmail(String userResponsibleEmail);
 
 }

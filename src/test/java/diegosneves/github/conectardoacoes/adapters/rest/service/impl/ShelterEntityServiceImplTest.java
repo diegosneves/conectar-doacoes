@@ -15,8 +15,8 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ReceiveDonationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.UserEntityService;
@@ -32,30 +32,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockedStatic;
+import org.mockito.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 class ShelterEntityServiceImplTest {
@@ -340,7 +326,7 @@ class ShelterEntityServiceImplTest {
         when(this.repository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL)).thenReturn(Optional.of(shelterEntity));
         when(this.repository.save(any(ShelterEntity.class))).thenReturn(shelterEntity);
 
-        ReceiveDonationResponse response = this.service.receiveDonation(donationRequest);
+        ShelterInformationResponse response = this.service.receiveDonation(donationRequest);
 
         verify(this.donationEntityService, times(1)).convertAndSaveDonationDTO(any(DonationDTO.class));
         verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
@@ -448,5 +434,71 @@ class ShelterEntityServiceImplTest {
         assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER).formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
     }
+
+    @Test
+    void testFindShelterByResponsibleEmail_WhenEmailIsValid_ShouldReturnShelterInformationResponse() {
+
+        DonationEntity firstDonation = new DonationEntity();
+        firstDonation.setDescription(DESCRIPTION);
+        firstDonation.setAmount(AMOUNT);
+
+        List<DonationEntity> donations = List.of(firstDonation);
+
+        UserEntity responsibleUser = new UserEntity();
+        responsibleUser.setUserName(USER_NAME);
+        responsibleUser.setEmail(USER_EMAIL);
+
+        ShelterEntity shelterEntity = new ShelterEntity();
+        shelterEntity.setShelterName(SHELTER_NAME);
+        shelterEntity.setResponsibleUser(responsibleUser);
+        shelterEntity.setDonations(donations);
+
+        when(repository.findShelterEntitiesByResponsibleUser_Email(anyString()))
+                .thenReturn(Optional.of(shelterEntity));
+
+        ShelterInformationResponse shelterByUserResponsibleEmail = service.findShelterByUserResponsibleEmail(USER_EMAIL);
+
+        verify(repository, times(1)).findShelterEntitiesByResponsibleUser_Email(anyString());
+
+        assertNotNull(shelterByUserResponsibleEmail);
+        assertNotNull(shelterByUserResponsibleEmail.getDonationDTOS());
+
+        assertEquals(SHELTER_NAME, shelterByUserResponsibleEmail.getShelterName());
+        assertEquals(USER_NAME, shelterByUserResponsibleEmail.getResponsibleName());
+        assertEquals(USER_EMAIL, shelterByUserResponsibleEmail.getResponsibleEmail());
+        assertEquals(1, shelterByUserResponsibleEmail.getDonationDTOS().size());
+        assertEquals(DESCRIPTION, shelterByUserResponsibleEmail.getDonationDTOS().get(0).getDescription());
+        assertEquals(AMOUNT, shelterByUserResponsibleEmail.getDonationDTOS().get(0).getAmount());
+
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenTheEmailPassedIsNotFound(){
+
+        String email = "email@teste.com";
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () ->
+                this.service.findShelterByUserResponsibleEmail(email));
+
+        assertNotNull(exception);
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)
+                        .formatErrorMessage(), exception.getMessage());
+        assertNull(exception.getCause());
+
+    }
+
+    @Test
+    void shouldThrowShelterEntityFailuresExceptionWhenTheEmailPassIsNull(){
+
+        ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () ->
+                this.service.findShelterByUserResponsibleEmail(null));
+
+        assertNotNull(exception);
+        assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)
+                .formatErrorMessage(), exception.getMessage());
+        assertNull(exception.getCause());
+
+    }
+
 
 }
