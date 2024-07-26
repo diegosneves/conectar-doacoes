@@ -16,7 +16,6 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,8 +38,9 @@ import java.util.Optional;
 public interface ShelterRepository extends ShelterContractRepository, CrudRepository<ShelterEntity, String> {
 
 
-    String INVALID_ID_MESSAGE = "Deve ser fornecido um ID válido!";
-    String SHELTER_ERROR_MESSAGE = "Um objeto Abrigo válido deve ser fornecido para persistência!";
+    Integer INVALID_ID_MESSAGE = 19;
+    Integer SHELTER_ERROR_MESSAGE = 21;
+    Integer INVALID_UUID_FORMAT_MESSAGE = 6;
 
     /**
      * Retorna uma nova instância do {@link MapperStrategy} para mapear uma entidade {@link ShelterEntity} para a classe de domínio {@link Shelter}.
@@ -70,7 +70,7 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
         try {
             UuidUtils.isValidUUID(id);
         } catch (UuidUtilsException e) {
-            throw new ShelterEntityFailuresException(INVALID_ID_MESSAGE, e);
+            throw new ShelterEntityFailuresException(INVALID_UUID_FORMAT_MESSAGE, id, e);
         }
     }
 
@@ -201,4 +201,15 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
         }
         this.delete(targetEntity);
     }
+
+    /**
+     * Este método é usado para buscar uma entidade {@link Shelter} pelo e-mail do usuário responsável.
+     *
+     * @param responsibleUserEmail O e-mail do usuário responsável. Este é um parâmetro de entrada usado para filtrar a busca pela entidade Shelter. Deve ser um e-mail válido em formato de string.
+     * @return Um objeto {@link Optional} que inclui a instância de {@link ShelterEntity} se o usuário responsável com o e-mail fornecido for encontrado.
+     * Se não houver uma correspondência para o e-mail fornecido, um {@link Optional} vazio será retornado. Note que {@link Optional} é usado para evitar erros de {@link NullPointerException}.
+     * @throws IllegalArgumentException se o parâmetro de e-mail fornecido for nulo, vazio ou não em um formato de e-mail válido.
+     */
+    Optional<ShelterEntity> findShelterEntitiesByResponsibleUser_Email(String responsibleUserEmail);
+
 }

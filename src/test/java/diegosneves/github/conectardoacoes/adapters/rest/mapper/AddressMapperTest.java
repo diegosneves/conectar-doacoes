@@ -1,7 +1,7 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class AddressMapperTest {
@@ -60,7 +62,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -70,7 +72,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -80,7 +82,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -90,7 +92,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -100,7 +102,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -110,7 +112,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -120,7 +122,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -130,7 +132,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -140,7 +142,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -150,7 +152,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -160,7 +162,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -170,7 +172,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -180,7 +182,7 @@ class AddressMapperTest {
         AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.addressMapper.mapFrom(this.addressEntity));
 
         assertNotNull(exception);
-        assertEquals(AddressEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(AddressMapper.ADDRESS_ENTITY_TYPE.getSimpleName()), exception.getMessage());
     }
 
 }

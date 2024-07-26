@@ -11,6 +11,8 @@ package diegosneves.github.conectardoacoes.adapters.rest.mapper;
  */
 public interface MapperStrategy<T, E> {
 
+    Integer CLASS_MAPPING_FAILURE = 4;
+
     /**
      * Executa a estratégia para realizar uma operação de mapeamento entre objetos.
      *

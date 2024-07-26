@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -73,5 +75,42 @@ public interface UserController {
             )
     })
     ResponseEntity<UserEntityCreatedResponse> createUser(@RequestBody UserEntityCreationRequest request);
+
+    /**
+     * Este endpoint pertence à aplicação "Usuários".
+     * Responsável por encontrar usuários no sistema por meio do email registrado.
+     * <p>
+     *  Aceita uma requisição GET com o objeto {@link String} email como Path variable na url da requisição que contém o email do usuário registrado.
+     * </p>
+     *
+     *
+     * <p>
+     * Após o usuário ser encontrado, retorna um objeto {@link ResponseEntity} que encapsula os detalhes da criação do usuário na forma de {@link UserEntityCreatedResponse}.
+     * <p>
+     * O objeto {@link UserEntityCreatedResponse} é um DTO que contém os detalhes relevantes sobre o usuário que foi criado.
+     * Isso inclui o ID de usuário único gerado pelo sistema, o nome de usuário escolhido, o endereço de e-mail fornecido e o tipo de perfil associado a este usuário.
+     *
+     * <p>
+     * Em qualquer caso de violação das validações de integridade do modelo da entidade, um erro HTTP apropriado é retornado junto com os detalhes do erro.
+     *                Este parâmetro deve estar presente na url da solicitação GET e é deserializado para o tipo {@link UserEntityCreatedResponse}.
+     * @return {@link ResponseEntity} que encapsula o {@link UserEntityCreatedResponse} se o email do usuário for encontrado com sucesso.
+     * @see UserEntityCreatedResponse
+     */
+
+    @GetMapping(value = "/findByEmail/{email}")
+    @Operation(
+            summary = "Encontra um usuário pelo email",
+            description = "Este endpoint é responsável por encontrar um Usuário no sistema pelo seu email utilizando os dados recebidos por meio de uma requisição do tipo GET",
+            tags = "Usuários"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Usuário recuperado com sucesso!",
+                    content = @Content(schema = @Schema(implementation = UserEntityCreatedResponse.class))
+            )
+    })
+    ResponseEntity<UserEntityCreatedResponse> findUserByEmail(@PathVariable("email") String email);
+
 
 }

@@ -51,4 +51,21 @@ public interface UserEntityService {
      */
     UserEntityCreatedResponse createUserEntity(UserEntityCreationRequest request) throws UserEntityFailuresException;
 
+    /**
+     * Este método é usado para obter uma response de usuário pelo seu email.
+
+     * <p>
+     * Se o email for válido, o método tentará encontrar uma entidade de usuário que corresponda ao email
+     * usando a interface {@link UserRepository}.
+     * Se não for encontrada uma entidade de usuário para o email fornecido,
+     * o método lançará uma exceção {@link UserEntityFailuresException} com uma mensagem de erro apropriada.
+     * <p></p>
+     *
+     * @param email A string que representa o email do usuário que será procurado no repositório.
+     * @return Um objeto {@link UserEntityCreatedResponse}  de um usuário correspondente ao email fornecido.
+     * @throws UserEntityFailuresException Se nenhuma entidade de usuário puder ser encontrada para o email fornecido
+     *                                     ou o valor do email for nulo ou vazio.
+     */
+    UserEntityCreatedResponse findUserByEmail(String email);
+
 }

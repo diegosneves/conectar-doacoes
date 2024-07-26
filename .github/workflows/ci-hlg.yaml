@@ -78,7 +78,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: diegoneves/conectar-doacoes:${{ env.BRANCH_NAME }}
+          tags: diegoneves/conectar-doacoes:${{ env.BRANCH_NAME }}-beta
           build-args: |
             DB_NAME=${{ env.DB_NAME }}
             DB_PASSWORD=${{ env.DB_PASSWORD }}

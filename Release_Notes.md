@@ -1066,3 +1066,78 @@ Este commit adicionou a interface `UserController` e sua implementação na clas
 **Nota:** A ênfase deste commit é adicionar a funcionalidade de criação de usuário, gerenciando as requisições HTTP e as respostas correspondentes, facilitando a interação de clientes com a criação de novos usuários.
 
 ---
+
+
+---
+
+## **_Release 1.1.0_**
+
+**Commit** 0ce258ee8e9583aa5415cdb39ce45f53416eb354
+
+Este commit remove inicializações desnecessárias de objetos em várias classes de mapeamento. Configurações de exclusão de cobertura de código foram incluídas e propriedades para Sonar e JaCoCo foram adicionadas ao `pom.xml` para melhor gerenciamento e análise de qualidade de código.
+
+**Arquivos alterados:** `.gitignore`, `pom.xml`, `UserEntityFailuresException.java`, `BuilderMapper.java`, `DonationMapper.java`, `ShelterEntityMapper.java`, `ShelterMapper.java`, `UserEntityMapper.java`, `UserMapper.java`, `AddressRepository.java`, `DonationRepository.java`.
+
+**Alterações:**
+
+- Adicionado `qodana.sarif.json` ao arquivo `.gitignore`.
+- Configurações para Sonar e JaCoCo foram adicionadas ao `pom.xml`, junto com as configurações de exclusão de cobertura de código.
+- Removida inicialização desnecessária de objetos nas classes `BuilderMapper`, `DonationMapper`, `ShelterEntityMapper`, `ShelterMapper`, `UserEntityMapper` e `UserMapper`.
+- Corrigida formatação no Javadoc das classes `AddressRepository` e `DonationRepository`.
+
+**Nota:** Essa commit é focada em refatorar o mapeamento de objetos e melhorar a configuração do JaCoCo e Sonar para análise de qualidade de código.
+
+---
+
+**Commit** 09b07b152878ed06ce99a36fe1a93fc2c82ff070:
+
+Este commit adiciona a ferramenta de análise de código Qodana ao projeto. Adicionamos o arquivo de configuração `qodana.yaml`, que define várias inspeções a serem realizadas e o arquivo `.github/workflows/qodana_code_quality.yml` para executar a verificação de qualidade de código usando GitHub Actions.
+
+**Arquivos Alterados:** `.github/workflows/qodana_code_quality.yml`, `qodana.yaml`
+
+**Alterações:**
+
+- No arquivo `.github/workflows/qodana_code_quality.yml`, foram definidas as ações de verificação de qualidade de código a serem executadas quando um pull request é criado ou quando qualquer push é feito para os branches `main`, `develop`, e `release/*`.
+- O arquivo `qodana.yaml` foi adicionado. Nele, foi definida a inspeção do perfil `qodana.starter` para a análise do código, e foram ativas as inspeções `JvmCoverageInspection`, `UNUSED_IMPORT` e `JavadocDeclaration`.
+
+**Nota:** A principal ênfase desta confirmação é adicionar a análise de código Qodana ao projeto para melhorar a qualidade do código.
+
+---
+
+**Commit** c4595afab45cff5afe3bf2242d9d0956ed87847a:
+
+Este commit efetua uma refatoração em diversos testes, aprimorando a maneira como algumas exceções são verificadas. Foi adicionado o método ParameterizedTest para tornar os testes mais dinâmicos e menos repetitivos. Além disso, foram removidas várias importações e códigos que não estavam sendo utilizados, visando manter o código limpo e de fácil manutenção. Outra mudança significativa foi a atualização no método "validateNotNullOrEmpty" na classe "ValidationUtils", no qual foi utilizado o recurso instanceof com padrão de variável do Java 17+.
+
+**Arquivos Alterados:** `ShelterEntityMapper.java`, `ShelterEntityServiceImpl.java`, `ValidationUtils.java`, `ShelterControllerImplTest.java`, `UserMapperTest.java`, `ShelterEntityServiceImplTest.java`, `UserTest.java`
+
+**Alterações:**
+
+- Em `ShelterEntityMapper.java`, a instância de `User` foi removida do cast de `source.getUser()`, tornando a chamada direta.
+- Em `ShelterEntityServiceImpl.java`, foi removida a dependência do `DonationRepository`, pois não estava sendo utilizada.
+- Em `ValidationUtils.java`, o recurso instanceof com padrão de variável do Java 17+ foi implementado no método `validateNotNullOrEmpty`.
+- Em `ShelterControllerImplTest.java`, foram removidas diversas importações que não estavam sendo utilizadas.
+- Em `UserMapperTest.java`, implementou-se o método ParameterizedTest para otimizar os testes relacionados à `UserEntity`.
+- Em `ShelterEntityServiceImplTest.java`, a entidade `Donation` foi removida, pois não estava sendo utilizada.
+- Em `UserTest.java`, foi removido o setUp que não estava sendo utilizado.
+
+**Nota:** A principal ênfase deste commit é melhorar a qualidade dos testes, torná-los menos repetitivos e manter o código limpo e de fácil manutenção.
+
+---
+
+**Commit** 3c5cfeb9842012e6320f3cc8ca6f4c5c31646f0b:
+
+Este commit remove algumas importações desnecessárias nos arquivos de teste `UserMapperTest.java` e `ShelterEntityServiceImplTest.java`, visando tornar o código mais limpo e eficiente. As importações removidas incluem `UuidUtilsException` e `Donation`, as quais não estavam sendo utilizadas.
+
+**Arquivos Alterados:** `UserMapperTest.java`, `ShelterEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Em `UserMapperTest.java`: 
+   - Foi removida a importação do `UuidUtilsException` e `UuidUtils`, pois não estavam sendo usados nesses testes. 
+
+- Em `ShelterEntityServiceImplTest.java`: 
+   - Foi removida a importação da entidade `Donation`, pois a mesma não estava sendo utilizada no teste.
+
+**Nota:** O principal foco deste commit é melhorar a limpeza do código removendo importações desnecessárias nos testes.
+
+---

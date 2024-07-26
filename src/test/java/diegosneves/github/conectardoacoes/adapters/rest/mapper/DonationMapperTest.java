@@ -1,6 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
@@ -12,7 +12,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class DonationMapperTest {
@@ -64,7 +66,7 @@ class DonationMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.donationMapper.mapFrom(null));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(DonationEntity.class.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -74,7 +76,7 @@ class DonationMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.donationMapper.mapFrom(this.donationEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(DonationEntity.class.getSimpleName()), exception.getMessage());
         assertEquals(DonationRegisterFailureException.class, exception.getCause().getClass());
     }
 
@@ -86,7 +88,7 @@ class DonationMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.donationMapper.mapFrom(this.donationEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(DonationEntity.class.getSimpleName()), exception.getMessage());
         assertEquals(DonationRegisterFailureException.class, exception.getCause().getClass());
     }
 
@@ -97,7 +99,7 @@ class DonationMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.donationMapper.mapFrom(this.donationEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(DonationEntity.class.getSimpleName()), exception.getMessage());
         assertEquals(DonationRegisterFailureException.class, exception.getCause().getClass());
     }
 
@@ -108,7 +110,7 @@ class DonationMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.donationMapper.mapFrom(this.donationEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(DonationEntity.class.getSimpleName()), exception.getMessage());
         assertEquals(DonationRegisterFailureException.class, exception.getCause().getClass());
     }
 
@@ -119,7 +121,7 @@ class DonationMapperTest {
         ShelterEntityFailuresException exception = assertThrows(ShelterEntityFailuresException.class, () -> this.donationMapper.mapFrom(this.donationEntity));
 
         assertNotNull(exception);
-        assertEquals(ShelterEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(DonationEntity.class.getSimpleName()), exception.getMessage());
         assertEquals(DonationRegisterFailureException.class, exception.getCause().getClass());
     }
 

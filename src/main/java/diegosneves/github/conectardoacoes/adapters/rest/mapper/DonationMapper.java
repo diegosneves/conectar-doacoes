@@ -1,11 +1,11 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.exception.DonationRegisterFailureException;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Esta classe implementa a interface {@link MapperStrategy} para mapear a entidade {@link DonationEntity} para o objeto de domínio {@link Donation}.
@@ -20,7 +20,10 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
  * @see DonationEntity
  * @see MapperStrategy
  */
+@Slf4j
 public class DonationMapper implements MapperStrategy<Donation, DonationEntity> {
+
+    public static final String MAPPING_ERROR_LOG = "Ocorreu um erro durante o processo de mapeamento do objeto DonationEntity para Donation. Detalhes do erro: {}";
 
     /**
      * Mapeia a entidade de doação do banco de dados para uma instância do objeto de domínio doação.
@@ -48,14 +51,16 @@ public class DonationMapper implements MapperStrategy<Donation, DonationEntity> 
     public Donation mapFrom(DonationEntity source) {
         ValidationUtils.validateNotNullOrEmpty(
                 source,
-                MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName()),
+                CLASS_MAPPING_FAILURE,
+                DonationEntity.class.getSimpleName(),
                 ShelterEntityFailuresException.class);
 
-        Donation donation = null;
+        Donation donation;
         try {
             donation = new Donation(source.getId(), source.getDescription(), source.getAmount());
         } catch (DonationRegisterFailureException e) {
-            throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName()), e);
+            log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
+            throw new ShelterEntityFailuresException(CLASS_MAPPING_FAILURE, DonationEntity.class.getSimpleName(), e);
         }
         return donation;
     }

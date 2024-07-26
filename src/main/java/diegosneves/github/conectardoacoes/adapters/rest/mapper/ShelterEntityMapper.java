@@ -1,7 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
 
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
@@ -10,9 +9,9 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
-import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +28,11 @@ import java.util.List;
  * @author diegoneves
  * @since 1.0.0
  */
+@Slf4j
 public class ShelterEntityMapper implements MapperStrategy<ShelterEntity, ShelterContract> {
 
     public static final Class<ShelterContract> SHELTER_CLASS = ShelterContract.class;
+    public static final String MAPPING_ERROR_LOG = "Ocorreu um erro durante o processo de mapeamento do objeto ShelterContract para ShelterEntity. Detalhes do erro: {}";
 
     /**
      * Método que converte a fonte, um objeto da classe {@link ShelterContract}, para um novo objeto da classe {@link ShelterEntity}.
@@ -48,19 +49,20 @@ public class ShelterEntityMapper implements MapperStrategy<ShelterEntity, Shelte
      */
     @Override
     public ShelterEntity mapFrom(ShelterContract source) {
-        ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(SHELTER_CLASS.getSimpleName()), ShelterEntityFailuresException.class);
-        ShelterEntity shelterEntity = null;
+        ValidationUtils.validateNotNullOrEmpty(source, CLASS_MAPPING_FAILURE, SHELTER_CLASS.getSimpleName(), ShelterEntityFailuresException.class);
+        ShelterEntity shelterEntity;
 
         try {
             shelterEntity = ShelterEntity.builder()
                     .id(source.getId())
                     .shelterName(source.getShelterName())
                     .address(new AddressEntityMapper().mapFrom(source.getAddress()))
-                    .responsibleUser(new UserEntityMapper().mapFrom((User) source.getUser()))
+                    .responsibleUser(new UserEntityMapper().mapFrom(source.getUser()))
                     .donations(getDonationEntities(source.getDonations()))
                     .build();
         } catch (RuntimeException e) {
-            throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(SHELTER_CLASS.getSimpleName()), e);
+            log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
+            throw new ShelterEntityFailuresException(CLASS_MAPPING_FAILURE, SHELTER_CLASS.getSimpleName(), e);
         }
         return shelterEntity;
     }

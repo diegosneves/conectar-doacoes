@@ -1,11 +1,11 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A classe {@link AddressMapper} implementa a interface de estratégia de Mapeamento {@link MapperStrategy}
@@ -22,10 +22,12 @@ import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
  * @author diegoneves
  * @since 1.0.0
  */
+@Slf4j
 public class AddressMapper implements MapperStrategy<Address, AddressEntity> {
 
 
     public static final Class<AddressEntity> ADDRESS_ENTITY_TYPE = AddressEntity.class;
+    public static final String MAPPING_ERROR_LOG = "Ocorreu um erro durante o processo de mapeamento do objeto AddressEntity para Address. Detalhes do erro: {}";
 
     /**
      * Realiza a conversão de um objeto {@link AddressEntity} para um objeto {@link Address}.
@@ -41,12 +43,13 @@ public class AddressMapper implements MapperStrategy<Address, AddressEntity> {
      */
     @Override
     public Address mapFrom(AddressEntity source) {
-        ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(ADDRESS_ENTITY_TYPE.getSimpleName()), AddressEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(source, CLASS_MAPPING_FAILURE, ADDRESS_ENTITY_TYPE.getSimpleName(), AddressEntityFailuresException.class);
         Address address;
         try {
             address = new Address(source.getId(), source.getStreet(), source.getNumber(), source.getNeighborhood(), source.getCity(), source.getState(), source.getZip());
         } catch (AddressCreationFailureException e) {
-            throw new AddressEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(ADDRESS_ENTITY_TYPE.getSimpleName()), e);
+            log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
+            throw new AddressEntityFailuresException(CLASS_MAPPING_FAILURE, ADDRESS_ENTITY_TYPE.getSimpleName(), e);
         }
         return address;
     }
