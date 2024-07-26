@@ -1,7 +1,5 @@
 package diegosneves.github.conectardoacoes.adapters.rest.exception;
 
-import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
-
 /**
  * Exceção personalizada que é lançada quando não é definido um construtor padrão.
  *
@@ -9,17 +7,15 @@ import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
  * @author diegoneves
  * @since 1.0.0
  */
-public class ConstructorDefaultUndefinedException extends RuntimeException {
-
-    public static final ExceptionDetails ERROR = ExceptionDetails.CONSTRUCTOR_DEFAULT_UNDEFINED;
+public class ConstructorDefaultUndefinedException extends CustomException {
 
     /**
      * Construtor da exceção {@link ConstructorDefaultUndefinedException}.
      *
      * @param message a mensagem de detalhe da exceção.
      */
-    public ConstructorDefaultUndefinedException(String message) {
-        super(ERROR.formatErrorMessage(message));
+    public ConstructorDefaultUndefinedException(Integer term, String message) {
+        super(message, obtainExceptionDetails(term));
     }
 
     /**
@@ -28,8 +24,8 @@ public class ConstructorDefaultUndefinedException extends RuntimeException {
      * @param message a mensagem de detalhe da exceção.
      * @param e a causa da exceção.
      */
-    public ConstructorDefaultUndefinedException(String message, Throwable e) {
-        super(ERROR.formatErrorMessage(message), e);
+    public ConstructorDefaultUndefinedException(Integer term, String message, Throwable e) {
+        super(message, e, obtainExceptionDetails(term));
     }
 
 }

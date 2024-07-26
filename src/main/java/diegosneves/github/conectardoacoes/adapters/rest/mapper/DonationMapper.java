@@ -1,6 +1,5 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
@@ -52,7 +51,8 @@ public class DonationMapper implements MapperStrategy<Donation, DonationEntity> 
     public Donation mapFrom(DonationEntity source) {
         ValidationUtils.validateNotNullOrEmpty(
                 source,
-                MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName()),
+                CLASS_MAPPING_FAILURE,
+                DonationEntity.class.getSimpleName(),
                 ShelterEntityFailuresException.class);
 
         Donation donation;
@@ -60,7 +60,7 @@ public class DonationMapper implements MapperStrategy<Donation, DonationEntity> 
             donation = new Donation(source.getId(), source.getDescription(), source.getAmount());
         } catch (DonationRegisterFailureException e) {
             log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
-            throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(DonationEntity.class.getSimpleName()), e);
+            throw new ShelterEntityFailuresException(CLASS_MAPPING_FAILURE, DonationEntity.class.getSimpleName(), e);
         }
         return donation;
     }

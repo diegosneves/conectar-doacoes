@@ -57,7 +57,7 @@ Este projeto utiliza Docker para garantir que a aplicação seja construída e e
 ```yaml
 services:
   database:
-    image: "mysql:latest"
+    image: "mysql:8.2.0-oraclelinux8"
     container_name: conectar_doacoes_mysql_db
     environment:
       - MYSQL_DATABASE=${DB_NAME}

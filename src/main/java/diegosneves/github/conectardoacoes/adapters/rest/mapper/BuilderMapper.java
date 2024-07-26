@@ -1,5 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ConstructorDefaultUndefinedException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
@@ -20,6 +21,7 @@ public class BuilderMapper {
 
     public static final String SOURCE_OBJECT_NULL_ERROR_MESSAGE = "O objeto que está sendo mapeado não deve ser nulo. Verifique se o objeto foi corretamente inicializado.";
     public static final String STRATEGY_CANNOT_BE_NULL = "O objeto MapperStrategy não pode ser nulo";
+    public static final Integer CLASS_MAPPING_FAILURE = 4;
 
     private BuilderMapper() {
     }
@@ -68,13 +70,13 @@ public class BuilderMapper {
                 mappedInstance = (T) nextConstructor.newInstance(paramValues);
 
             } else {
-                log.error(ConstructorDefaultUndefinedException.ERROR.formatErrorMessage(destinationClass.getName()));
-                throw new ConstructorDefaultUndefinedException(destinationClass.getName());
+                log.error(ExceptionDetails.getExceptionDetails(CLASS_MAPPING_FAILURE).formatErrorMessage(destinationClass.getName()));
+                throw new ConstructorDefaultUndefinedException(CLASS_MAPPING_FAILURE, destinationClass.getName());
             }
 
         } catch (Exception e) {
-            log.error(MapperFailureException.ERROR.formatErrorMessage(destinationClass.getName()), e);
-            throw new MapperFailureException(destinationClass.getName(), e);
+            log.error(ExceptionDetails.getExceptionDetails(CLASS_MAPPING_FAILURE).formatErrorMessage(destinationClass.getName()), e);
+            throw new MapperFailureException(CLASS_MAPPING_FAILURE, destinationClass.getName(), e);
         }
 
         for (Field field : destinationFields) {

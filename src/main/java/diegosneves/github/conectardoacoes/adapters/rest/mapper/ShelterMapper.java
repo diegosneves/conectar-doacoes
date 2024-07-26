@@ -1,6 +1,5 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
-import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
@@ -57,7 +56,7 @@ public class ShelterMapper implements MapperStrategy<ShelterContract, ShelterEnt
      */
     @Override
     public ShelterContract mapFrom(ShelterEntity source) {
-        ValidationUtils.validateNotNullOrEmpty(source, MapperFailureException.ERROR.formatErrorMessage(SHELTER_ENTITY_CLASS.getSimpleName()), ShelterEntityFailuresException.class);
+        ValidationUtils.validateNotNullOrEmpty(source, CLASS_MAPPING_FAILURE, SHELTER_ENTITY_CLASS.getSimpleName(), ShelterEntityFailuresException.class);
 
         Shelter constructedShelter;
         try {
@@ -68,7 +67,7 @@ public class ShelterMapper implements MapperStrategy<ShelterContract, ShelterEnt
                     new UserMapper().mapFrom(source.getResponsibleUser()));
         } catch (RuntimeException e) {
             log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
-            throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(SHELTER_ENTITY_CLASS.getSimpleName()), e);
+            throw new ShelterEntityFailuresException(CLASS_MAPPING_FAILURE, SHELTER_ENTITY_CLASS.getSimpleName(), e);
         }
         this.mappedDonationsToShelter(source, constructedShelter);
         return constructedShelter;
@@ -101,7 +100,7 @@ public class ShelterMapper implements MapperStrategy<ShelterContract, ShelterEnt
                 constructedShelter.addDonation(new Donation(donationEntity.getId(), donationEntity.getDescription(), donationEntity.getAmount()));
             } catch (DonationRegisterFailureException e) {
                 log.error(MAPPING_ERROR_LOG, e.getMessage(), e);
-                throw new ShelterEntityFailuresException(MapperFailureException.ERROR.formatErrorMessage(Donation.class.getSimpleName()), e);
+                throw new ShelterEntityFailuresException(CLASS_MAPPING_FAILURE, Donation.class.getSimpleName(), e);
             }
         }
     }

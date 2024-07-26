@@ -1,5 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.mapper;
 
+import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.enums.UserProfileType;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ConstructorDefaultUndefinedException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.MapperFailureException;
@@ -55,7 +56,7 @@ class UserEntityMapperTest {
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityMapper.mapFrom(this.user));
 
         assertNotNull(exception);
-        assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(UserEntityMapper.USER_CLASS.getSimpleName())), exception.getMessage());
+        assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(UserEntityMapper.USER_CLASS.getSimpleName()), exception.getMessage());
     }
 
     @Test
@@ -68,7 +69,7 @@ class UserEntityMapperTest {
             UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityMapper.mapFrom(this.user));
 
             assertNotNull(exception);
-            assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(UserEntityMapper.USER_CLASS.getSimpleName())), exception.getMessage());
+            assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(UserEntityMapper.USER_CLASS.getSimpleName()), exception.getMessage());
             assertEquals(ConstructorDefaultUndefinedException.class, exception.getCause().getClass());
         }
     }
@@ -83,7 +84,7 @@ class UserEntityMapperTest {
             UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityMapper.mapFrom(this.user));
 
             assertNotNull(exception);
-            assertEquals(UserEntityFailuresException.ERROR.formatErrorMessage(MapperFailureException.ERROR.formatErrorMessage(UserEntityMapper.USER_CLASS.getSimpleName())), exception.getMessage());
+            assertEquals(ExceptionDetails.getExceptionDetails(MapperStrategy.CLASS_MAPPING_FAILURE).formatErrorMessage(UserEntityMapper.USER_CLASS.getSimpleName()), exception.getMessage());
             assertEquals(MapperFailureException.class, exception.getCause().getClass());
         }
     }
