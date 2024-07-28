@@ -3,7 +3,6 @@ package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.UserEntityMapper;
-import diegosneves.github.conectardoacoes.adapters.rest.mapper.UserMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.UserRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.UserEntityCreationRequest;
@@ -12,13 +11,17 @@ import diegosneves.github.conectardoacoes.adapters.rest.service.UserEntityServic
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
-import diegosneves.github.conectardoacoes.core.domain.user.factory.UserFactory;
+import diegosneves.github.conectardoacoes.core.service.UserService;
+import diegosneves.github.conectardoacoes.core.service.UserServiceContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 /**
  * A classe {@link UserEntityServiceImpl} implementa a interface {@link UserEntityService} e
@@ -52,17 +55,22 @@ public class UserEntityServiceImpl implements UserEntityService {
 
 
     private final UserRepository userRepository;
+    private final UserServiceContract userServiceContract;
 
     @Autowired
     public UserEntityServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
+        this.userServiceContract = new UserService(this.userRepository);
     }
 
     @Override
     public UserContract searchUserByEmail(String email) throws UserEntityFailuresException {
         ValidationUtils.validateNotNullOrEmpty(email, INVALID_EMAIL_ERROR_MESSAGE, UserEntityFailuresException.class);
-        UserEntity foundUser = this.userRepository.findByEmail(email).orElseThrow(() -> new UserEntityFailuresException(EMAIL_NOT_FOUND_ERROR_MESSAGE, email));
-        return BuilderMapper.mapTo(new UserMapper(), foundUser);
+        UserContract foundUser = this.userServiceContract.getUserByEmail(email);
+        if (isNull(foundUser)) {
+            throw new UserEntityFailuresException(EMAIL_NOT_FOUND_ERROR_MESSAGE, email);
+        }
+        return foundUser;
     }
 
     @Override
@@ -70,7 +78,7 @@ public class UserEntityServiceImpl implements UserEntityService {
         ValidationUtils.validateNotNullOrEmpty(request, MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE, UserEntityFailuresException.class);
         this.checkIfEmailAlreadyInUse(request.getEmail());
         UserEntity newUser = createUserEntityFromCreationRequest(request);
-        return BuilderMapper.mapTo(UserEntityCreatedResponse.class, this.userRepository.save(newUser));
+        return BuilderMapper.mapTo(UserEntityCreatedResponse.class, newUser);
     }
 
     @Override
@@ -112,7 +120,7 @@ public class UserEntityServiceImpl implements UserEntityService {
      * @see UserEntity
      * @see UserEntityMapper
      */
-    private static UserEntity createUserEntityFromCreationRequest(UserEntityCreationRequest request) {
+    private UserEntity createUserEntityFromCreationRequest(UserEntityCreationRequest request) {
         UserContract userContract = createUserFromRequest(request);
         return BuilderMapper.mapTo(getUserEntityMapper(), userContract);
     }
@@ -130,7 +138,7 @@ public class UserEntityServiceImpl implements UserEntityService {
      * O método lança a exceção {@link UserEntityFailuresException} nas seguintes situações:
      * <ul>
      * <li>Quando o campo userProfile da solicitação de criação de entidade de usuário está nulo.</li>
-     * <li> Quando ocorrer uma exceção {@link RuntimeException} durante a criação do usuário no método {@link UserFactory#create}.</li>
+     * <li> Quando ocorrer uma exceção {@link RuntimeException} durante a criação do usuário no método {@link UserServiceContract#createUser(String, String, UserProfile, String)}.</li>
      * </ul>
      * Nesses casos, uma {@link UserEntityFailuresException} será lançada com uma mensagem de erro adequada.
      * </p>
@@ -142,12 +150,12 @@ public class UserEntityServiceImpl implements UserEntityService {
      * @see UserContract
      * @see UserEntityCreationRequest
      */
-    private static UserContract createUserFromRequest(UserEntityCreationRequest request) {
+    private UserContract createUserFromRequest(UserEntityCreationRequest request) {
         ValidationUtils.validateNotNullOrEmpty(request.getUserProfile(), USER_PROFILE_VALIDATION_FAILURE, UserEntityFailuresException.class);
         UserProfile userProfile = Enum.valueOf(UserProfile.class, request.getUserProfile().name());
         UserContract createdUser;
         try {
-            createdUser = UserFactory.create(request.getUserName(), request.getEmail(), userProfile, request.getUserPassword());
+            createdUser = this.userServiceContract.createUser(request.getUserName(), request.getEmail(), userProfile, request.getUserPassword());
             log.info(USER_CREATION_SUCCESS_LOG, createdUser.getId(), createdUser.getEmail());
         } catch (RuntimeException e) {
             log.error(USER_CREATION_ERROR_LOG, e.getMessage(), e);
@@ -176,8 +184,8 @@ public class UserEntityServiceImpl implements UserEntityService {
      */
     private void checkIfEmailAlreadyInUse(String email) {
         ValidationUtils.validateNotNullOrEmpty(email, INVALID_EMAIL_ERROR_MESSAGE, UserEntityFailuresException.class);
-        Optional<UserEntity> existingUser = this.userRepository.findByEmail(email);
-        if (existingUser.isPresent()) {
+        UserContract existingUser = this.userServiceContract.getUserByEmail(email);
+        if (nonNull(existingUser)) {
             log.error(EMAIL_DUPLICATE_LOG, email);
             throw new UserEntityFailuresException(EMAIL_ALREADY_IN_USE, email);
         }

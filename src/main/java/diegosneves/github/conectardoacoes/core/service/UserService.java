@@ -32,6 +32,7 @@ public class UserService implements UserServiceContract {
     public static final String INVALID_NEW_PASSWORD_MESSAGE = "A nova senha informada é invalida";
     public static final String USER_NOT_FOUND_MESSAGE = "Usuário não encontrado";
     public static final String USERNAME_INVALID_ERROR_MESSAGE = "O novo nome de usuário informado é inválido.";
+    public static final String EMAIL_REQUIRED_ERROR_MESSAGE = "É necessário fornecer um email válido";
 
     private final UserContractRepository userContractRepository;
 
@@ -63,7 +64,7 @@ public class UserService implements UserServiceContract {
      * @throws UserServiceFailureException se o ID do usuário for nulo ou em branco.
      */
     @Override
-    public UserContract getUser(String userId) {
+    public UserContract getUserById(String userId) {
         validateUserId(userId);
         return this.userContractRepository.findEntityById(userId);
     }
@@ -108,7 +109,7 @@ public class UserService implements UserServiceContract {
     @Override
     public void changePassword(String userId, String newPassword) {
         ValidationUtils.validateNotNullOrEmpty(newPassword, INVALID_NEW_PASSWORD_MESSAGE, UserServiceFailureException.class);
-        UserContract retrievedUser = this.getUser(userId);
+        UserContract retrievedUser = this.getUserById(userId);
         ValidationUtils.validateNotNullOrEmpty(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
         retrievedUser.changeUserPassword(newPassword);
         this.userContractRepository.persist(retrievedUser);
@@ -124,9 +125,15 @@ public class UserService implements UserServiceContract {
     @Override
     public void changeUserName(String userId, String newUsername) {
         ValidationUtils.validateNotNullOrEmpty(newUsername, USERNAME_INVALID_ERROR_MESSAGE, UserServiceFailureException.class);
-        UserContract retrievedUser = this.getUser(userId);
+        UserContract retrievedUser = this.getUserById(userId);
         ValidationUtils.validateNotNullOrEmpty(retrievedUser, USER_NOT_FOUND_MESSAGE, UserServiceFailureException.class);
         retrievedUser.changeUserName(newUsername);
         this.userContractRepository.persist(retrievedUser);
+    }
+
+    @Override
+    public UserContract getUserByEmail(String userEmail) {
+        ValidationUtils.validateNotNullOrEmpty(userEmail, EMAIL_REQUIRED_ERROR_MESSAGE, UserServiceFailureException.class);
+        return this.userContractRepository.findUserEntityByUserEmail(userEmail);
     }
 }

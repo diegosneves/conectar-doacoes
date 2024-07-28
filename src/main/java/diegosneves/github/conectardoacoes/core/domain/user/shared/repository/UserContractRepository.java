@@ -22,10 +22,32 @@ import diegosneves.github.conectardoacoes.core.repository.RepositoryContract;
  * <p> Caso as operações de pesquisa não possam encontrar usuário(s) correspondente, eles retornarão um valor nulo ou uma lista vazia.
  *
  * @author diegoneves
- * @since 1.0.0
  * @see RepositoryContract
  * @see UserContract
+ * @since 1.0.0
  */
 public interface UserContractRepository extends RepositoryContract<UserContract> {
+
+    /**
+     * Este método está na interface {@link UserContractRepository} e ele retorna um objeto {@link UserContract}
+     * ao procurar um usuário pelo seu endereço de email.
+     *
+     * <p> Em situações reais, esta função pode ser usada para recuperar as informações de um usuário para fins de login ou registro.
+     * Quando estamos implementando um processo de login, podemos procurar o usuário que se encontra com o endereço de email fornecido.
+     * Se pudermos encontrar tal usuário, recuperamos os detalhes do usuário e o habilitamos para o próximo passo no processo de login. </p>
+     *
+     * <p> Mesmo caso para o processo de registro, procuramos o email e vemos se algum usuário já está registrado com o endereço de email fornecido.
+     * Se for esse o caso, não permitimos mais o processo de registro e sugerimos que o usuário faça login em vez de se registrar. </p>
+     *
+     * <p> Para implementar essa função na classe de repositório real, podemos usar como base um método de busca por email fornecido pelo Spring Data JPA.</p>
+     *
+     * @param userEmail endereço de email do usuário como uma String. Utilizado para procurar um usuário no banco de dados.
+     *                  Ele não pode ser nulo ou vazio.
+     * @return um {@link UserContract} que representa as informações de usuário correspondentes ao email.
+     * Se nenhum usuário for encontrado com o email fornecido, retornará um valor nulo.
+     * @see UserContract
+     * @see RepositoryContract
+     */
+    UserContract findUserEntityByUserEmail(String userEmail);
 
 }
