@@ -147,4 +147,9 @@ public interface UserRepository extends UserContractRepository, CrudRepository<U
         this.delete(targetEntity);
     }
 
+    @Override
+    default UserContract findUserEntityByUserEmail(String userEmail) {
+        Optional<UserEntity> foundUserEntity = this.findByEmail(userEmail);
+        return foundUserEntity.map(userEntity -> this.getUserMapper().mapFrom(userEntity)).orElse(null);
+    }
 }
