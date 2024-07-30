@@ -324,13 +324,13 @@ class ShelterEntityServiceImplTest {
 
         when(this.donationEntityService.convertAndSaveDonationDTO(any(DonationDTO.class))).thenReturn(this.donation);
         when(this.repository.findShelterEntitiesByResponsibleUser_Email(USER_EMAIL)).thenReturn(Optional.of(shelterEntity));
-        when(this.repository.save(any(ShelterEntity.class))).thenReturn(shelterEntity);
+        when(this.repository.findEntityById(SHELTER_ID)).thenReturn(this.shelter);
 
         ShelterInformationResponse response = this.service.receiveDonation(donationRequest);
 
         verify(this.donationEntityService, times(1)).convertAndSaveDonationDTO(any(DonationDTO.class));
         verify(this.repository, times(1)).findShelterEntitiesByResponsibleUser_Email(USER_EMAIL);
-        verify(this.repository, times(1)).save(any(ShelterEntity.class));
+        verify(this.repository, times(1)).persist(any(ShelterContract.class));
 
         assertNotNull(response);
         assertEquals(SHELTER_NAME, response.getShelterName());
@@ -353,6 +353,7 @@ class ShelterEntityServiceImplTest {
 
     private static ShelterEntity generateShelterEntity() {
         return ShelterEntity.builder()
+                .id(SHELTER_ID)
                 .shelterName(SHELTER_NAME)
                 .responsibleUser(generateUserEntity())
                 .donations(new ArrayList<>())

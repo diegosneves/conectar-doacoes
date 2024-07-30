@@ -7,8 +7,9 @@ import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
-import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterInformationResponseFromShelterEntityMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.DonationMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterInformationResponseFromShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
@@ -16,8 +17,8 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.ShelterEntityService;
@@ -25,6 +26,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.service.UserEntityServic
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
+import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.domain.shelter.factory.ShelterFactory;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
@@ -35,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -297,8 +298,8 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     public ShelterInformationResponse receiveDonation(ReceiveDonationRequest request) {
         ValidationUtils.validateNotNullOrEmpty(request, DONATION_VALIDATION_ERROR, ShelterEntityFailuresException.class);
         ShelterEntity currentShelter = this.getCurrentShelterByResponsibleEmail(request.getResponsibleEmail());
-        this.appendDonationsToShelter(request, currentShelter);
-        return BuilderMapper.mapTo(getShelterInformationResponseMapper(), this.repository.save(currentShelter));
+        ShelterContract currentShelterContract = this.shelterServiceContract.getShelter(currentShelter.getId());
+        return BuilderMapper.mapTo(getShelterInformationResponseMapper(), this.appendDonationsToShelter(request, currentShelterContract));
     }
 
     @Override
@@ -331,42 +332,27 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
      * <p>
      * Em seguida, cada doação na lista de doações fornecida é convertida e salva usando o método
      * {@link DonationEntityService#convertAndSaveDonationDTO(DonationDTO) convertAndSaveDonationDTO} do serviço {@code donationEntityService}.
-     * <p>
-     * A lista de doações existente da instituição é então obtida, e a lista de doações convertidas
-     * é combinada com a lista existente usando o método {@link #mergeDonationLists}.
-     * <p>
-     * Finalmente, a lista de doações combinadas é salva na entidade instituição.
      *
      * @param request        a solicitação de receber doação que contém a lista de doações a serem anexadas.
      *                       Não deve ser nula e deve conter pelo menos uma doação.
      * @param currentShelter a entidade de instituição cujas doações serão anexadas. Não deve ser nula.
      * @throws ShelterEntityFailuresException se a lista de doações na requisição for nula ou vazia.
      */
-    private void appendDonationsToShelter(ReceiveDonationRequest request, ShelterEntity currentShelter) {
+    private ShelterEntity appendDonationsToShelter(ReceiveDonationRequest request, ShelterContract currentShelter) {
         ValidationUtils.ensureListIsNotNullOrEmpty(request.getDonationDTOS(), EMPTY_DONATION_LIST, ShelterEntityFailuresException.class);
         List<DonationEntity> convertedDonations = request.getDonationDTOS().stream().map(this.donationEntityService::convertAndSaveDonationDTO).toList();
-        List<DonationEntity> appendedDonations = this.mergeDonationLists(currentShelter.getDonations(), convertedDonations);
-        currentShelter.setDonations(appendedDonations);
+        List<Donation> receivedDonation = ValidationUtils.ensureListIsNotNull(convertedDonations).stream().map(donationMapperInstance()::mapFrom).toList();
+        receivedDonation.forEach(donation -> this.shelterServiceContract.addDonation(currentShelter.getId(), donation));
+        return BuilderMapper.mapTo(getShelterEntityMapper(), this.shelterServiceContract.getShelter(currentShelter.getId()));
     }
 
     /**
-     * Este método serve para unir duas listas de objetos {@link DonationEntity}, retornando uma nova lista que é a combinação das duas listas.
-     * <p>
-     * A operação de combinação adiciona todos os elementos da segunda lista para a primeira. Antes de adicionar os elementos,
-     * o método garante que as listas não sejam nulas, usando o utilitário {@link ValidationUtils#ensureListIsNotNull(List) ensureListIsNotNull}.
-     * Se alguma das listas for nula, {@link ValidationUtils#ensureListIsNotNull(List) ensureListIsNotNull} garante que essa lista seja transformada em uma lista vazia,
-     * evitando assim um {@link NullPointerException}.
-     * <p>
-     * Note que a combinação de doações não muda as listas originais de doações. Em vez disso, uma nova lista é criada e retornada.
+     * Este é um método privado estático que instancia e retorna uma nova instância de {@link DonationMapper}.
      *
-     * @param donations          Lista original de objetos {@link DonationEntity}.
-     * @param convertedDonations Lista de objetos {@link DonationEntity} a serem adicionados à lista original de doações.
-     * @return Uma nova lista contendo a combinação de ambas as listas de doações. Esta lista pode ser vazia, mas nunca será nula.
+     * @return Retorna uma nova instância do objeto {@link DonationMapper}.
      */
-    private List<DonationEntity> mergeDonationLists(List<DonationEntity> donations, List<DonationEntity> convertedDonations) {
-        List<DonationEntity> combinedDonations = new ArrayList<>(ValidationUtils.ensureListIsNotNull(donations));
-        combinedDonations.addAll(ValidationUtils.ensureListIsNotNull(convertedDonations));
-        return combinedDonations;
+    private static DonationMapper donationMapperInstance() {
+        return new DonationMapper();
     }
 
     /**
