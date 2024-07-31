@@ -7,8 +7,9 @@ import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.UserEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
-import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterInformationResponseFromShelterEntityMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.DonationMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterEntityMapper;
+import diegosneves.github.conectardoacoes.adapters.rest.mapper.ShelterInformationResponseFromShelterEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.ShelterEntity;
@@ -16,8 +17,8 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.ShelterRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.ShelterEntityService;
@@ -25,17 +26,21 @@ import diegosneves.github.conectardoacoes.adapters.rest.service.UserEntityServic
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.Shelter;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.ShelterContract;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
+import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.domain.shelter.factory.ShelterFactory;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
+import diegosneves.github.conectardoacoes.core.service.ShelterService;
+import diegosneves.github.conectardoacoes.core.service.ShelterServiceContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.Objects.nonNull;
 
 /**
  * Esta classe é responsável pela implementação dos métodos necessários para gerenciar abrigos no sistema.
@@ -56,16 +61,17 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     public static final Integer DONATION_VALIDATION_ERROR = 13;
     public static final Integer EMPTY_DONATION_LIST = 15;
     public static final Integer RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER = 17;
+    public static final Integer CLASS_MAPPING_FAILURE = 4;
 
     public static final String SHELTER_CREATION_SUCCESS_LOG = "Novo abrigo criado com sucesso. Detalhes: ID do Abrigo: {} - Email do Usuário Responsável: {}";
-    public static final String SHELTER_CREATION_FAILURE_LOG = "Falha ao instanciar e retornar um Abrigo. Causa: {}";
+    public static final String SHELTER_CREATION_FAILURE_LOG = "Falha ao instanciar e persistir um Abrigo. Causa: {}";
     public static final String RESPONSIBLE_USER_VERIFICATION_ERROR_LOG = "Falha na verificação do usuário responsável. A causa do erro é: {}";
     public static final String USER_NOT_FOUND_ERROR_LOG = "Não foi possível localizar o usuário com o email: {}. Motivo: {}";
-    public static final String SHELTER_REGISTRATION_SUCCESS_LOG = "O Abrigo foi registrado e armazenado com sucesso. ID do Abrigo: {} - Email do usuário responsável {}";
-    public static final String SHELTER_DATA_MAPPING_SAVING_FAILED_LOG = "Falha ao mapear e salvar os dados do Abrigo: {}";
+    public static final String SHELTER_DATA_MAPPING_FAILED_LOG = "Não foi possível mapear os dados do Abrigo. Motivo: {}";
 
 
     private final ShelterRepository repository;
+    private final ShelterServiceContract shelterServiceContract;
     private final AddressEntityService addressService;
     private final UserEntityService userEntityService;
     private final DonationEntityService donationEntityService;
@@ -73,6 +79,7 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     @Autowired
     public ShelterEntityServiceImpl(ShelterRepository repository, AddressEntityService addressService, UserEntityService userEntityService, DonationEntityService donationEntityService) {
         this.repository = repository;
+        this.shelterServiceContract = new ShelterService(this.repository);
         this.addressService = addressService;
         this.userEntityService = userEntityService;
         this.donationEntityService = donationEntityService;
@@ -102,8 +109,44 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     public ShelterCreatedResponse createShelter(ShelterCreationRequest request) {
         ValidationUtils.validateNotNullOrEmpty(request, REQUEST_VALIDATION_ERROR_MESSAGE, ShelterEntityFailuresException.class);
         ShelterContract shelterContract = this.createAndReturnShelterInstance(request);
-        ShelterEntity shelterEntity = this.mapShelterAndSaveToRepository(shelterContract);
+        ShelterEntity shelterEntity = convertShelterContractToEntity(shelterContract);
         return constructShelterCreatedResponse(shelterEntity);
+    }
+
+    /**
+     * Converte um contrato de abrigo ({@link ShelterContract}) para a entidade de abrigo ({@link ShelterEntity}).
+     * Este método tenta mapear um objeto {@link ShelterContract} para um objeto {@link ShelterEntity} através do uso de uma função de mapeamento predefinida.
+     *
+     * @param shelterContract o contrato de abrigo a ser convertido para uma entidade de abrigo. Não deve ser null.
+     * @return A entidade de abrigo ({@link ShelterEntity}) obtida depois de mapear o objeto {@link ShelterContract} fornecido.
+     * @throws ShelterEntityFailuresException se ocorrer um erro durante o mapeamento do contrato de abrigo para a entidade de abrigo.
+     *                                        Isso pode ocorrer se a estrutura dos dados no objeto {@link ShelterContract} fornecido não for compatível com a estrutura do objeto {@link ShelterEntity}.
+     * @see ShelterContract
+     * @see ShelterEntity
+     */
+    private static ShelterEntity convertShelterContractToEntity(ShelterContract shelterContract) throws ShelterEntityFailuresException {
+        ShelterEntity shelterEntity;
+        try {
+            shelterEntity = BuilderMapper.mapTo(getShelterEntityMapper(), shelterContract);
+        } catch (RuntimeException e) {
+            log.error(SHELTER_DATA_MAPPING_FAILED_LOG, ExceptionDetails.getExceptionDetails(CLASS_MAPPING_FAILURE).formatErrorMessage(ShelterEntity.class.getSimpleName()), e);
+            throw new ShelterEntityFailuresException(SHELTER_CREATION_ERROR_MESSAGE, e);
+        }
+        return shelterEntity;
+    }
+
+    /**
+     * Retorna uma nova instância de {@link ShelterEntityMapper}.
+     * <p>
+     * Este método é responsável por criar e retornar uma nova instância do objeto {@link ShelterEntityMapper}.
+     * Essa classe pode ser usada para converter objetos de entidade ShelterEntity em outros tipos de objetos.
+     * </p>
+     *
+     * @return ShelterEntityMapper - Uma nova instância de {@link ShelterEntityMapper}
+     * @see ShelterEntityMapper
+     */
+    private static ShelterEntityMapper getShelterEntityMapper() {
+        return new ShelterEntityMapper();
     }
 
     /**
@@ -164,13 +207,15 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
      *                                        um erro ao encontrar o usuário responsável, um erro ao salvar o endereço, ou um
      *                                        erro na própria criação do Shelter.
      */
-    private Shelter createAndReturnShelterInstance(ShelterCreationRequest request) throws ShelterEntityFailuresException {
+    private ShelterContract createAndReturnShelterInstance(ShelterCreationRequest request) throws ShelterEntityFailuresException {
         UserContract userContract = this.validateResponsibleUSer(request.getResponsibleUserEmail());
-        Shelter newShelter;
+        ShelterContract newShelter;
         try {
             Address address = this.addressService.createAndSaveAddressFromDto(request.getAddress());
-            newShelter = ShelterFactory.create(request.getShelterName(), address, userContract);
-            log.info(SHELTER_CREATION_SUCCESS_LOG, newShelter.getId(), newShelter.getUser().getEmail());
+            newShelter = this.shelterServiceContract.createShelter(request.getShelterName(), address, userContract);
+            if (nonNull(newShelter)) {
+                log.info(SHELTER_CREATION_SUCCESS_LOG, newShelter.getId(), newShelter.getUser().getEmail());
+            }
         } catch (RuntimeException e) {
             log.error(SHELTER_CREATION_FAILURE_LOG, e.getMessage(), e);
             throw new ShelterEntityFailuresException(SHELTER_CREATION_ERROR_MESSAGE, e);
@@ -207,7 +252,7 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
      *
      * @param needToThrowAnException a condição Booleana segundo a qual a exceção deve ser lançada.
      *                               Se for verdadeiro, a {@link ShelterEntityFailuresException} será lançada.
-     * @param errorCode           o Integer que representa a mensagem detalhada da exceção. Esta mensagem é utilizada
+     * @param errorCode              o Integer que representa a mensagem detalhada da exceção. Esta mensagem é utilizada
      *                               quando a exceção é lançada.
      * @throws ShelterEntityFailuresException a exceção customizada que será lançada quando {@code needToThrowAnException} for verdadeiro.
      */
@@ -249,43 +294,34 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
         return foundUser;
     }
 
-    /**
-     * Este método é responsável por mapear um contrato de abrigo para uma entidade de abrigo e salvá-la no repositório.
-     * <p>
-     * O método primeiro tenta persistir o contrato de abrigo no repositório.
-     * Se a operação for bem-sucedida, ele mapeia o contrato de abrigo salvo para uma nova entidade de abrigo usando um mapeador.
-     * Se ocorrer uma {@link RuntimeException} durante qualquer uma dessas operações, ela é capturada e tratada lançando uma {@link ShelterEntityFailuresException}.
-     *
-     * @param shelterContract é o contrato de abrigo que será mapeado para uma entidade de abrigo e salvo.
-     * @return Retorna a nova entidade de abrigo que foi mapeada e salva com sucesso.
-     * @throws ShelterEntityFailuresException essa exceção é lançada quando ocorre um erro durante a criação da entidade de abrigo.
-     *                                        A causa original da falha é encapsulada dentro desta exceção para permitir uma depuração mais eficiente.
-     */
-    private ShelterEntity mapShelterAndSaveToRepository(ShelterContract shelterContract) {
-        ShelterEntity newShelterEntity;
-        try {
-            ShelterContract savedContract = this.repository.persist(shelterContract);
-            newShelterEntity = BuilderMapper.mapTo(new ShelterEntityMapper(), savedContract);
-            log.info(SHELTER_REGISTRATION_SUCCESS_LOG, newShelterEntity.getId(), newShelterEntity.getResponsibleUser().getEmail());
-        } catch (RuntimeException e) {
-            log.error(SHELTER_DATA_MAPPING_SAVING_FAILED_LOG, e.getMessage(), e);
-            throw new ShelterEntityFailuresException(SHELTER_CREATION_ERROR_MESSAGE, e);
-        }
-        return newShelterEntity;
-    }
-
     @Override
     public ShelterInformationResponse receiveDonation(ReceiveDonationRequest request) {
         ValidationUtils.validateNotNullOrEmpty(request, DONATION_VALIDATION_ERROR, ShelterEntityFailuresException.class);
         ShelterEntity currentShelter = this.getCurrentShelterByResponsibleEmail(request.getResponsibleEmail());
-        this.appendDonationsToShelter(request, currentShelter);
-        return BuilderMapper.mapTo(new ShelterInformationResponseFromShelterEntityMapper(), this.repository.save(currentShelter));
+        ShelterContract currentShelterContract = this.shelterServiceContract.getShelter(currentShelter.getId());
+        return BuilderMapper.mapTo(getShelterInformationResponseMapper(), this.appendDonationsToShelter(request, currentShelterContract));
     }
 
     @Override
     public ShelterInformationResponse findShelterByUserResponsibleEmail(String userResponsibleEmail) {
-        ShelterEntity currentShelterByResponsibleEmail = getCurrentShelterByResponsibleEmail(userResponsibleEmail);
-        return BuilderMapper.mapTo(new ShelterInformationResponseFromShelterEntityMapper(), currentShelterByResponsibleEmail);
+        ShelterEntity currentShelterByResponsibleEmail = this.getCurrentShelterByResponsibleEmail(userResponsibleEmail);
+        return BuilderMapper.mapTo(getShelterInformationResponseMapper(), currentShelterByResponsibleEmail);
+    }
+
+    /**
+     * Este método é responsável por criar uma nova instância de um objeto {@link ShelterInformationResponseFromShelterEntityMapper}.
+     * <p>
+     * Um objeto {@link ShelterInformationResponseFromShelterEntityMapper} é utilizado para mapear os dados de um objeto {@link ShelterEntity} para um objeto {@link ShelterInformationResponse}.
+     * Isso é tipicamente usado quando se deseja converter os dados de uma entidade de banco de dados em um objeto que pode ser enviado como uma resposta a uma solicitação da API.
+     *
+     * @return Uma nova instância de um objeto {@link ShelterInformationResponseFromShelterEntityMapper}.
+     * Não há parâmetros de entrada para este método.
+     * Este método não lança explicitamente exceções, mas dado que uma nova instância de
+     * {@link ShelterInformationResponseFromShelterEntityMapper} está sendo criada, qualquer exceção que possa
+     * ser lançada durante a inicialização dessa classe seria propagada para este método.
+     */
+    private static ShelterInformationResponseFromShelterEntityMapper getShelterInformationResponseMapper() {
+        return new ShelterInformationResponseFromShelterEntityMapper();
     }
 
     /**
@@ -296,42 +332,27 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
      * <p>
      * Em seguida, cada doação na lista de doações fornecida é convertida e salva usando o método
      * {@link DonationEntityService#convertAndSaveDonationDTO(DonationDTO) convertAndSaveDonationDTO} do serviço {@code donationEntityService}.
-     * <p>
-     * A lista de doações existente da instituição é então obtida, e a lista de doações convertidas
-     * é combinada com a lista existente usando o método {@link #mergeDonationLists}.
-     * <p>
-     * Finalmente, a lista de doações combinadas é salva na entidade instituição.
      *
      * @param request        a solicitação de receber doação que contém a lista de doações a serem anexadas.
      *                       Não deve ser nula e deve conter pelo menos uma doação.
      * @param currentShelter a entidade de instituição cujas doações serão anexadas. Não deve ser nula.
      * @throws ShelterEntityFailuresException se a lista de doações na requisição for nula ou vazia.
      */
-    private void appendDonationsToShelter(ReceiveDonationRequest request, ShelterEntity currentShelter) {
+    private ShelterEntity appendDonationsToShelter(ReceiveDonationRequest request, ShelterContract currentShelter) {
         ValidationUtils.ensureListIsNotNullOrEmpty(request.getDonationDTOS(), EMPTY_DONATION_LIST, ShelterEntityFailuresException.class);
         List<DonationEntity> convertedDonations = request.getDonationDTOS().stream().map(this.donationEntityService::convertAndSaveDonationDTO).toList();
-        List<DonationEntity> appendedDonations = this.mergeDonationLists(currentShelter.getDonations(), convertedDonations);
-        currentShelter.setDonations(appendedDonations);
+        List<Donation> receivedDonation = ValidationUtils.ensureListIsNotNull(convertedDonations).stream().map(donationMapperInstance()::mapFrom).toList();
+        receivedDonation.forEach(donation -> this.shelterServiceContract.addDonation(currentShelter.getId(), donation));
+        return BuilderMapper.mapTo(getShelterEntityMapper(), this.shelterServiceContract.getShelter(currentShelter.getId()));
     }
 
     /**
-     * Este método serve para unir duas listas de objetos {@link DonationEntity}, retornando uma nova lista que é a combinação das duas listas.
-     * <p>
-     * A operação de combinação adiciona todos os elementos da segunda lista para a primeira. Antes de adicionar os elementos,
-     * o método garante que as listas não sejam nulas, usando o utilitário {@link ValidationUtils#ensureListIsNotNull(List) ensureListIsNotNull}.
-     * Se alguma das listas for nula, {@link ValidationUtils#ensureListIsNotNull(List) ensureListIsNotNull} garante que essa lista seja transformada em uma lista vazia,
-     * evitando assim um {@link NullPointerException}.
-     * <p>
-     * Note que a combinação de doações não muda as listas originais de doações. Em vez disso, uma nova lista é criada e retornada.
+     * Este é um método privado estático que instancia e retorna uma nova instância de {@link DonationMapper}.
      *
-     * @param donations          Lista original de objetos {@link DonationEntity}.
-     * @param convertedDonations Lista de objetos {@link DonationEntity} a serem adicionados à lista original de doações.
-     * @return Uma nova lista contendo a combinação de ambas as listas de doações. Esta lista pode ser vazia, mas nunca será nula.
+     * @return Retorna uma nova instância do objeto {@link DonationMapper}.
      */
-    private List<DonationEntity> mergeDonationLists(List<DonationEntity> donations, List<DonationEntity> convertedDonations) {
-        List<DonationEntity> combinedDonations = new ArrayList<>(ValidationUtils.ensureListIsNotNull(donations));
-        combinedDonations.addAll(ValidationUtils.ensureListIsNotNull(convertedDonations));
-        return combinedDonations;
+    private static DonationMapper donationMapperInstance() {
+        return new DonationMapper();
     }
 
     /**
