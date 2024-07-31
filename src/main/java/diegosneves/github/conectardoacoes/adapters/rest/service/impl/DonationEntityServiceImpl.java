@@ -9,6 +9,8 @@ import diegosneves.github.conectardoacoes.adapters.rest.repository.DonationRepos
 import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.domain.shelter.factory.DonationFactory;
+import diegosneves.github.conectardoacoes.core.service.DonationService;
+import diegosneves.github.conectardoacoes.core.service.DonationServiceContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +40,12 @@ public class DonationEntityServiceImpl implements DonationEntityService {
     private static final String DONATION_CREATION_ERROR_LOG = "A criação da doação não foi bem-sucedida devido ao seguinte erro: {}";
 
     private final DonationRepository repository;
+    private final DonationServiceContract donationServiceContract;
 
     @Autowired
     public DonationEntityServiceImpl(DonationRepository repository) {
         this.repository = repository;
+        this.donationServiceContract = new DonationService();
     }
 
 
@@ -62,7 +66,7 @@ public class DonationEntityServiceImpl implements DonationEntityService {
      * @throws DonationEntityFailuresException se não foi possível criar uma instância da entity {@link Donation}.
      */
     private DonationEntity convertDonationDTOToDonationEntity(DonationDTO donationDTO) {
-        Donation newDonation = createDonation(donationDTO);
+        Donation newDonation = this.createDonation(donationDTO);
         DonationEntity donationEntityOutput = BuilderMapper.mapTo(this.getDonationEntityMapperInstance(), newDonation);
         return this.repository.save(donationEntityOutput);
     }
@@ -80,10 +84,10 @@ public class DonationEntityServiceImpl implements DonationEntityService {
      *                                         a exceção {@link DonationEntityFailuresException} é lançada
      *                                         e uma mensagem de erro é registrada com detalhes do erro.
      */
-    private static Donation createDonation(DonationDTO donationDTO) throws DonationEntityFailuresException {
+    private Donation createDonation(DonationDTO donationDTO) throws DonationEntityFailuresException {
         Donation created;
         try {
-            created = DonationFactory.created(donationDTO.getDescription(), donationDTO.getAmount());
+            created = this.donationServiceContract.createDonation(donationDTO.getDescription(), donationDTO.getAmount());
         } catch (RuntimeException e) {
             log.error(DONATION_CREATION_ERROR_LOG, e.getMessage(), e);
             throw new DonationEntityFailuresException(5, DONATION_CREATION_FAILURE, e);
