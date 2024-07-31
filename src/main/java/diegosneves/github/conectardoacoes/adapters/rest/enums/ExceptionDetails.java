@@ -20,7 +20,7 @@ public enum ExceptionDetails {
     CONSTRUCTOR_DEFAULT_UNDEFINED(2, "Classe [ %s ] deve declarar um construtor padrão.", HttpStatus.NOT_IMPLEMENTED),
     REQUEST_VALIDATION_ERROR_MESSAGE(3, "Por favor, forneça uma requisição de criação de Abrigo preenchida corretamente.", HttpStatus.BAD_REQUEST),
     CLASS_MAPPING_FAILURE(4, "Falha ao tentar mapear a classe [ %s ].", HttpStatus.BAD_REQUEST),
-    SHELTER_CREATION_ERROR_MESSAGE(5, "Erro na criação de um Abrigo. Por favor, Confirme se todos os campos do Abrigo estão corretamente preenchidos e tente novamente.", HttpStatus.BAD_REQUEST),
+    SHELTER_CREATION_ERROR_MESSAGE(5, "Erro na criação de um Abrigo. Por favor,Confirme se todos os campos do Abrigo estão corretamente preenchidos e tente novamente.", HttpStatus.BAD_REQUEST),
     INVALID_UUID_FORMAT_MESSAGE(6, "O ID %s precisa estar no formato UUID", HttpStatus.BAD_REQUEST),
     RESPONSIBLE_USER_PROFILE_INVALID(7, "O usuário deve possuir o perfil de responsável.", HttpStatus.BAD_REQUEST),
     EMAIL_NOT_FOUND_ERROR_MESSAGE(8, "Não foi possível encontrar um usuário com o email %s .", HttpStatus.NOT_FOUND),
