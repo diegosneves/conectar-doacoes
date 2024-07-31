@@ -8,7 +8,6 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.DonationRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.service.DonationEntityService;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
-import diegosneves.github.conectardoacoes.core.domain.shelter.factory.DonationFactory;
 import diegosneves.github.conectardoacoes.core.service.DonationService;
 import diegosneves.github.conectardoacoes.core.service.DonationServiceContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
@@ -75,7 +74,7 @@ public class DonationEntityServiceImpl implements DonationEntityService {
      * Cria uma entidade de Doação a partir de um objeto {@link DonationDTO} usando a Factory de Doação.
      *
      * <p>Este método leva um objeto {@link DonationDTO} como argumento.
-     * Usando os dados do objeto {@link DonationDTO}, isto irá criar uma nova entidade de Doação através da {@link DonationFactory}.
+     * Usando os dados do objeto {@link DonationDTO}, isto irá criar uma nova entidade de Doação através da {@link DonationService}.
      * A nova entidade de Doação é então retornada.
      *
      * @param donationDTO objeto que contém as informações para a criação da entidade de Doação

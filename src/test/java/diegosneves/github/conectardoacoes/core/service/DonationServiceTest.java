@@ -3,7 +3,6 @@ package diegosneves.github.conectardoacoes.core.service;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Donation;
 import diegosneves.github.conectardoacoes.core.exception.DonationRegisterFailureException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
