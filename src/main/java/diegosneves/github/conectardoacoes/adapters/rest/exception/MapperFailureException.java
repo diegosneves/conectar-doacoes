@@ -21,7 +21,7 @@ public class MapperFailureException extends CustomException {
      * @param e       A exceção generica causada durante o mapeamento.
      */
     public MapperFailureException(Integer term, String message, Throwable e) {
-        super(message, e, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message, e);
     }
 
 }

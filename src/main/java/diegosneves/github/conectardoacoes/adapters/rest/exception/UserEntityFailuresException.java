@@ -42,7 +42,7 @@ public class UserEntityFailuresException extends CustomException {
      * @param message A mensagem específica da exceção.
      */
     public UserEntityFailuresException(Integer term, String message) {
-        super(message, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message);
     }
 
     /**
@@ -65,7 +65,7 @@ public class UserEntityFailuresException extends CustomException {
      *                                 Esta exceção seria lançada pelo método {@link #obtainExceptionDetails(Integer)}.
      */
     public UserEntityFailuresException(Integer term, Throwable cause) {
-        super(cause, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), cause);
     }
 
     /**
@@ -76,7 +76,7 @@ public class UserEntityFailuresException extends CustomException {
      * @param cause   A causa original do erro.
      */
     public UserEntityFailuresException(Integer term, String message, Throwable cause) {
-        super(message, cause, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message, cause);
     }
 
 }
