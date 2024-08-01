@@ -22,7 +22,7 @@ public class DonationEntityFailuresException extends CustomException {
     * @param message A mensagem específica da exceção.
     */
     public DonationEntityFailuresException(Integer term, String message) {
-        super(message, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message);
     }
 
     /**
@@ -33,7 +33,7 @@ public class DonationEntityFailuresException extends CustomException {
     * @param cause A causa original do erro.
     */
     public DonationEntityFailuresException(Integer term, String message, Throwable cause) {
-        super(message, cause, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message, cause);
     }
 
 }
