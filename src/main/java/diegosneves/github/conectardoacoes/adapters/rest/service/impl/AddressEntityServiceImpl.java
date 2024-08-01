@@ -8,8 +8,9 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.AddressRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
-import diegosneves.github.conectardoacoes.core.domain.shelter.factory.AddressFactory;
 import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;
+import diegosneves.github.conectardoacoes.core.service.AddressService;
+import diegosneves.github.conectardoacoes.core.service.AddressServiceContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Service;
  * Ao iniciar, o serviço valida se o objeto endereço não é nulo nem vazio.
  * Em caso de falha na validação, é lançada uma exceção {@link AddressEntityFailuresException} com a mensagem específica.
  * <p>
- * Depois, é criada uma nova instância de {@link Address} usando {@link AddressFactory}, que pode gerar exceções durante a criação,
+ * Depois, é criada uma nova instância de {@link Address} usando {@link AddressServiceContract}, que pode gerar exceções durante a criação,
  * as quais são capturadas e tratadas, emitindo novas {@link AddressEntityFailuresException} em caso de erros.
  * <p>
  * Por fim, o serviço faz uso do objeto {@link Address} criado para armazená-lo no repositório correspondente,
@@ -52,9 +53,11 @@ public class AddressEntityServiceImpl implements AddressEntityService {
 
 
     private final AddressRepository repository;
+    private final AddressServiceContract addressServiceContract;
 
     public AddressEntityServiceImpl(AddressRepository repository) {
         this.repository = repository;
+        this.addressServiceContract = new AddressService();
     }
 
     @Override
@@ -62,7 +65,7 @@ public class AddressEntityServiceImpl implements AddressEntityService {
         ValidationUtils.validateNotNullOrEmpty(address, ADDRESS_CREATION_ERROR, AddressEntityFailuresException.class);
         Address newAddress;
         try {
-            newAddress = AddressFactory.create(address.getStreet(), address.getNumber(), address.getNeighborhood(), address.getCity(), address.getState(), address.getZip());
+            newAddress = this.addressServiceContract.createAddress(address.getStreet(), address.getNumber(), address.getNeighborhood(), address.getCity(), address.getState(), address.getZip());
         } catch (AddressCreationFailureException e) {
             log.error(CREATION_FAILURE_LOG, e.getMessage(), e);
             throw new AddressEntityFailuresException(ADDRESS_CREATION_ERROR, e);
