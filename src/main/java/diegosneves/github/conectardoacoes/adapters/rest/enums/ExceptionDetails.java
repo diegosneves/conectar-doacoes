@@ -27,6 +27,7 @@ public enum ExceptionDetails {
     RESPONSIBLE_USER_ALREADY_IN_USE(9, "Este usuário já possui responsabilidade sobre outro abrigo.", HttpStatus.FORBIDDEN),
     EMAIL_ALREADY_IN_USE(10, "Desculpe, o endereço de email %s , já está associado a uma conta existente. Por favor,tente com um email diferente.", HttpStatus.FORBIDDEN),
     USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR(11, "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.", HttpStatus.NOT_FOUND),
+    CEP_RETRIEVAL_FAILURE(12, "Falha ao recuperar o endereço com o CEP fornecido (%s). Por favor, verifique se o CEP está correto e tente novamente em alguns instantes.", HttpStatus.BAD_REQUEST),
     DONATION_VALIDATION_ERROR(13, "Para o cadastro de doações, é indispensável o fornecimento de informações válidas e completas.", HttpStatus.BAD_REQUEST),
     EMPTY_DONATION_LIST(15, "Até o momento, não há doações listadas.", HttpStatus.BAD_REQUEST),
     RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER(17, "Por favor, verifique se o e-mail do usuário responsável está correto e associado a um abrigo. Caso contrário, certifique-se de que o usuário responsável tenha um e-mail válido em nosso sistema.", HttpStatus.BAD_REQUEST),
