@@ -28,7 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class RetrieveAddressAdapter extends HttpAdapter {
 
     private static final String JSON_PATH = "json";
-    public static final Integer CEP_RETRIEVAL_FAILURE = 12;
+    public static final Integer ZIPCODE_RETRIEVAL_FAILURE = 12;
 
     private final String url;
 
@@ -55,7 +55,7 @@ public class RetrieveAddressAdapter extends HttpAdapter {
             return response.getBody();
         } catch (RestClientException e) {
             log.error(e.getLocalizedMessage(), e);
-            throw new ExternalApiFailureException(CEP_RETRIEVAL_FAILURE, zipcode, e);
+            throw new ExternalApiFailureException(ZIPCODE_RETRIEVAL_FAILURE, zipcode, e);
         }
     }
 

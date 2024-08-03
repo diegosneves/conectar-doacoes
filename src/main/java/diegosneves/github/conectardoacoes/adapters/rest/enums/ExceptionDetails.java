@@ -27,7 +27,7 @@ public enum ExceptionDetails {
     RESPONSIBLE_USER_ALREADY_IN_USE(9, "Este usuário já possui responsabilidade sobre outro abrigo.", HttpStatus.FORBIDDEN),
     EMAIL_ALREADY_IN_USE(10, "Desculpe, o endereço de email %s , já está associado a uma conta existente. Por favor,tente com um email diferente.", HttpStatus.FORBIDDEN),
     USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR(11, "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.", HttpStatus.NOT_FOUND),
-    CEP_RETRIEVAL_FAILURE(12, "Falha ao recuperar o endereço com o CEP fornecido (%s). Por favor, verifique se o CEP está correto e tente novamente em alguns instantes.", HttpStatus.BAD_REQUEST),
+    ZIPCODE_RETRIEVAL_FAILURE(12, "Falha ao recuperar o endereço com o CEP fornecido (%s). Por favor, verifique se o CEP está correto e tente novamente em alguns instantes.", HttpStatus.BAD_REQUEST),
     DONATION_VALIDATION_ERROR(13, "Para o cadastro de doações, é indispensável o fornecimento de informações válidas e completas.", HttpStatus.BAD_REQUEST),
     EMPTY_DONATION_LIST(15, "Até o momento, não há doações listadas.", HttpStatus.BAD_REQUEST),
     RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER(17, "Por favor, verifique se o e-mail do usuário responsável está correto e associado a um abrigo. Caso contrário, certifique-se de que o usuário responsável tenha um e-mail válido em nosso sistema.", HttpStatus.BAD_REQUEST),
@@ -39,7 +39,8 @@ public enum ExceptionDetails {
     INVALID_EMAIL_ERROR_MESSAGE(29, "Não foi informado nenhum email. Por favor, forneça um email válido.", HttpStatus.BAD_REQUEST),
     USER_CREATION_FAILURE_MESSAGE(31, "Ops! A criação do novo usuário não foi bem-sucedida. Por favor, certifique-se de que seus dados estão corretos e tente novamente.", HttpStatus.BAD_REQUEST),
     USER_PROFILE_VALIDATION_FAILURE(33, "A validação do Perfil do usuário fornecido falhou.", HttpStatus.BAD_REQUEST),
-    REQUIRED_USER_ERROR_MESSAGE(35, "Um usuário válido é requerido para efetuar a persistência.", HttpStatus.BAD_REQUEST);
+    REQUIRED_USER_ERROR_MESSAGE(35, "Um usuário válido é requerido para efetuar a persistência.", HttpStatus.BAD_REQUEST),
+    ZIPCODE_INVALID_FAILURE(37, "Falha ao tentar recuperar o endereço com o CEP fornecido. Por favor, verifique se o CEP está correto e tente novamente", HttpStatus.BAD_REQUEST);
 
 
     public static final String EXCEPTION_PREFIX = "T%03dF - ";
