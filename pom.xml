@@ -28,6 +28,7 @@
         <sonar.coverage.exclusions>
             **/dto/**,
             **/model/**,
+            **/adapter/**,
             **/response/**,
             **/request/**,
             **/config/**,

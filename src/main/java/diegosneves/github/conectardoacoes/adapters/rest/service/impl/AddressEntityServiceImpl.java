@@ -1,11 +1,14 @@
 package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
+import diegosneves.github.conectardoacoes.adapters.rest.adapter.RetrieveAddressAdapter;
+import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressApiResponseDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.AddressEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.AddressRepository;
+import diegosneves.github.conectardoacoes.adapters.rest.response.AddressApiResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;
@@ -50,13 +53,16 @@ public class AddressEntityServiceImpl implements AddressEntityService {
     public static final String CREATION_FAILURE_LOG = "Falha na tentativa de criação de um novo Endereço. Causa do erro: {}";
     public static final String ADDRESS_MAPPING_ERROR_LOG = "Ocorreu uma falha ao tentar mapear o Endereço. Causa do erro: {}";
     public static final String ADDRESS_REGISTRATION_SUCCESS_LOG = "Novo endereço registrado com êxito! Identificador do endereço (ID): {} - Código Postal (ZIPCODE): {}";
+    public static final int ZIPCODE_INVALID_FAILURE = 37;
 
 
     private final AddressRepository repository;
     private final AddressServiceContract addressServiceContract;
+    private final RetrieveAddressAdapter addressAdapter;
 
-    public AddressEntityServiceImpl(AddressRepository repository) {
+    public AddressEntityServiceImpl(AddressRepository repository, RetrieveAddressAdapter addressAdapter) {
         this.repository = repository;
+        this.addressAdapter = addressAdapter;
         this.addressServiceContract = new AddressService();
     }
 
@@ -94,4 +100,10 @@ public class AddressEntityServiceImpl implements AddressEntityService {
         log.info(ADDRESS_REGISTRATION_SUCCESS_LOG, address.getId(), address.getZip());
     }
 
+    @Override
+    public AddressApiResponseDTO restrieveAddress(String zipcode) {
+        ValidationUtils.validateNotNullOrEmpty(zipcode, ZIPCODE_INVALID_FAILURE, AddressEntityFailuresException.class);
+        AddressApiResponse addressApiResponse = this.addressAdapter.retrieveAddress(zipcode);
+        return addressApiResponse.convertToDTO();
+    }
 }

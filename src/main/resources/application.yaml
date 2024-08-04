@@ -11,6 +11,10 @@ spring:
       ddl-auto: update
     show-sql: true
 
+  api:
+    url:
+      via-cep: https://viacep.com.br/ws/
+
 
 springdoc:
   swagger-ui:
