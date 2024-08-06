@@ -32,16 +32,34 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 class ShelterEntityServiceImplTest {
@@ -498,6 +516,40 @@ class ShelterEntityServiceImplTest {
         assertEquals(ExceptionDetails.getExceptionDetails(ShelterEntityServiceImpl.RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER)
                 .formatErrorMessage(), exception.getMessage());
         assertNull(exception.getCause());
+
+    }
+
+    @Test
+    void testFindAll_When_WithPageable_ShouldReturnAPageableOfAllShelterInformationResponse(){
+
+        DonationEntity firstDonation = new DonationEntity();
+        firstDonation.setDescription(DESCRIPTION);
+        firstDonation.setAmount(AMOUNT);
+
+        List<DonationEntity> donations = List.of(firstDonation);
+
+        ShelterEntity shelterEntity = generateShelterEntity();
+        shelterEntity.setDonations(donations);
+
+        List<ShelterEntity> shelterEntityList = List.of(shelterEntity);
+
+        when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(shelterEntityList));
+
+        Page<ShelterInformationResponse> allShelters = service.findAll(PageRequest.of(0, 10));
+
+        verify(repository,times(1)).findAll(any(Pageable.class));
+
+        ShelterInformationResponse shelterInformationResponse = allShelters.getContent().get(0);
+
+        assertNotNull(allShelters);
+        assertEquals(1, allShelters.getTotalElements());
+
+        assertEquals(SHELTER_NAME, shelterInformationResponse.getShelterName());
+        assertEquals(USER_NAME, shelterInformationResponse.getResponsibleName());
+        assertEquals(USER_EMAIL, shelterInformationResponse.getResponsibleEmail());
+        assertEquals(1, shelterInformationResponse.getDonationDTOS().size());
+        assertEquals(DESCRIPTION, shelterInformationResponse.getDonationDTOS().get(0).getDescription());
+        assertEquals(AMOUNT, shelterInformationResponse.getDonationDTOS().get(0).getAmount());
 
     }
 
