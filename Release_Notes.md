@@ -1,6 +1,8 @@
 # Release Notes
 
-
+- [1.0.0](#_release-100_)
+- [1.1.0](#_release-110_)
+- [1.2.0](#_release-120_)
 
 ---
 ## **_Release 1.0.0_**
@@ -1769,3 +1771,208 @@ Este commit adiciona documentações Javadoc para a classe `AddressEntityService
 **Nota:** A ênfase principal deste commit é melhorar a documentação do código, fornecendo comentários Javadoc detalhados para a classe de serviço `AddressEntityService` e sua implementação, tornando mais fácil para os desenvolvedores entenderem o propósito e a funcionalidade dessas classes.
 
 ---
+
+## **_Release 1.2.0_**
+
+**Commit** 5bba4235236d029798a0023aa288ffcc7ba21e18:
+
+Este commit atualiza a cobertura de código do Jacoco e adiciona novas informações no arquivo Release_Notes.md.  
+
+**Arquivos Alterados:** `pom.xml`, `Release_Notes.md`
+
+**Alterações:**
+
+- Houve uma atualização na cobertura do Jacoco, provavelmente com novas configurações ou dependências, refletidas no arquivo `pom.xml`.
+- Foram feitas diversas atualizações no arquivo `Release_Notes.md`, contendo informações de vários commits e suas respectivas mudanças.
+
+**Nota:** A principal ênfase deste commit é adicionar novas informações de commits no arquivo `Release_Notes.md` e fazer atualizações na cobertura de código do Jacoco no arquivo `pom.xml`.
+
+---
+
+**Commit** 33563e3a5fc3370e745920809e1bb81f577fe55d:
+
+Este commit renomeia o método "getUser" para "getUserById" para maior clareza. Além disso, introduz o método "getUserByEmail" para habilitar a busca de usuários por email. As mensagens de erro correspondentes e os testes unitários foram atualizados para cobrir essas mudanças.
+
+**Arquivos Alterados:** `UserContractRepository.java`, `UserService.java`, `UserServiceContract.java`, `UserServiceTest.java`
+
+**Alterações:**
+
+- O método "getUser" em `UserService` e `UserServiceContract` foi renomeado para "getUserById".
+- Um novo método, "findUserEntityByUserEmail", foi adicionado à interface `UserContractRepository` para buscar usuários por email.
+- Um novo método, "getUserByEmail", foi adicionado em `UserService` e `UserServiceContract` para buscar usuários por email.
+- Testes correspondentes para os novos métodos foram adicionados em `UserServiceTest`.
+  
+
+**Nota:** Este commit foca na introdução da funcionalidade de busca de usuários por email, enquanto melhora a clareza ao renomear o método de busca por ID de usuário.
+
+---
+
+**Commit** 004c7ee4d4146746579fee09f016ea59cff66094:
+
+Neste commit foi feita a refatoração da busca e criação de entidade de usuário para usar `UserServiceContract` ao invés do repositório diretamente. Isso foi realizado com o objetivo de melhorar a separação de responsabilidades, facilitar a manutenção de código e garantir maior coesão entre os componentes do sistema.
+
+**Arquivos Alterados:** `UserRepository.java`, `UserEntityServiceImpl.java`, `UserEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Em `UserRepository.java` foi implementado o método `findUserEntityByUserEmail`.
+
+- Na classe `UserEntityServiceImpl.java` foram realizadas as seguintes alterações:
+    - Em `searchUserByEmail`, buscou-se o usuário através do método `getUserByEmail` do `UserServiceContract` ao invés de buscar diretamente do repositório.
+    - No método `createUserEntityFromCreationRequest`, o usuário é agora criado através do método `createUser` do `UserServiceContract` ao invés directamente da classe `UserFactory`.
+    - Em `checkIfEmailAlreadyInUse`, verifica-se se o usuário existe através do método `getUserByEmail` do `UserServiceContract`.
+
+- Em `UserEntityServiceImplTest.java`, os testes foram atualizados para refletir as alterações em `UserEntityServiceImpl.java`.
+
+**Resumo:** Este commit concentra-se em refatorar a maneira como os usuários são buscados e criados no sistema, primeiro utilizando um serviço dedicado (`UserServiceContract`) em vez de acessar diretamente o repositório.
+
+---
+
+- **Commit** 8343b4f000d7af274dc5aedab8698ef63856c458:
+
+  Este commit adiciona métodos para converter contratos de abrigos em entidades de abrigos e vice-versa. A classe `ShelterEntityServiceImpl` foi refatorada para melhorar o mapeamento de entidades. O processo de criação de abrigos agora utiliza `ShelterServiceContract`, melhorando a separação de responsabilidades. Além disso, logs de erro e sucesso foram aprimorados para facilitar o debug. O método obsoleto `mapShelterAndSaveToRepository` foi removido.
+
+  **Arquivos Alterados:** `ShelterEntityServiceImpl.java`
+  
+  **Alterações:**
+  
+  - Foram adicionados métodos para lidar com a transformação de contratos de abrigos em entidades de abrigos e vice-versa.
+  - O método `createAndReturnShelterInstance` em `ShelterEntityServiceImpl` foi alterado para retornar `ShelterContract` em vez de `Shelter`.
+  - O método `createShelter` em `ShelterEntityServiceImpl` agora usa o `ShelterServiceContract` ao criar um novo abrigo.
+  - Foi removido o método `mapShelterAndSaveToRepository` que estava obsoleto.
+  
+  **Nota:**  A principal motivação deste commit é melhorar o mapeamento de entidades e o uso de contratos. Isso facilita futuras manutenções e melhora a separação de responsabilidades.
+  
+---
+
+**Commit** f40eadcf556902e12a50551bea818717f7230c9e:
+
+Este commit implementa `DonationService` e `DonationServiceContract` para gerenciar doações, encapsulando a lógica de criação de doações e tratamento de exceções. Além disso, atualiza a lógica em `DonationEntityServiceImpl` para utilizar o serviço.
+
+**Arquivos Alterados:** `DonationEntityServiceImpl.java`, `DonationService.java`, `DonationServiceContract.java`, `DonationServiceTest.java`
+
+**Alterações:**
+
+- Adicionado o uso de `DonationService` e `DonationServiceContract` em `DonationEntityServiceImpl`.
+- Criada a classe `DonationService` que implementa a interface `DonationServiceContract`. Esta classe é responsável por gerenciar as operações relacionadas às doações.
+- Interface `DonationServiceContract` foi criada para definir um contrato para a criação de doações.
+- Adicionado um Teste Unitário `DonationServiceTest` para a classe `DonationService`.
+
+**Nota:** A principal ênfase desta confirmação é melhorar a lógica de criação e gestão das doações, bem como a atualização da classe `DonationEntityServiceImpl` para utilizar o novo `DonationService`. Além disso, também foi incluído um Teste Unitário para a nova classe.
+
+---
+
+**Commit** 0142f059cfa0a7a3d6a41914f6493f4b7def56b8:
+
+Este commit implementa serviços relacionados ao endereço e da interface de contrato. Isso inclui a criação de métodos para a construção de objetos Address e lançamento de exceções apropriadas. Além disso, foi substituído o uso de `AddressFactory` por `AddressServiceContract` em `AddressEntityServiceImpl`.
+
+**Arquivos Alterados:** `AddressEntityServiceImpl.java`, `AddressService.java`, `AddressServiceContract.java`, `AddressServiceTest.java`
+
+**Alterações:**
+
+- Foi implementada a interface `AddressServiceContract` que define um contrato para um serviço responsável pelo gerenciamento de endereços na aplicação.
+- Foi criada a classe `AddressService` que implementa a `AddressServiceContract`. Esta classe é responsável por fornecer os serviços relacionados ao endereço e implementa todas as assinaturas de métodos definidas na interface.
+- Foi alterada a classe `AddressEntityServiceImpl`. Substituído o uso de `AddressFactory` por `AddressServiceContract` para criação de novas instâncias do objeto `Address`.
+- Foi criada a classe de teste `AddressServiceTest` para testar o serviço `AddressService`.
+
+**Nota:** A principal ênfase deste commit é melhorar a lógica de serviço dos endereços e padronizar as regras de negócio ao criar novos endereços.
+
+---
+
+**Commit** f2b00eb7582eff8b0aab67e401b267dbe90d8c53:
+
+Este commit adiciona o tratamento de erros para APIs externas e as configurações da URL do serviço Via CEP. Inclui a criação da classe `ExternalApiFailureException` para lidar com os erros das APIs externas, adiciona os detalhes da exceção `CEP_RETRIEVAL_FAILURE` e atualiza a classe `OpenApiConfig` para a versão 1.2.0. 
+
+**Arquivos Alterados:** `OpenApiConfig.java`, `ExceptionDetails.java`, `ExternalApiFailureException.java`, `application.yaml`
+
+**Alterações:**
+
+- A versão da API foi atualizada de `v1.0.0` para `v1.2.0` no arquivo `OpenApiConfig.java`.
+- Adicionada um novo `Tag` relacionada a "Endereços" na lista de tags em `OpenApiConfig.java`.
+- Adicionado a definição da exceção `CEP_RETRIEVAL_FAILURE` ao enum `ExceptionDetails.java`.
+- Criada a nova classe `ExternalApiFailureException` representando falhas de APIs externas.
+- A URL base do serviço Via CEP foi adicionada ao arquivo de configuração `application.yaml`.
+
+**Nota:** Este commit foi focado em lidar com falhas ao interagir com APIs externas, em particular com o serviço Via CEP. A estratégia adotada foi criar uma nova exceção para encapsular essas falhas e adicionar a URL do serviço Via CEP ao arquivo de configurações do projeto.
+
+---
+
+**Commit** c1b0082df977acde04ce082ab9193ad038ecd46c:
+
+Este commit adiciona novas classes para lidar com a recuperação de informações de endereços através de chamadas de API. As classes `AddressApiResponse`, `AddressApiResponseDTO`, `HttpAdapter`, `RestTemplateSimpleWebClient` e `RetrieveAddressAdapter` foram introduzidas. O arquivo `pom.xml` também foi atualizado para excluir essas novas classes da cobertura de testes do Sonar.
+
+**Arquivos Alterados:** `pom.xml`, `HttpAdapter.java`, `RestTemplateSimpleWebClient.java`, `RetrieveAddressAdapter.java`, `AddressApiResponseDTO.java`, `AddressApiResponse.java`
+
+**Alterações:**
+
+- Atualizado o `pom.xml` para excluir a nova pasta `adapter` da cobertura de testes do Sonar.
+- Criada a classe abstrata `HttpAdapter` que fornece a base para adaptadores HTTP, incluindo a configuração de cabeçalhos HTTP e a instância do `RestTemplateSimpleWebClient` a ser usada para chamadas HTTP.
+- Criada a classe `RestTemplateSimpleWebClient` que encapsula simplesmente a classe `RestTemplate` do Spring Framework para realizar requisições HTTP.
+- Added the `RetrieveAddressAdapter` class, which extends `HttpAdapter` and is responsible for retrieving address information based on the provided ZIP code.
+- Criada a classe `AddressApiResponse` para representar as respostas da API ao recuperar informações de endereços. A classe possui um método para converter a resposta da API para uma instância `AddressApiResponseDTO`.
+- Criada a classe `AddressApiResponseDTO` para representar um DTO (Data Transfer Object) da resposta da API de endereços.
+
+**Nota:** Este commit se concentra em introduzir as classes necessárias para efetuar chamadas à API para recuperar informações de endereços baseadas no CEP. Essas classes novas permitem a recuperação de endereço e a subsequente conversão das respostas da API em DTOs para uso mais adiante no sistema.
+
+---
+
+**Commit** b2ca4151ed8b43c1b4e02abdcb1fe95553872ba1:
+
+Este commit adiciona o controlador de endereços e a implementação de `AddressController`. Contém a interface `AddressController` com um endpoint para obter o endereço pelo código postal. Além disso, implementa a classe `AddressControllerImpl` para gerenciar solicitações e se conectar ao serviço `AddressEntityService`. Também atualiza as mensagens de exceção relacionadas para refletir as mudanças na terminologia.
+
+**Arquivos Alterados:** `RetrieveAddressAdapter.java`, `AddressController.java`, `AddressControllerImpl.java`, `AddressApiResponseDTO.java`, `ExceptionDetails.java`
+
+**Alterações:**
+
+- A constante `CEP_RETRIEVAL_FAILURE` foi renomeada para `ZIPCODE_RETRIEVAL_FAILURE` no arquivo `RetrieveAddressAdapter.java` e também na enum `ExceptionDetails.java`.
+- Foram criados os novos arquivos `AddressController.java` e `AddressControllerImpl.java` para controle de operações de endereço.
+- No arquivo `AddressController.java`, foi criado um novo endpoint a partir do método `retrieveAddress`, mapeado para /{zipcode}, onde zipcode é um parâmetro que define o código postal do endereço a ser obtido.
+- Em `AddressControllerImpl.java`, implementou-se o método `retrieveAddress` de `AddressController.java`, que solicita o serviço `AddressEntityService`.
+- Adicionou-se a documentação à classe `AddressApiResponseDTO.java`.
+
+**Nota:** Este commit visa introduzir a capacidade de obter informações de endereços usando o código postal através de um novo endpoint.
+
+---
+
+**Commit** a0161d38390e63f86b07d23cef14178b87c16a06:
+
+Este commit adiciona o método `restrieveAddress` no `AddressEntityService` para recuperar endereços usando um CEP fornecido. Implementa também testes unitários para garantir o funcionamento correto e tratamento de exceções para CEPs nulos, vazios ou inválidos.
+
+**Arquivos Alterados:** `AddressEntityService.java`, `AddressEntityServiceImpl.java`, `AddressEntityServiceImplTest.java`
+
+**Alterações:**
+
+- **Em**: `AddressEntityService.java`
+  - Adicionado o novo método `restrieveAddress`, usado para recuperar um endereço através de um CEP fornecido.
+  
+- **Em**: `AddressEntityServiceImpl.java`
+  - Implementação do método `restrieveAddress` que utiliza o serviço `RetrieveAddressAdapter` para realizar a requisição e obter a resposta correspondente.
+  - A resposta é convertida para `AddressApiResponseDTO` e retorna ao chamador.
+  
+- **Em**: `AddressEntityServiceImplTest.java`
+  - Adicionados testes unitários para o método `restrieveAddress`.
+  - Testes incluem o tratamento de exceções para CEPs nulos, vazios ou inválidos.
+
+**Nota:** A principal ênfase desta confirmação é a recuperação de endereços usando um CEP por meio do método `restrieveAddress`.
+
+---
+
+**Commit** 905f606acab04f5e5e70530026345a9344d933c6:
+
+Este commit introduz novas funcionalidades de paginação ao método `findAll` no repositório `ShelterRepository`, além de implementar testes correspondentes. A adição dos métodos respectivos facilita a recuperação paginada de todos os registros de abrigos cadastrados.
+
+**Arquivos Alterados:** `ShelterController.java`, `ShelterControllerImpl.java`, `ShelterRepository.java`, `ShelterEntityService.java`, `ShelterEntityServiceImpl.java`, `ShelterRepositoryIntegrationTest.java`
+
+**Alterações:**
+
+- **ShelterController.java**: Adicionado o método `findAll` com a anotação `@GetMapping`, para suportar requisições paginadas de abrigos.
+- **ShelterControllerImpl.java**: Implementação do método `findAll` que chama o serviço para obter os dados paginados.
+- **ShelterRepository.java**: Declaração do método `Page<ShelterEntity> findAll(Pageable pageable)`, permitindo consultas paginadas ao banco de dados.
+- **ShelterEntityService.java**: Adicionado o método `Page<ShelterInformationResponse> findAll(Pageable pageable)`, que define a lógica de serviço para a paginação.
+- **ShelterEntityServiceImpl.java**: Implementação do método `findAll`, que converte as entidades de abrigo em DTOs paginados.
+- **ShelterRepositoryIntegrationTest.java**: Inclusão de testes de integração para validar o funcionamento da paginação no repositório de abrigos.
+
+**Nota:** A principal ênfase deste commit é a implementação da funcionalidade de paginação para os registros de abrigos e os testes associados, melhorando a eficiência no gerenciamento e recuperação de dados.
+
+---
+

@@ -1,4 +1,5 @@
 diegosneves.github.conectardoacoes.adapters.rest
+diegosneves.github.conectardoacoes.adapters.rest.adapter
 diegosneves.github.conectardoacoes.adapters.rest.config.handler
 diegosneves.github.conectardoacoes.adapters.rest.config.web
 diegosneves.github.conectardoacoes.adapters.rest.controller
