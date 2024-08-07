@@ -23,6 +23,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.reflect.Method;
@@ -435,6 +437,26 @@ class ShelterRepositoryIntegrationTest {
         Optional<ShelterEntity> shelterEntitiesByResponsibleUserEmail = this.shelterRepository.findShelterEntitiesByResponsibleUser_Email("USER_EMAIL");
 
         assertFalse(shelterEntitiesByResponsibleUserEmail.isPresent());
+
+    }
+
+    @Test
+    void shouldReturnFindAllWithAllOfPagedShelterEntity(){
+
+        persistEntity(new AddressEntityMapper(), this.address);
+        persistEntity(new UserEntityMapper(), this.user);
+        persistEntity(new ShelterEntityMapper(), this.shelter);
+        Pageable pageable = Pageable.ofSize(10);
+
+        Page<ShelterEntity> allShelters = shelterRepository.findAll(pageable);
+
+        ShelterEntity shelterEntityRecovery = allShelters.getContent().get(0);
+        assertNotNull(allShelters);
+        assertEquals(this.shelter.getId(), shelterEntityRecovery.getId());
+        assertEquals(this.shelter.getShelterName(), shelterEntityRecovery.getShelterName());
+        assertNotNull(this.shelter.getUser());
+        assertNotNull(this.shelter.getAddress());
+
 
     }
 

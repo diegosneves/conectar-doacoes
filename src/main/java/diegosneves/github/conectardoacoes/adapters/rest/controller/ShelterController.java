@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
+
 
 /**
  * Interface que define as operações de gerenciamento de abrigos.
@@ -168,5 +171,45 @@ public interface ShelterController {
             )
     })
     ResponseEntity<ShelterInformationResponse> findShelterByUserResponsibleEmail(@PathVariable("userResponsibleEmail") String userResponsibleEmail);
+
+    /**
+     * Método GET para encontrar todos os abrigos cadastrados.
+     * <p>
+     * Este método recebe um {@link Pageable} que para que seja feito a paginação da pagina
+     * e retorna como resposta todos os {@link ShelterInformationResponse} cadastrados com paginação.
+     * </p>
+     * <p>
+     * O método retornará um objeto JSON com os seguintes campos:
+     * <ul>
+     *      <li> {@code shelterName}: O nome do abrigo.</li>
+     *      <li> {@code responsibleName}: O nome da pessoa que está gerenciando as doações no abrigo.</li>
+     *      <li> {@code responsibleEmail}: O e-mail do responsável pelo recebimento das doações.</li>
+     *      <li> {@code donationDTOS}: Uma lista de objetos representando as doações recebidas.</li>
+     * </ul>
+     * </p>
+     *
+     * @return Retorna um {@link ResponseEntity} que encapsula a resposta do abrigo encontrado. Esta
+     * resposta inclui o status HTTP da operação, bem como um corpo que é uma representação JSON
+     * do abrigo.
+     *
+     * @see Pageable
+     * @see Page
+     */
+
+    @GetMapping
+    @Operation(
+            summary = "Encontra todos os abrigos cadastrados",
+            description = "Este endpoint é responsável por encontrar todos os abrigos cadastrados e paginá-los, " +
+                    "utilizando os dados recebidos por meio de uma requisição do tipo GET.",
+            tags = "Abrigos"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Abrigos encontrados com sucesso!",
+                    content = @Content(schema = @Schema(implementation = ShelterInformationResponse.class))
+            )
+    })
+    ResponseEntity<Page<ShelterInformationResponse>> findAll(Pageable pageable);
 
 }

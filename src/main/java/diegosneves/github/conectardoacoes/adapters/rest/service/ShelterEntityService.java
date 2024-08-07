@@ -5,8 +5,10 @@ import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityF
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonationEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Interface para a criação de um novo abrigo no sistema.
@@ -70,5 +72,18 @@ public interface ShelterEntityService {
      */
 
     ShelterInformationResponse findShelterByUserResponsibleEmail(String userResponsibleEmail);
+
+    /**
+     * Método utilizado para encontrar todos os abrigos com paginação.
+     * Recupera uma página de informações de abrigos do sistema com base nas informações de paginação fornecidas.
+     * Este método é responsável por retornar uma lista paginada de {@link ShelterInformationResponse},
+     * que contém detalhes sobre os abrigos registrados no sistema.
+     *
+     * @param pageable um objeto {@link Pageable} que define as informações de paginação, como número da página
+     *                 e tamanho da página, para controlar o retorno das informações de abrigos.
+     * @return uma página de objetos {@link ShelterInformationResponse} contendo as informações dos abrigos.
+     */
+
+    Page<ShelterInformationResponse> findAll(Pageable pageable);
 
 }

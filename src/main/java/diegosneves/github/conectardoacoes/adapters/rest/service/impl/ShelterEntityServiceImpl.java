@@ -35,8 +35,12 @@ import diegosneves.github.conectardoacoes.core.service.ShelterServiceContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -306,6 +310,17 @@ public class ShelterEntityServiceImpl implements ShelterEntityService {
     public ShelterInformationResponse findShelterByUserResponsibleEmail(String userResponsibleEmail) {
         ShelterEntity currentShelterByResponsibleEmail = this.getCurrentShelterByResponsibleEmail(userResponsibleEmail);
         return BuilderMapper.mapTo(getShelterInformationResponseMapper(), currentShelterByResponsibleEmail);
+    }
+
+    @Override
+    public Page<ShelterInformationResponse> findAll(Pageable pageable) {
+
+        Page<ShelterEntity> allShelterWithPageable = repository.findAll(pageable);
+        List<ShelterEntity> content = allShelterWithPageable.getContent();
+        List<ShelterInformationResponse> informationResponses = content.stream()
+                .map(getShelterInformationResponseMapper()::mapFrom).toList();
+
+        return new PageImpl<>(informationResponses, pageable, allShelterWithPageable.getTotalElements());
     }
 
     /**
