@@ -260,4 +260,39 @@ class UserRepositoryTest {
         assertNotNull(exception.getCause());
         assertEquals(UuidUtilsException.class, exception.getCause().getClass());
     }
+
+    @Test
+    void shouldFindUserContractByEmail() {
+        this.persistEntity(new UserEntityMapper(), this.user);
+
+        UserContract foundUser = this.repository.findUserEntityByUserEmail(USER_EMAIL);
+
+        assertNotNull(foundUser);
+        assertEquals(USER_ID, foundUser.getId());
+        assertEquals(USER_NAME, foundUser.getUsername());
+        assertEquals(USER_EMAIL, foundUser.getEmail());
+        assertEquals(UserProfile.DONOR, foundUser.getUserProfile());
+        assertEquals(USER_PASSWORD, foundUser.getUserPassword());
+    }
+
+    @Test
+    void shouldNotFindNonExistingUser() {
+        this.persistEntity(new UserEntityMapper(), this.user);
+
+        UserContract foundUser = this.repository.findUserEntityByUserEmail("USER_EMAIL");
+
+        assertNull(foundUser);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenEmailIsNull() {
+        this.persistEntity(new UserEntityMapper(), this.user);
+
+        UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class,
+                () -> this.repository.findUserEntityByUserEmail(null));
+
+        assertNotNull(exception);
+        assertEquals(ExceptionDetails.getExceptionDetails(29).formatErrorMessage(), exception.getMessage());
+    }
+
 }

@@ -1,6 +1,8 @@
 # Release Notes
 
-
+- [1.0.0](#_release-100_)
+- [1.1.0](#_release-110_)
+- [1.2.0](#_release-120_)
 
 ---
 ## **_Release 1.0.0_**
@@ -1141,3 +1143,836 @@ Este commit remove algumas importações desnecessárias nos arquivos de teste `
 **Nota:** O principal foco deste commit é melhorar a limpeza do código removendo importações desnecessárias nos testes.
 
 ---
+## **_Release 1.1.0_**
+
+**Commit** 0ce258ee8e9583aa5415cdb39ce45f53416eb354
+
+Este commit remove inicializações desnecessárias de objetos em várias classes de mapeamento. Configurações de exclusão de cobertura de código foram incluídas e propriedades para Sonar e JaCoCo foram adicionadas ao `pom.xml` para melhor gerenciamento e análise de qualidade de código.
+
+**Arquivos alterados:** `.gitignore`, `pom.xml`, `UserEntityFailuresException.java`, `BuilderMapper.java`, `DonationMapper.java`, `ShelterEntityMapper.java`, `ShelterMapper.java`, `UserEntityMapper.java`, `UserMapper.java`, `AddressRepository.java`, `DonationRepository.java`.
+
+**Alterações:**
+
+- Adicionado `qodana.sarif.json` ao arquivo `.gitignore`.
+- Configurações para Sonar e JaCoCo foram adicionadas ao `pom.xml`, junto com as configurações de exclusão de cobertura de código.
+- Removida inicialização desnecessária de objetos nas classes `BuilderMapper`, `DonationMapper`, `ShelterEntityMapper`, `ShelterMapper`, `UserEntityMapper` e `UserMapper`.
+- Corrigida formatação no Javadoc das classes `AddressRepository` e `DonationRepository`.
+
+**Nota:** Essa commit é focada em refatorar o mapeamento de objetos e melhorar a configuração do JaCoCo e Sonar para análise de qualidade de código.
+
+---
+
+**Commit** 09b07b152878ed06ce99a36fe1a93fc2c82ff070:
+
+Este commit adiciona a ferramenta de análise de código Qodana ao projeto. Adicionamos o arquivo de configuração `qodana.yaml`, que define várias inspeções a serem realizadas e o arquivo `.github/workflows/qodana_code_quality.yml` para executar a verificação de qualidade de código usando GitHub Actions.
+
+**Arquivos Alterados:** `.github/workflows/qodana_code_quality.yml`, `qodana.yaml`
+
+**Alterações:**
+
+- No arquivo `.github/workflows/qodana_code_quality.yml`, foram definidas as ações de verificação de qualidade de código a serem executadas quando um pull request é criado ou quando qualquer push é feito para os branches `main`, `develop`, e `release/*`.
+- O arquivo `qodana.yaml` foi adicionado. Nele, foi definida a inspeção do perfil `qodana.starter` para a análise do código, e foram ativas as inspeções `JvmCoverageInspection`, `UNUSED_IMPORT` e `JavadocDeclaration`.
+
+**Nota:** A principal ênfase desta confirmação é adicionar a análise de código Qodana ao projeto para melhorar a qualidade do código.
+
+---
+
+**Commit** c4595afab45cff5afe3bf2242d9d0956ed87847a:
+
+Este commit efetua uma refatoração em diversos testes, aprimorando a maneira como algumas exceções são verificadas. Foi adicionado o método ParameterizedTest para tornar os testes mais dinâmicos e menos repetitivos. Além disso, foram removidas várias importações e códigos que não estavam sendo utilizados, visando manter o código limpo e de fácil manutenção. Outra mudança significativa foi a atualização no método "validateNotNullOrEmpty" na classe "ValidationUtils", no qual foi utilizado o recurso instanceof com padrão de variável do Java 17+.
+
+**Arquivos Alterados:** `ShelterEntityMapper.java`, `ShelterEntityServiceImpl.java`, `ValidationUtils.java`, `ShelterControllerImplTest.java`, `UserMapperTest.java`, `ShelterEntityServiceImplTest.java`, `UserTest.java`
+
+**Alterações:**
+
+- Em `ShelterEntityMapper.java`, a instância de `User` foi removida do cast de `source.getUser()`, tornando a chamada direta.
+- Em `ShelterEntityServiceImpl.java`, foi removida a dependência do `DonationRepository`, pois não estava sendo utilizada.
+- Em `ValidationUtils.java`, o recurso instanceof com padrão de variável do Java 17+ foi implementado no método `validateNotNullOrEmpty`.
+- Em `ShelterControllerImplTest.java`, foram removidas diversas importações que não estavam sendo utilizadas.
+- Em `UserMapperTest.java`, implementou-se o método ParameterizedTest para otimizar os testes relacionados à `UserEntity`.
+- Em `ShelterEntityServiceImplTest.java`, a entidade `Donation` foi removida, pois não estava sendo utilizada.
+- Em `UserTest.java`, foi removido o setUp que não estava sendo utilizado.
+
+**Nota:** A principal ênfase deste commit é melhorar a qualidade dos testes, torná-los menos repetitivos e manter o código limpo e de fácil manutenção.
+
+---
+
+**Commit** 3c5cfeb9842012e6320f3cc8ca6f4c5c31646f0b:
+
+Este commit remove algumas importações desnecessárias nos arquivos de teste `UserMapperTest.java` e `ShelterEntityServiceImplTest.java`, visando tornar o código mais limpo e eficiente. As importações removidas incluem `UuidUtilsException` e `Donation`, as quais não estavam sendo utilizadas.
+
+**Arquivos Alterados:** `UserMapperTest.java`, `ShelterEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Em `UserMapperTest.java`: 
+   - Foi removida a importação do `UuidUtilsException` e `UuidUtils`, pois não estavam sendo usados nesses testes. 
+
+- Em `ShelterEntityServiceImplTest.java`: 
+   - Foi removida a importação da entidade `Donation`, pois a mesma não estava sendo utilizada no teste.
+
+**Nota:** O principal foco deste commit é melhorar a limpeza do código removendo importações desnecessárias nos testes.
+
+---
+
+**Commit** b1a01823449146c4a727faec3f6341698e867109:
+
+Este commit adiciona uma validação ao método `createShelter` para garantir que uma solicitação de criação de abrigo não seja nula. Também foi incluído um novo teste para verificar a exceção lançada quando uma solicitação nula é passada. Essas mudanças visam evitar erros causados por solicitações de criação nulas e fornecer mensagens de erro mais claras para o usuário.
+
+**Arquivos Alterados:** `ShelterEntityServiceImpl.java`, `ShelterEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Adicionada a validação `ValidationUtils.validateNotNullOrEmpty` no método `createShelter` de `ShelterEntityServiceImpl` para verificar se o pedido de criação de um abrigo não é nulo.
+- Incluído o campo `REQUEST_VALIDATION_ERROR_MESSAGE` em `ShelterEntityServiceImpl`.
+- Adicionado o teste `shouldThrowShelterEntityFailuresExceptionWhenCreatingShelterWithNullArgument` em `ShelterEntityServiceImplTest` para verificar a exceção lançada quando uma solicitação nula é passada para `createShelter`.
+
+**Nota:** A principal ênfase desta confirmação é adicionar uma validação de solicitação nula no método `createShelter` e fornecer mensagens de erro claras quando uma solicitação nula é passada.
+
+---
+
+**Commit** 68b85312f52c9a999c6279671af8d6c388b6018a:
+
+Este commit atualiza o serviço de criação de abrigos para usar `AddressEntityService`. O código foi refatorado para utilizar a classe AddressEntityService no processo de criação de abrigos em vez de diretamente tratar os dados do endereço. Isso simplifica a classe ShelterEntityServiceImpl, e melhora a separação de responsabilidades, pois agora a lógica de criação de endereços está inteiramente dentro de AddressEntityService.
+
+**Arquivos Alterados:** `ShelterEntityServiceImpl.java`
+
+**Alterações:**
+
+- As referências à `AddressRepository` foram removidas de `ShelterEntityServiceImpl.java` e substituídas por `AddressEntityService`.
+- O método `createAndReturnShelterInstance` de `ShelterEntityServiceImpl.java` foi alterado para usar `AddressEntityService.createAndSaveAddressFromDto(request.getAddress())` ao invés de criar e salvar o endereço diretamente.
+- A lógica de criação e salvamento de endereços que estava em `ShelterEntityServiceImpl.java` foi movida para `AddressEntityService`.
+- Os testes unitários em `ShelterEntityServiceImplTest.java` foram ajustados para refletir as mudanças feitas.
+
+**Nota:** A principal ênfase desta confirmação é melhorar a separação de responsabilidades no serviço de criação de abrigos, movendo a lógica de criação de endereços para o próprio `AddressEntityService`.
+
+---
+
+**Commit** b25bb9dc76c73cc0e2b5315994c9170a23ff2703:
+
+Este commit introduz um novo serviço chamado `AddressEntityServiceImpl`, responsável pela criação e gravação de entidades de endereço. Esse serviço aceita DTOs, valida, transforma-os em entidades de endereço e, em seguida, persiste-os no banco de dados. Em caso de falha, um tratamento de exceções foi implementado. Além disso, a interface `AddressEntityService` também foi criada, esta define o contrato para o serviço de endereço.
+
+**Arquivos Alterados:** `AddressEntityService.java`, `AddressEntityServiceImpl.java`
+
+**Alterações:**
+
+- A interface `AddressEntityService` foi criada. Ela define o contrato para o serviço que lida com a entidade de endereço. A interface define um método chamado `createAndSaveAddressFromDto`, que é responsável por criar e salvar uma entidade de endereço com base em um DTO.
+
+- A classe de serviço `AddressEntityServiceImpl` foi criada. Esta classe implementa a `AddressEntityService` e fornece a implementação para `createAndSaveAddressFromDto`. A implementação valida o DTO de entrada, cria a entidade de endereço e a persiste no banco de dados.
+
+- Durante a criação da entidade de endereço, `AddressEntityServiceImpl` faz uso da `AddressFactory`. Se ocorrer algum erro durante a criação da entidade, `AddressCreationFailureException` será lançada.
+
+- Para salvar a entidade no repositório, `AddressEntityServiceImpl` primeiro mapeia o objeto de endereço para a entidade relevante usando `BuilderMapper` e, em seguida, salva a entidade no repositório. Se ocorrer um erro durante o mapeamento, uma `AddressEntityFailuresException` será lançada.
+
+- Em caso geral, se houver uma falha ao criar ou salvar a entidade de endereço, `AddressEntityFailuresException` será lançada.
+
+**Nota:** A ênfase principal deste commit está na criação de um novo serviço dedicado ao gerenciamento de entidades de endereço. O serviço permite converter DTOs de endereço em entidades de endereço e persisti-las no banco de dados. O serviço também adiciona com robustez ao implementar tratamento de exceção adequado para situações onde a conversão ou persistência falha.
+
+---
+
+**Commit** f68969e62ba7b5d8b8d7f564e98792c48e2926fe:
+
+Este commit adiciona uma série de testes para a implementação de `AddressEntityServiceImpl`. Os testes cobrem o comportamento esperado da implementação bem-sucedida, bem como tratamentos de erro quando há entradas inválidas ou nulas.
+
+**Arquivo Alterado:** `AddressEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Nova classe de teste `AddressEntityServiceImplTest` adicionada, com vários casos de teste.
+- Os casos de teste verificam o comportamento esperado ao manipular o objeto `AddressDTO`, como a exceção apropriada sendo lançada quando o DTO está nulo ou quando campos individuais no DTO são nulos ou em branco.
+- Uso extensivo de `MockedStatic`, `ArgumentCaptor` e `assertThrows` para verificar o comportamento do serviço `AddressEntityServiceImpl`.
+  
+
+**Nota:** Este commit se concentra na verificação dos casos de tratamento de erro, garantindo que a implementação `AddressEntityServiceImpl` se comporta como esperado quando encontrados dados inválidos ou nulos.
+
+---
+
+**Commit** f0dfe4278bfcbd52c1bce7a45f8d5c6b42ccfda2:
+
+Este commit aumenta o arquivo README.md para incluir informações mais específicas relacionadas ao projeto 'Conectar Doações'. Ele introduz um novo emblema CI Prod no título e o complementa com uma seção de conteúdo abrangente que descreve os títulos dos componentes do projeto, como 'Recursos', 'Arquitetura Hexagonal', 'Swagger', 'Docker' e 'UML'. A comparação também inclui uma descrição detalhada de cada uma dessas seções, incluindo códigos, diagramas e explicações.
+
+**Arquivos Alterados:** `README.md`
+
+**Alterações:**
+
+- Introduzido um novo emblema "CI Prod" na parte superior do arquivo README.md.
+- Incluía uma nova seção "Conteúdo" que detalha várias seções importantes do arquivo README.md.
+- Foram adicionadas as descrições detalhadas das seções 'Recursos', 'Arquitetura Hexagonal', 'Swagger', 'Docker' e 'UML'. 
+- Foi incluída a explicação de como executar e parar o projeto com o Docker.
+- Foi proporcionada uma descrição visual da arquitetura do projeto por meio de um diagrama UML.
+
+**Nota:** A principal finalidade deste commit é melhorar a compreensão do projeto 'Conectar Doações' ao fornecer informações estendidas no arquivo README.md.
+
+---
+
+**Commit** af98b49c6d2254a2b9477e67cab6279b7b25505f:
+
+Este commit adicionou a validação de perfil e a restrição de vinculação de múltiplos abrigos para um usuário responsável. Assegurando que o usuário designado como responsável por um abrigo tenha o perfil de "Beneficiary" (e não "Donor"), e que esse usuário não seja já responsável por outro abrigo. Os testes correspondentes também foram adicionados.
+
+**Arquivos Alterados:** `ShelterRepository.java`, `ShelterEntityServiceImpl.java`, `ShelterRepositoryIntegrationTest.java`, `ShelterEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Foram adicionados dois novos métodos na classe `ShelterEntityServiceImpl.java` para validar se o usuário responsável possui perfil de beneficiário e se já está vinculado a algum outro abrigo.
+- A inclusão do método `findShelterEntitiesByResponsibleUser_Email(String responsibleUserEmail)` na interface `ShelterRepository`. Esse método busca por abrigos associados a um determinado usuário.
+- A implementação de testes, `ShelterRepositoryIntegrationTest.java` e `ShelterEntityServiceImplTest.java`, respectivamente para os itens acima mencionados.
+
+**Nota:** O propósito principal desse commit é assegurar que o usuário responsável por um abrigo atenda aos requisitos necessários, otimizando a lógica no serviço `ShelterEntityService`.
+
+---
+
+**Commit** 015a7e5eda4e0c3ee5b716ecf044934c9c5acb1c:
+
+Neste commit, uma seção de Javadoc foi adicionada ao arquivo README. A nova seção fornece um link para a documentação detalhada do Javadoc, permitindo que os usuários acessem mais facilmente essa documentação.
+
+**Arquivo alterado:** `README.md`
+
+**Alterações:**
+
+- Adicionado um novo item ao índice do README.
+- Inclusão de uma nova seção de Javadoc no README, com um link para a documentação gerada pelo Javadoc.
+
+**Nota:** A essência deste commit é oferecer uma referência acessível à documentação do Javadoc através da inclusão deste link diretamente no arquivo README.
+
+---
+
+**Commit** caafb80de0e0f487d9a21a3a75535befe56f04cc:
+
+Este commit adiciona registros de log em vários serviços e utilitários no pacote. Isso inclui a classe ValidationUtils, bem como os serviços de endereço, usuário e abrigo. Além disso, as mensagens de log foram adicionadas em vários pontos para indicar o sucesso ou falha de eventos específicos. Assim, melhorando a capacidade de rastreabilidade e debug das operações.
+
+**Arquivos Alterados:** `AddressEntityServiceImpl.java`, `ShelterEntityServiceImpl.java`, `UserEntityServiceImpl.java`, `ValidationUtils.java`
+
+**Alterações:**
+
+- A anotação `@Slf4j` foi adicionada nas classes `AddressEntityServiceImpl.java`, `ShelterEntityServiceImpl.java`, `UserEntityServiceImpl.java` e `ValidationUtils.java` para habilitar o registro de log.
+- Mensagens de log foram adicionadas em vários blocos `catch` para registrar situações de erro. Mensagens de sucesso também foram adicionadas em determinados pontos-chave, como após a criação de um novo endereço ou abrigo, para registrar a realização bem-sucedida dessas operações.
+
+**Nota:** A principal ênfase deste commit é melhorar a rastreabilidade das operações por meio do registro de log. Isso facilitará a identificação e a resolução de problemas, aumentando assim a qualidade do código.
+
+---
+
+**Commit** 46f2bc3884920f138e12e31ef86519646394a480:
+
+Este commit aprimora o rastreamento ao integrar logs de erro em várias classes mappers (`AddressMapper`, `ShelterEntityMapper`, `UserMapper`, etc). Isso aprimora a capacidade de rastrear os processos de mapeamento, facilitando a identificação de problemas e promovendo melhorias na depuração e manutenção do código.
+
+**Arquivos Alterados:** `AddressMapper.java`, `DonationMapper.java`, `ShelterEntityMapper.java`, `ShelterMapper.java`, `UserEntityMapper.java`, `UserMapper.java`.
+
+**Alterações:**
+
+- Logs de erro foram adicionados em todas as classes mappers. Isso inclui a captura e log de erros ao mapear de entidades para objetos e vice-versa.
+
+**Notas:**
+
+Este commit foca em melhorar a capacidade de rastreamento de erros durante os processos de mapeamento, o que facilita a identificação de problemas e a depuração. Cada classe mapper agora gera um log quando ocorre um erro durante o mapeamento, fornecendo detalhes sobre o erro para auxiliar na resolução de problemas.
+
+---
+
+**Commit** 72b5c5fa03e4879ee0e1e9e29c6c1e582493aab8:
+
+Este commit adiciona um manipulador de exceção para erros de leitura de mensagens HTTP no manipulador de exceções global (ControllerExceptionHandler). Esse tipo de erro ocorre quando há uma falha de sintaxe no corpo de uma solicitação HTTP. Agora, quando essa exceção é lançada, uma mensagem de erro é registrada no log e uma resposta BAD_REQUEST (400) é retornada ao cliente, indicando que a solicitação era inválida ou não pôde ser entendida pelo servidor.
+
+**Arquivos Alterados:** `ControllerExceptionHandler.java`
+
+**Alterações:**
+
+- Adicionado um novo método para lidar com erros do tipo HttpMessageNotReadableException em `ControllerExceptionHandler`.
+- Agora, a exceção registra uma mensagem de erro no log.
+- Retorna uma resposta BAD_REQUEST (400) ao cliente quando ocorre essa exceção.
+
+**Nota:** Este commit foca em melhorar a manipulação de erros relacionados a falhas de sintaxe no corpo de uma solicitação HTTP, fornecendo uma resposta apropriada para o cliente e registrando o erro para futuras análises.
+
+---
+
+**Commit** 96d2f9d710260dcf84af8bc421a2e34d740adb3b:
+
+Este commit atualiza as condições para construção e envio nos workflows de CI. O processo de construção e envio agora é executado apenas quando um pull request é mesclado na branch "release/*" para o ci-hlg.yaml e na branch "main" para o ci-prod.yaml. Isto tem como objetivo otimizar as operações de CI e evitar execuções não necessárias.
+
+**Arquivos Alterados:** `.github/workflows/ci-hlg.yaml`, `.github/workflows/ci-prod.yaml`
+
+**Alterações:**
+
+- Adicionada condição de execução em `ci-hlg.yaml` e `ci-prod.yaml`. A condição verifica se um pull request foi mesclado e se ocorreu nas branches corretas.
+
+**Nota:** A principal ênfase desta confirmação é otimizar as operações de CI, garantindo que as tarefas de construção e envio sejam executadas apenas nas condições corretas, evitando possíveis execuções desnecessárias.
+
+---
+
+**Commit** 38ab5f3ee061d869f03e4042d7b4776d172abaa6:
+
+Este commit atualiza o fluxo de trabalho para usar a ação docker/build-push-action no CI ao invés do comando `docker build` e `docker push` diretos. Isso simplifica o script além de fornecer uma maneira padronizada de realizar essas ações.
+
+**Arquivos Alterados:** `.github/workflows/ci-hlg-docker.yaml`, `.github/workflows/ci-hlg.yaml`, `.github/workflows/ci-prod-docker.yaml`, `.github/workflows/ci-prod.yaml`, `.github/workflows/sonar-cloud.yaml`
+
+**Alterações:**
+
+- Atualizado o fluxo de trabalho CI (Continuous Integration) para usar `docker/build-push-action` em vez dos comandos diretos `docker build` e `docker push` nos arquivos `.github/workflows/ci-hlg-docker.yaml`, `.github/workflows/ci-hlg.yaml`, `.github/workflows/ci-prod-docker.yaml`, `.github/workflows/ci-prod.yaml`.
+- O arquivo `.github/workflows/sonar-cloud.yaml` foi atualizado para remover a verificação de eventos push nos branches main, develop e release.
+
+**Nota:** A principal ênfase deste commit é a simplificação e padronização do fluxo de trabalho CI para uso com o Docker.
+
+---
+
+**Commit** 9cf814fa8a16208bb5f2b4879eb53ba3ac6ee8ad:
+
+Esse commit adiciona uma nova exceção, `DonationEntityFailuresException`, para tratar especificamente falhas relacionadas as entidades de doação. Além disso, a enumeração `ExceptionDetails` foi estendida para incluir uma nova mensagem de erro para falhas em operações de doação. Uma nova manipulação de exceção foi adicionada no `ControllerExceptionHandler` para capturar e responder apropriadamente a exceção lançada por essa operação.
+
+**Arquivos Alterados:** `ControllerExceptionHandler.java`, `ExceptionDetails.java`, `DonationEntityFailuresException.java`
+
+**Alterações:**
+
+- Nova exceção `DonationEntityFailuresException` adicionada para lidar com falhas em operações relacionadas a entidades de doação.
+- Aumento do enum `ExceptionDetails` para incluir uma nova mensagem de erro para falhas em operações de doação.
+- Adicionada a manipulação de exceção em `ControllerExceptionHandler` para capturar e responder apropriadamente a exceção lançada.
+- MServiço de manipulação de exceções adicionado ao arquivo `ControllerExceptionHandler.java` para tratar `DonationEntityFailuresException`.
+- Nova mensagem de erro `DONATION_OPERATION_FAILURE` adicionada ao enum `ExceptionDetails`.
+
+**Nota:** A principal ênfase deste commit é melhorar o tratamento de erro para operações de doação. Especificamente, adicionando uma nova exceção e uma nova mensagem de erro para falhas em operações de doação.
+
+---
+
+**Commit** c22c759ac75ce596fc8cbad149477d1bfc183608:
+
+Este commit adiciona recursos para gerenciar doações no sistema, incluindo a conversão e persistência de doações. Esse recurso é importante para armazenar informação sobre as doações feitas pelos usuários. A funcionalidade foi implementada utilizando a estrutura padrão do sistema, com DTOs, serviços, e testes relacionados.
+
+**Arquivos Alterados:** `DonationDTO.java`, `DonationEntityService.java`, `DonationEntityServiceImpl.java`
+
+**Alterações:**
+
+- Adicionado o DTO de doação (`DonationDTO.java`) que é utilizado para transportar dados entre processos.
+- Criada a interface `DonationEntityService.java` que especifica métodos para realizar operações como conversão e persistência de doações em nossa base de dados.
+- Implementada a classe `DonationEntityServiceImpl.java` que possui lógica de negócios para gerenciar doações, incluindo a conversão de DTOs para entidades de doação e a persistência dessas entidades no repositório.
+
+**Nota:** A principal ênfase deste commit é adicionar recursos para gerenciar doações no sistema. Os arquivos novos são adicionados e implementados com o objetivo de tratar as doações efetuadas pelos usuários.
+
+---
+
+**Commit** 1e90b77a10d22ed148efc964ccc47cc9cc06e103:
+
+Este commit ajusta a maneira como as doações são convertidas e salvas no sistema. Todo o processo agora é manipulado dentro do método 'convertAndSaveDonationDTO', removendo a necessidade de uso do 'DonationMapper'. O tipo de retorno do método também foi alterado de 'Donation' para 'DonationEntity'. Em consequência, ajustes foram necessários nas classes de teste.
+
+**Arquivos Alterados:** `DonationEntityService.java`, `DonationEntityServiceImpl.java`, `DonationEntityServiceImplTest.java`
+
+**Alterações:**
+
+- O tipo de retorno do método 'convertAndSaveDonationDTO' da classe `DonationEntityService` foi alterado de 'Donation' para 'DonationEntity'.
+- O método 'convertAndSaveDonationDTO' da classe `DonationEntityServiceImpl` foi atualizado para persistir diretamente a `DonationEntity` após a conversão do `DonationDTO`.
+- O método de teste 'shouldConvertDonationDTOANDSaveDonationEntityANDValidateSavedDonation' da classe `DonationEntityServiceImplTest` foi atualizado para refletir a alteração do tipo de retorno do método 'convertAndSaveDonationDTO'.
+
+**Nota:** A principal ênfase desta confirmação é melhorar a conversão e persistência de doações, removendo a necessidade de uso do 'DonationMapper' e direcionando a persistência para o próprio método de conversão.
+
+---
+
+**Commit** 3ae3e2930977667fd37a47e3a7cc956db405de7f:
+
+Este commit adiciona novas classes de Request e Response para manipular a recepção de doações, bem como um novo Mapper para converter entidades Shelter para Responses. Essas classes fortalecem o encapsulamento das informações e melhoram a clareza na comunicação cliente-servidor.
+
+**Arquivos Adicionados:** `ReceiveDonationResponseFromShelterEntityMapper.java`, `ReceiveDonationRequest.java`, `ReceiveDonationResponse.java`
+
+**Adições:**
+
+- Adicionada a classe `ReceiveDonationResponseFromShelterEntityMapper`, que é responsável pela conversão de objetos do tipo `ShelterEntity` para `ReceiveDonationResponse`.
+- Adicionada a classe `ReceiveDonationRequest` para encapsular as informações presentes em uma solicitação de recebimento de doação.
+- Adicionada a classe `ReceiveDonationResponse` que encapsula as informações de resposta quando um abrigo recebe uma doação.
+
+**Nota:** A ênfase principal deste commit é melhorar o encapsulamento das informações e a clareza na comunicação cliente-servidor ao lidar com a recepção de doações.
+
+---
+
+**Commit** f76deea5e0a74153a89b015cfa5e96242d832ce3:
+
+Este commit adiciona testes de mapeamento e validação da entidade de doação. Os testes foram incluídos no pacote src/test/java. Isso inclui testes para validar o mapeamento correto de entidades sem doações e com listas de doações vazias. Também o teste garante a correta conversão de uma doação DTO com quantidade zero para uma entidade, que é salva e validada como um.
+
+**Arquivos Alterados:** `ReceiveDonationResponseFromShelterEntityMapperTest.java`, `DonationEntityServiceImplTest.java`
+
+**Alterações:**
+
+- A classe `ReceiveDonationResponseFromShelterEntityMapperTest` foi criada para implementar testes de mapeamento da entidade `ShelterEntity` e validação de respostas de recebimento de doação.
+- Em `DonationEntityServiceImplTest.java`, o nome do método foi alterado de `shouldConvertDonationDTOANDSaveDonationEntityANDValidateSavedDonation` para `shouldConvertDonationDtoToEntitySaveAndValidate`, tornando-o mais expressivo.
+- Adicionado novo teste `shouldConvertDonationDtoWithZeroAmountToEntitySaveAndValidateAsOne` para validar a lógica de quando a quantidade da doação é zero ou negativa, e o serviço deve ajustá-la para um no momento de salvamento.
+  
+
+**Nota:** Este commit é significativo para verificar a robustez da conversão, mapeamento, persistência e validação das entidades de doação.
+
+---
+
+**Commit** e616b50455e2fd737b93192aa1a3067a94c86371:
+
+Este commit atualiza a imagem do MySQL usada no serviço do docker. A versão foi modificada para 'mysql:8.2.0-oraclelinux8' em vez da versão 'latest', garantindo maior controle sobre as versões do software.
+
+**Arquivo Alterado:** `compose.yaml`
+
+**Alterações:**
+
+- Imagem do MySQL no serviço Docker alterada de "mysql:latest" para "mysql:8.2.0-oraclelinux8".
+
+**Nota:** Essa alteração busca especificar uma versão consistente para o MySQL, o que pode ajudar a evitar problemas inesperados causados por atualizações automáticas para as novas versões "latest".
+
+---
+
+**Commit** 3ed5f25471bd7c4cdc883cdb0df1693e7d76ad16:
+
+Neste commit, foram adicionadas duas novas validações no `ValidationUtils` para checar se uma lista não é nula ou vazia, e para garantir que uma lista retornada nunca seja nula. Além disso, a versão da imagem do MySQL usada no docker-compose foi atualizada para `8.2.0-oraclelinux8`, garantindo a utilização da versão correta no README.
+
+**Arquivos Alterados:** `README.md`, `ValidationUtils.java`.
+
+**Alterações:**
+
+- Duas novas validações foram adicionadas ao `ValidationUtils`. Essas validações são para verificar se uma lista não é nula ou vazia e garantir que uma lista retornada nunca seja nula.
+- A versão da imagem do MySQL usada no `docker-compose.yaml` foi atualizada para `8.2.0-oraclelinux8`.
+
+**Nota:** A principal ênfase deste commit é melhorar a lógica de validação em `ValidationUtils` e garantir a utilização da versão correta da imagem do MySQL no docker-compose.
+
+---
+
+**Commit** 7b42fab658fc5a362de4fafe57a540868cada521:
+
+A adição deste código permite que os abrigos recebam doações. Isso é realizado por meio da criação de uma lista de doações, que é então anexada ao respectivo abrigo. Validações adicionais garantem que a lista de doações não seja nula ou vazia e que o abrigo exista no repositório. Testes foram adicionados para cobrir esses novos métodos e validações.
+
+**Arquivos Alterados:** `ShelterEntityService.java`, `ShelterEntityServiceImpl.java`
+
+**Alterações:**
+
+- O método `receiveDonation()` foi adicionado à interface `ShelterEntityService`. Este método aceita um `ReceiveDonationRequest`, processa as doações, associa-as ao abrigo correspondente e retorna uma `ReceiveDonationResponse`. Se o abrigo não for encontrado, o método retornará null.
+  
+- `ReceiveDonationResponse receiveDonation(ReceiveDonationRequest request)` foi adicionado na implementação `ShelterEntityServiceImpl` de `ShelterEntityService`. O método atualiza os registros presistentes, valida os dados de entrada e atualiza o estado da aplicação. Essa implementação lança uma `ShelterEntityFailuresException` se a requisição de doação for nula ou vazia.
+  
+- Além disso, foram adicionados dois novos métodos privados no `ShelterEntityServiceImpl`. Os métodos `appendDonationsToShelter()` e `mergeDonationLists()` são auxiliares para o `receiveDonation()`.
+
+**Nota:** Este commit se concentra em permitir que os abrigos recebam doações por meio da adição de novos métodos e validações. A ênfase principal está na validação dos dados de entrada e atualização do estado persistente.
+
+---
+
+**Commit** 6d4fcf74d709dc84a80c734f745df80a330a4340:
+
+Este commit adiciona um novo recurso no `ShelterController` chamado 'receiveDonation'. Este novo método recebe e processa solicitações POST para o recebimento de doações. Ele registra a doação no back-end e responde com os detalhes da doação recebida, incluindo informações sobre o abrigo e o responsável. As classes relevantes para solicitar e responder também foram importadas.
+
+**Arquivos Alterados:** `ShelterController.java`, `ShelterControllerImpl.java`, `ShelterService.java` e outros.
+
+**Alterações:**
+
+- Adicionado novo método 'receiveDonation' em `ShelterController` e `ShelterControllerImpl` que recebe e processa solicitações POST para o recebimento de doações.
+- Adicionado o código necessário para registrar a doação no back-end e responder com os detalhes da doação recebida.
+- Importadas as classes relevantes para solicitar e responder.
+
+**Nota:** Este commit é principalmente sobre a adição de um novo recurso para processar e receber doações em abrigos. Este recurso também inclui o registro de doações e retorna uma resposta contendo os detalhes da doação.
+
+---
+
+**Commit** b43d290431ff1c0d8a2f604baf78dbeba293af65:
+
+Este commit inclui a implementação do JavaDoc no método `findUserByEmail` e a implementação do Swagger.
+
+**Arquivos Alterados:** `UserController.java`, `UserEntityService.java`
+
+**Alterações:**
+
+- O método `findUserByEmail` no `UserController.java` recebeu um comentário extenso do JavaDoc explicando sua funcionalidade e também a implementação do Swagger, responsável por documentar e descrever as operações do método.
+- Foi adicionado um comentário do JavaDoc para o método `findUserByEmail` na `UserEntityService.java` detalhando seu propósito e comportamento.
+
+**Nota:** A ênfase principal deste commit é melhorar a documentação e a descrição das funções, facilitando a compreensão e o uso por outros desenvolvedores.
+
+---
+
+**Commit** 350c50820a257a7e828a36a1ca2aeb86c4898289:
+
+Este commit traz pequenas atualizações nas descrições do JavaDoc e testes no método `findUserByEmail`.
+
+**Arquivos Alterados:** `UserController.java`, `UserEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Em `UserController.java`, uma linha do JavaDoc no método `findUserByEmail` que descrevia o parâmetro foi removida. O parâmetro em questão não é usado na implementação do método, tornando a descrição irrelevante.
+
+- No arquivo `UserEntityServiceImplTest.java`, houve a inclusão de um teste feito para assegurar que o retorno do método `findUserByEmail` seja um objeto não nulo.
+
+**Nota:** Este commit aprimora a consistência do código, eliminando comentários desnecessários e garantindo a presença de testes relevantes.
+
+---
+
+**Commit** c9f30632bc67732f04a84760835bb55fc68db1ff:
+
+Este commit adiciona classes de exceção personalizadas e atualizações enum `ExceptionDetails`.
+
+**Arquivos Alterados:** `ExceptionDetails.java`, `CustomException.java`, `DetailsFailureException.java`
+
+**Alterações:**
+
+- A enumeração `ExceptionDetails.java` foi expandida para incluir novos códigos de termos e mensagens correspondentes a erros e exceções específicas. Um novo método também foi adicionado para recuperar detalhes de exceção com base em um termo.
+- Duas novas classes de exceção personalizadas, `CustomException.java` e `DetailsFailureException.java`, foram criadas. Elas fornecem manipulação de erros e exceções mais robusta e permitem o rastreamento de erros mais refinado.
+
+**Nota:** A principal ênfase deste commit é melhorar o gerenciamento de erros e exceções na aplicação. Ao personalizar a manipulação de erros, o aplicativo pode fornecer feedback mais útil em casos de falha e pode rastrear melhor onde e por que essas falhas estão ocorrendo.
+
+---
+
+**Commit** 3d8aa4e9c41d775cd99bc05a7e943f5782e2b943:
+
+Este commit atualiza as classes de exceção para estenderem `CustomException`. Também modifica suas estruturas para utilizar termos em seus construtores. Esses termos são usados para buscar os detalhes correspondentes da exceção lançada. Além disso, o processo de validação de exceções personalizadas foram reformulados em `ValidationUtils`.
+
+**Arquivos Alterados:** `AddressEntityFailuresException.java`, `ConstructorDefaultUndefinedException.java`, `DonationEntityFailuresException.java`, `MapperFailureException.java`, entre outros.
+
+**Alterações:**
+
+- As classes de exceção como `AddressEntityFailuresException.java`, `ConstructorDefaultUndefinedException.java`, `DonationEntityFailuresException.java` e `MapperFailureException.java` foram atualizadas para estender `CustomException` em vez de `RuntimeException`.
+- Os construtores nestas classes de exceção agora requerem um integer 'termo' que é usado para buscar informações detalhadas sobre a exceção.
+- Além da mensagem de exceção e Throwable 'cause', os construtores nas classes de exceção também levam um termo que é usado para buscar os detalhes da exceção.
+  
+
+**Nota:** A principal ênfase deste commit é aprimorar a manipulação personalizada de exceções fornecendo termos específicos. Os termos permitem recuperar detalhes precisos de exceção para rastreabilidade aprimorada.
+
+---
+
+**Commit** e2f253b88508be00afcee028855bf1a43baa6f81:
+
+Este commit inclui a constante CLASS_MAPPING_FAILURE na interface `MapperStrategy` e na classe `BuilderMapper`. Este valor é utilizado para melhorar as mensagens de erro quando um erro de mapeamento de classe ocorre, tornando-as mais informativas e úteis para rastrear o problema.
+
+**Arquivos Alterados:** `BuilderMapper.java`, `MapperStrategy.java`
+
+**Alterações:**
+
+- A constante `CLASS_MAPPING_FAILURE` foi adicionada à interface `MapperStrategy` e à classe `BuilderMapper`.
+- No construtor da classe `BuilderMapper`, a constante `CLASS_MAPPING_FAILURE` é utilizada nas mensagens de exceção para `ConstructorDefaultUndefinedException` e `MapperFailureException`.
+
+**Nota:** A principal ênfase desta confirmação é melhorar a rastreabilidade dos erros de mapeamento de classe, fornecendo mensagens de erro mais informativas.
+
+---
+
+**Commit** b77edf4fd52a59bd3492cdf5e245c6e60326a597:
+
+Este commit atualiza o tratamento de exceções no mapeamento de entidade de endereço. Substitui `MapperFailureException` por `ExceptionDetails` e faz alterações correspondentes no código para tratar as exceções de forma mais consistente. As mensagens de erro também foram atualizadas para utilizar códigos de erro em vez de strings literais. Todos os testes de unidade afetados foram atualizados de acordo.
+
+**Arquivos Alterados:** `AddressEntityMapper.java`, `AddressMapper.java`, `AddressEntityServiceImpl.java`, `AddressEntityMapperTest.java`, `AddressMapperTest.java`
+
+**Alterações:**
+
+- Substituição da exceção `MapperFailureException` por `ExceptionDetails` para tratamento de exceções mais consistente.
+- Atualização das mensagens de erro para utilizar códigos de erro em vez de strings literais.
+- Atualização de todos os testes de unidade afetados pelas mudanças.
+  
+
+**Nota:** A principal ênfase desta confirmação é aprimorar o tratamento de exceções, tornando-o mais consistente e informativo.
+
+---
+
+**Commit** 4bfba94e14fa15eab72802b934be48d784512f61:
+
+Este commit atualiza a manipulação de exceções nos mapeadores de doação e nos testes relacionados para fornecer mensagens de erro mais precisas. As dependências desnecessárias foram removidas e as mensagens de erro foram atualizadas para usar os detalhes específicos da exceção. Esses ajustes ajudam a rastrear e resolver erros mais eficientemente.
+
+**Arquivos Alterados:** `DonationEntityMapper.java`, `DonationMapper.java`, `DonationEntityServiceImpl.java`, `DonationEntityMapperTest.java`, `DonationMapperTest.java`
+
+**Alterações:**
+
+- Substituição do tratamento de exceção `MapperFailureException` por chamadas diretas ao método `mapFrom`.
+- As mensagens de erro foram atualizadas para usar os detalhes específicos da exceção.
+- Inclusão de uma lógica que garante que a entidade a ser persistida não seja nula no arquivo `DonationEntityServiceImpl.java`.
+
+**Nota:** A principal ênfase desta confirmação é aprimorar o tratamento de exceções para fornecer mensagens de erro mais precisas.
+
+---
+
+**Commit** 73d60cae3828d21657858bb8462b8c4877500959:
+
+Este commit substitui as mensagens de erro dinâmicas por códigos de erro em várias classes e testes relacionados às exceções. Esta alteração facilita a rastreabilidade e a interpretação de erros, pois eles são agora identificados com códigos consistentes em vez de mensagens de texto.
+
+**Arquivos Alterados:** `ShelterEntityMapper.java`, `ShelterMapper.java`, `ShelterRepository.java`, `ShelterEntityServiceImpl.java`, `ShelterEntityMapperTest.java`
+
+**Alterações:**
+
+- As mensagens de erro em várias classes e testes foram substituídas por códigos específicos.
+- Removido o tratamento de exceção `MapperFailureException` em `ShelterEntityMapper.java` e `ShelterMapper.java`, substituindo por chamadas diretas ao método class-specific `mapFrom`.
+- As constantes de mensagem de erro no `ShelterRepository.java` e `ShelterEntityServiceImpl.java` foram alteradas para códigos de erro correspondentes.
+- Testes foram atualizados para verificar as condições de erro apropriadas.
+
+**Nota:** A principal ênfase desta confirmação é aprimorar a rastreabilidade e interpretação de erros usando códigos de erro em vez de mensagens de texto.
+
+---
+
+**Commit** 5a6f3e5d52a558ba53aff0fd80413e99f30eeffc:
+
+Este commit atualiza validações e tratamento de exceção com detalhes de exceção. As mensagens de erro em várias classes e testes foram substituídas por códigos de erro, incluindo nas classes `UserEntityMapper`, `UserMapper` e `UserRepository`.
+
+**Arquivos Alterados:** `UserEntityMapper.java`, `UserMapper.java`, `UserRepository.java`, `UserEntityServiceImpl.java`, `UserEntityMapperTest.java`
+
+**Alterações:**
+
+- As mensagens de erro em várias classes e testes foram substituídas por códigos específicos.
+- A lógica de validação para as classes `UserEntityMapper`, `UserMapper` e `UserRepository` foi atualizada para usar a nova classe `ExceptionDetails` no mapeamento e nos serviços de teste.
+- Também foram ajustadas validações para as classes `UserEntityMapper`, `UserMapper` e `UserRepository` para melhorar a precisão na verificação de dados.
+
+**Nota:** A principal ênfase desta confirmação é aprimorar a rastreabilidade e interpretação de erros usando detalhes de exceção em vez de mensagens de texto.
+
+---
+
+**Commit** e2a7418514e639aa29b060f5055ed07c70faf500:
+
+Este commit adiciona comentários de documentação detalhados para a classe CustomException e seus construtores. Além disso, há uma refatoração do tratamento de exceções personalizadas no ControllerExceptionHandler, simplificando o processo para lidar apenas com a classe base CustomException em vez de várias subclasses específicas. Esta mudança torna o código mais genérico e fácil de manter.
+
+**Arquivos Alterados:** 
+
+- `ControllerExceptionHandler.java`
+- `CustomException.java`
+
+**Alterações:**
+
+- Adição de documentação de comentários detalhada para a classe `CustomException` e seus construtores.
+- Refatoração do tratamento de exceções personalizadas no `ControllerExceptionHandler` para lidar apenas com a classe base `CustomException`.
+- O tratador de exceções específico para `ConstructorDefaultUndefinedException`, `ShelterEntityFailuresException`, `AddressEntityFailuresException`, `MapperFailureException`, `UserEntityFailuresException`, `DonationEntityFailuresException` foram removidos.
+- Adicionada uma nova função tratadora de exceções específica para `CustomException`, que captura a exceção e processa a criação de um `ExceptionDTO`, bem como um `ResponseEntity` contendo os detalhes de erro da exceção.
+
+**Nota:** A principal ênfase desta confirmação é melhorar a documentação detalhada para a classe `CustomException` e simplificar o tratamento de exceções personalizadas no ControllerExceptionHandler para lidar apenas com a classe base `CustomException`, tornando o código mais genérico e fácil de manter.
+
+---
+
+**Commit** 8130c3d18bda82296864cb18675db7f6161137da:
+
+Este commit refatora os métodos de teste e implementação na classe `UserEntityServiceImpl`. Isso inclui a simplificação dos métodos de teste em `UserEntityServiceImplTest` para reduzir redundâncias. Além disso, mudanças significativas foram feitas no arquivo `UserEntityServiceImpl`, principalmente na maneira como o `UserEntityMapper` é utilizado. O objetivo desta refatoração é proporcionar um código mais enxuto e legível.
+
+**Arquivos Alterados:** `UserEntityServiceImpl.java`, `UserEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Os métodos de teste em `UserEntityServiceImplTest` foram simplificados.
+- Um novo método, `getUserEntityMapper()`, foi adicionado recentemente em `UserEntityServiceImpl`.
+- O método `findUserByEmail` em `UserEntityServiceImpl` foi refatorado para utilizar `BuilderMapper.mapTo()` e `getUserEntityMapper()`.
+- O método `createUserEntityFromCreationRequest` em `UserEntityServiceImpl` também foi refatorado para usar `getUserEntityMapper()`.
+
+**Nota:** A ênfase principal deste commit é a redução de redundâncias no código de teste e a refatoração de como o `UserEntityMapper` é empregado na `UserEntityServiceImpl`.
+
+---
+
+**Commit** eae5e588ca8b08e9a16ed1255c0a5bdf15401956:
+
+Este commit inclui a criação do método para buscar um abrigo pelo email do responsável. Além disso, inclui a implementação do swagger e Java Doc para este novo método.
+
+**Arquivos Alterados:** `ShelterController.java`, `ShelterControllerImpl.java`, `ReceiveDonationResponseFromShelterEntityMapper.java`, `ReceiveDonationResponse.java`, `ShelterEntityService.java`
+
+Alterações:
+
+- Em `ShelterController.java`, foi adicionado um novo endpoint GET para busca de abrigo pelo email do responsável.
+- `ShelterControllerImpl.java` foi atualizado para incluir a implementação deste novo método. 
+- A classe `ReceiveDonationResponseFromShelterEntityMapper.java` foi renomeada para `ShelterInformationResponseFromShelterEntityMapper.java` e as devidas alterações foram feitas no código para refletir essa mudança. 
+- Da mesma forma, `ReceiveDonationResponse.java` foi renomeado para `ShelterInformationResponse.java`.
+- `ShelterEntityService.java` foi atualizado para refletir essas mudanças de nomenclatura.
+
+**Nota:** A ênfase principal deste commit é estender a funcionalidade do sistema com a habilidade de buscar abrigos pelo email do responsável, melhorando a interface de programação de aplicativos com documentação adicional e organizando melhor o código com mudanças de nome apropriadas.
+
+---
+
+**Commit** 7a7d393df05fac3ee7b3549160dc354f650327ad:
+
+Este commit adiciona documentações Javadoc para a classe `AddressEntityService` e sua implementação. As novas páginas HTML geradas pelo Javadoc para `AddressEntityService` e `AddressEntityServiceImpl` também foram incluídas. Essas páginas contêm informações detalhadas sobre a interface e suas implementações, incluindo métodos e descrições de uso.
+
+**Arquivos Alterados:** `docs/allclasses-index.html`
+
+**Alterações:**
+
+- Foram adicionadas documentações Javadoc para os métodos em `AddressEntityService` e `AddressEntityServiceImpl`.
+- Foram geradas novas páginas HTML pelo Javadoc para `AddressEntityService` e `AddressEntityServiceImpl`.
+
+**Nota:** A ênfase principal deste commit é melhorar a documentação do código, fornecendo comentários Javadoc detalhados para a classe de serviço `AddressEntityService` e sua implementação, tornando mais fácil para os desenvolvedores entenderem o propósito e a funcionalidade dessas classes.
+
+---
+
+## **_Release 1.2.0_**
+
+**Commit** 5bba4235236d029798a0023aa288ffcc7ba21e18:
+
+Este commit atualiza a cobertura de código do Jacoco e adiciona novas informações no arquivo Release_Notes.md.  
+
+**Arquivos Alterados:** `pom.xml`, `Release_Notes.md`
+
+**Alterações:**
+
+- Houve uma atualização na cobertura do Jacoco, provavelmente com novas configurações ou dependências, refletidas no arquivo `pom.xml`.
+- Foram feitas diversas atualizações no arquivo `Release_Notes.md`, contendo informações de vários commits e suas respectivas mudanças.
+
+**Nota:** A principal ênfase deste commit é adicionar novas informações de commits no arquivo `Release_Notes.md` e fazer atualizações na cobertura de código do Jacoco no arquivo `pom.xml`.
+
+---
+
+**Commit** 33563e3a5fc3370e745920809e1bb81f577fe55d:
+
+Este commit renomeia o método "getUser" para "getUserById" para maior clareza. Além disso, introduz o método "getUserByEmail" para habilitar a busca de usuários por email. As mensagens de erro correspondentes e os testes unitários foram atualizados para cobrir essas mudanças.
+
+**Arquivos Alterados:** `UserContractRepository.java`, `UserService.java`, `UserServiceContract.java`, `UserServiceTest.java`
+
+**Alterações:**
+
+- O método "getUser" em `UserService` e `UserServiceContract` foi renomeado para "getUserById".
+- Um novo método, "findUserEntityByUserEmail", foi adicionado à interface `UserContractRepository` para buscar usuários por email.
+- Um novo método, "getUserByEmail", foi adicionado em `UserService` e `UserServiceContract` para buscar usuários por email.
+- Testes correspondentes para os novos métodos foram adicionados em `UserServiceTest`.
+  
+
+**Nota:** Este commit foca na introdução da funcionalidade de busca de usuários por email, enquanto melhora a clareza ao renomear o método de busca por ID de usuário.
+
+---
+
+**Commit** 004c7ee4d4146746579fee09f016ea59cff66094:
+
+Neste commit foi feita a refatoração da busca e criação de entidade de usuário para usar `UserServiceContract` ao invés do repositório diretamente. Isso foi realizado com o objetivo de melhorar a separação de responsabilidades, facilitar a manutenção de código e garantir maior coesão entre os componentes do sistema.
+
+**Arquivos Alterados:** `UserRepository.java`, `UserEntityServiceImpl.java`, `UserEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Em `UserRepository.java` foi implementado o método `findUserEntityByUserEmail`.
+
+- Na classe `UserEntityServiceImpl.java` foram realizadas as seguintes alterações:
+    - Em `searchUserByEmail`, buscou-se o usuário através do método `getUserByEmail` do `UserServiceContract` ao invés de buscar diretamente do repositório.
+    - No método `createUserEntityFromCreationRequest`, o usuário é agora criado através do método `createUser` do `UserServiceContract` ao invés directamente da classe `UserFactory`.
+    - Em `checkIfEmailAlreadyInUse`, verifica-se se o usuário existe através do método `getUserByEmail` do `UserServiceContract`.
+
+- Em `UserEntityServiceImplTest.java`, os testes foram atualizados para refletir as alterações em `UserEntityServiceImpl.java`.
+
+**Resumo:** Este commit concentra-se em refatorar a maneira como os usuários são buscados e criados no sistema, primeiro utilizando um serviço dedicado (`UserServiceContract`) em vez de acessar diretamente o repositório.
+
+---
+
+- **Commit** 8343b4f000d7af274dc5aedab8698ef63856c458:
+
+  Este commit adiciona métodos para converter contratos de abrigos em entidades de abrigos e vice-versa. A classe `ShelterEntityServiceImpl` foi refatorada para melhorar o mapeamento de entidades. O processo de criação de abrigos agora utiliza `ShelterServiceContract`, melhorando a separação de responsabilidades. Além disso, logs de erro e sucesso foram aprimorados para facilitar o debug. O método obsoleto `mapShelterAndSaveToRepository` foi removido.
+
+  **Arquivos Alterados:** `ShelterEntityServiceImpl.java`
+  
+  **Alterações:**
+  
+  - Foram adicionados métodos para lidar com a transformação de contratos de abrigos em entidades de abrigos e vice-versa.
+  - O método `createAndReturnShelterInstance` em `ShelterEntityServiceImpl` foi alterado para retornar `ShelterContract` em vez de `Shelter`.
+  - O método `createShelter` em `ShelterEntityServiceImpl` agora usa o `ShelterServiceContract` ao criar um novo abrigo.
+  - Foi removido o método `mapShelterAndSaveToRepository` que estava obsoleto.
+  
+  **Nota:**  A principal motivação deste commit é melhorar o mapeamento de entidades e o uso de contratos. Isso facilita futuras manutenções e melhora a separação de responsabilidades.
+  
+---
+
+**Commit** f40eadcf556902e12a50551bea818717f7230c9e:
+
+Este commit implementa `DonationService` e `DonationServiceContract` para gerenciar doações, encapsulando a lógica de criação de doações e tratamento de exceções. Além disso, atualiza a lógica em `DonationEntityServiceImpl` para utilizar o serviço.
+
+**Arquivos Alterados:** `DonationEntityServiceImpl.java`, `DonationService.java`, `DonationServiceContract.java`, `DonationServiceTest.java`
+
+**Alterações:**
+
+- Adicionado o uso de `DonationService` e `DonationServiceContract` em `DonationEntityServiceImpl`.
+- Criada a classe `DonationService` que implementa a interface `DonationServiceContract`. Esta classe é responsável por gerenciar as operações relacionadas às doações.
+- Interface `DonationServiceContract` foi criada para definir um contrato para a criação de doações.
+- Adicionado um Teste Unitário `DonationServiceTest` para a classe `DonationService`.
+
+**Nota:** A principal ênfase desta confirmação é melhorar a lógica de criação e gestão das doações, bem como a atualização da classe `DonationEntityServiceImpl` para utilizar o novo `DonationService`. Além disso, também foi incluído um Teste Unitário para a nova classe.
+
+---
+
+**Commit** 0142f059cfa0a7a3d6a41914f6493f4b7def56b8:
+
+Este commit implementa serviços relacionados ao endereço e da interface de contrato. Isso inclui a criação de métodos para a construção de objetos Address e lançamento de exceções apropriadas. Além disso, foi substituído o uso de `AddressFactory` por `AddressServiceContract` em `AddressEntityServiceImpl`.
+
+**Arquivos Alterados:** `AddressEntityServiceImpl.java`, `AddressService.java`, `AddressServiceContract.java`, `AddressServiceTest.java`
+
+**Alterações:**
+
+- Foi implementada a interface `AddressServiceContract` que define um contrato para um serviço responsável pelo gerenciamento de endereços na aplicação.
+- Foi criada a classe `AddressService` que implementa a `AddressServiceContract`. Esta classe é responsável por fornecer os serviços relacionados ao endereço e implementa todas as assinaturas de métodos definidas na interface.
+- Foi alterada a classe `AddressEntityServiceImpl`. Substituído o uso de `AddressFactory` por `AddressServiceContract` para criação de novas instâncias do objeto `Address`.
+- Foi criada a classe de teste `AddressServiceTest` para testar o serviço `AddressService`.
+
+**Nota:** A principal ênfase deste commit é melhorar a lógica de serviço dos endereços e padronizar as regras de negócio ao criar novos endereços.
+
+---
+
+**Commit** f2b00eb7582eff8b0aab67e401b267dbe90d8c53:
+
+Este commit adiciona o tratamento de erros para APIs externas e as configurações da URL do serviço Via CEP. Inclui a criação da classe `ExternalApiFailureException` para lidar com os erros das APIs externas, adiciona os detalhes da exceção `CEP_RETRIEVAL_FAILURE` e atualiza a classe `OpenApiConfig` para a versão 1.2.0. 
+
+**Arquivos Alterados:** `OpenApiConfig.java`, `ExceptionDetails.java`, `ExternalApiFailureException.java`, `application.yaml`
+
+**Alterações:**
+
+- A versão da API foi atualizada de `v1.0.0` para `v1.2.0` no arquivo `OpenApiConfig.java`.
+- Adicionada um novo `Tag` relacionada a "Endereços" na lista de tags em `OpenApiConfig.java`.
+- Adicionado a definição da exceção `CEP_RETRIEVAL_FAILURE` ao enum `ExceptionDetails.java`.
+- Criada a nova classe `ExternalApiFailureException` representando falhas de APIs externas.
+- A URL base do serviço Via CEP foi adicionada ao arquivo de configuração `application.yaml`.
+
+**Nota:** Este commit foi focado em lidar com falhas ao interagir com APIs externas, em particular com o serviço Via CEP. A estratégia adotada foi criar uma nova exceção para encapsular essas falhas e adicionar a URL do serviço Via CEP ao arquivo de configurações do projeto.
+
+---
+
+**Commit** c1b0082df977acde04ce082ab9193ad038ecd46c:
+
+Este commit adiciona novas classes para lidar com a recuperação de informações de endereços através de chamadas de API. As classes `AddressApiResponse`, `AddressApiResponseDTO`, `HttpAdapter`, `RestTemplateSimpleWebClient` e `RetrieveAddressAdapter` foram introduzidas. O arquivo `pom.xml` também foi atualizado para excluir essas novas classes da cobertura de testes do Sonar.
+
+**Arquivos Alterados:** `pom.xml`, `HttpAdapter.java`, `RestTemplateSimpleWebClient.java`, `RetrieveAddressAdapter.java`, `AddressApiResponseDTO.java`, `AddressApiResponse.java`
+
+**Alterações:**
+
+- Atualizado o `pom.xml` para excluir a nova pasta `adapter` da cobertura de testes do Sonar.
+- Criada a classe abstrata `HttpAdapter` que fornece a base para adaptadores HTTP, incluindo a configuração de cabeçalhos HTTP e a instância do `RestTemplateSimpleWebClient` a ser usada para chamadas HTTP.
+- Criada a classe `RestTemplateSimpleWebClient` que encapsula simplesmente a classe `RestTemplate` do Spring Framework para realizar requisições HTTP.
+- Added the `RetrieveAddressAdapter` class, which extends `HttpAdapter` and is responsible for retrieving address information based on the provided ZIP code.
+- Criada a classe `AddressApiResponse` para representar as respostas da API ao recuperar informações de endereços. A classe possui um método para converter a resposta da API para uma instância `AddressApiResponseDTO`.
+- Criada a classe `AddressApiResponseDTO` para representar um DTO (Data Transfer Object) da resposta da API de endereços.
+
+**Nota:** Este commit se concentra em introduzir as classes necessárias para efetuar chamadas à API para recuperar informações de endereços baseadas no CEP. Essas classes novas permitem a recuperação de endereço e a subsequente conversão das respostas da API em DTOs para uso mais adiante no sistema.
+
+---
+
+**Commit** b2ca4151ed8b43c1b4e02abdcb1fe95553872ba1:
+
+Este commit adiciona o controlador de endereços e a implementação de `AddressController`. Contém a interface `AddressController` com um endpoint para obter o endereço pelo código postal. Além disso, implementa a classe `AddressControllerImpl` para gerenciar solicitações e se conectar ao serviço `AddressEntityService`. Também atualiza as mensagens de exceção relacionadas para refletir as mudanças na terminologia.
+
+**Arquivos Alterados:** `RetrieveAddressAdapter.java`, `AddressController.java`, `AddressControllerImpl.java`, `AddressApiResponseDTO.java`, `ExceptionDetails.java`
+
+**Alterações:**
+
+- A constante `CEP_RETRIEVAL_FAILURE` foi renomeada para `ZIPCODE_RETRIEVAL_FAILURE` no arquivo `RetrieveAddressAdapter.java` e também na enum `ExceptionDetails.java`.
+- Foram criados os novos arquivos `AddressController.java` e `AddressControllerImpl.java` para controle de operações de endereço.
+- No arquivo `AddressController.java`, foi criado um novo endpoint a partir do método `retrieveAddress`, mapeado para /{zipcode}, onde zipcode é um parâmetro que define o código postal do endereço a ser obtido.
+- Em `AddressControllerImpl.java`, implementou-se o método `retrieveAddress` de `AddressController.java`, que solicita o serviço `AddressEntityService`.
+- Adicionou-se a documentação à classe `AddressApiResponseDTO.java`.
+
+**Nota:** Este commit visa introduzir a capacidade de obter informações de endereços usando o código postal através de um novo endpoint.
+
+---
+
+**Commit** a0161d38390e63f86b07d23cef14178b87c16a06:
+
+Este commit adiciona o método `restrieveAddress` no `AddressEntityService` para recuperar endereços usando um CEP fornecido. Implementa também testes unitários para garantir o funcionamento correto e tratamento de exceções para CEPs nulos, vazios ou inválidos.
+
+**Arquivos Alterados:** `AddressEntityService.java`, `AddressEntityServiceImpl.java`, `AddressEntityServiceImplTest.java`
+
+**Alterações:**
+
+- **Em**: `AddressEntityService.java`
+  - Adicionado o novo método `restrieveAddress`, usado para recuperar um endereço através de um CEP fornecido.
+  
+- **Em**: `AddressEntityServiceImpl.java`
+  - Implementação do método `restrieveAddress` que utiliza o serviço `RetrieveAddressAdapter` para realizar a requisição e obter a resposta correspondente.
+  - A resposta é convertida para `AddressApiResponseDTO` e retorna ao chamador.
+  
+- **Em**: `AddressEntityServiceImplTest.java`
+  - Adicionados testes unitários para o método `restrieveAddress`.
+  - Testes incluem o tratamento de exceções para CEPs nulos, vazios ou inválidos.
+
+**Nota:** A principal ênfase desta confirmação é a recuperação de endereços usando um CEP por meio do método `restrieveAddress`.
+
+---
+
+**Commit** 905f606acab04f5e5e70530026345a9344d933c6:
+
+Este commit introduz novas funcionalidades de paginação ao método `findAll` no repositório `ShelterRepository`, além de implementar testes correspondentes. A adição dos métodos respectivos facilita a recuperação paginada de todos os registros de abrigos cadastrados.
+
+**Arquivos Alterados:** `ShelterController.java`, `ShelterControllerImpl.java`, `ShelterRepository.java`, `ShelterEntityService.java`, `ShelterEntityServiceImpl.java`, `ShelterRepositoryIntegrationTest.java`
+
+**Alterações:**
+
+- **ShelterController.java**: Adicionado o método `findAll` com a anotação `@GetMapping`, para suportar requisições paginadas de abrigos.
+- **ShelterControllerImpl.java**: Implementação do método `findAll` que chama o serviço para obter os dados paginados.
+- **ShelterRepository.java**: Declaração do método `Page<ShelterEntity> findAll(Pageable pageable)`, permitindo consultas paginadas ao banco de dados.
+- **ShelterEntityService.java**: Adicionado o método `Page<ShelterInformationResponse> findAll(Pageable pageable)`, que define a lógica de serviço para a paginação.
+- **ShelterEntityServiceImpl.java**: Implementação do método `findAll`, que converte as entidades de abrigo em DTOs paginados.
+- **ShelterRepositoryIntegrationTest.java**: Inclusão de testes de integração para validar o funcionamento da paginação no repositório de abrigos.
+
+**Nota:** A principal ênfase deste commit é a implementação da funcionalidade de paginação para os registros de abrigos e os testes associados, melhorando a eficiência no gerenciamento e recuperação de dados.
+
+---
+

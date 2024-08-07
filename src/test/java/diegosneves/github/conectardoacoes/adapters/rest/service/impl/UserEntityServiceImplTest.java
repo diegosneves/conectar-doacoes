@@ -8,6 +8,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.repository.UserRepositor
 import diegosneves.github.conectardoacoes.adapters.rest.request.UserEntityCreationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.response.UserEntityCreatedResponse;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
+import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
 import diegosneves.github.conectardoacoes.core.exception.UserCreationFailureException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
@@ -31,7 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 class UserEntityServiceImplTest {
@@ -49,7 +53,7 @@ class UserEntityServiceImplTest {
     private UserRepository userRepository;
 
     @Captor
-    private ArgumentCaptor<UserEntity> userEntityCaptor;
+    private ArgumentCaptor<UserContract> userContractCaptor;
 
     private UserEntity userEntity;
     private UserEntityCreationRequest request;
@@ -74,11 +78,12 @@ class UserEntityServiceImplTest {
 
     @Test
     void shouldReturnUserEntityByEmail() {
-        when(this.userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.ofNullable(this.userEntity));
+        UserContract userContract = this.getUserContract(UserProfile.BENEFICIARY);
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(userContract);
 
-        User entity = (User) this.userEntityService.searchUserByEmail("email@test.com");
+        UserContract entity = this.userEntityService.searchUserByEmail(USER_EMAIL);
 
-        verify(this.userRepository, times(1)).findByEmail(anyString());
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(USER_EMAIL);
 
         assertNotNull(entity);
         assertEquals(USER_ID, entity.getId());
@@ -91,11 +96,12 @@ class UserEntityServiceImplTest {
     @Test
     void shouldThrowExceptionWhenUserNotFound() {
         String email = "email@teste.com";
-        when(this.userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.ofNullable(this.userEntity));
+        UserContract userContract = this.getUserContract(UserProfile.BENEFICIARY);
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(userContract);
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityService.searchUserByEmail(email));
 
-        verify(this.userRepository, times(1)).findByEmail(anyString());
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(anyString());
 
         assertNotNull(exception);
         assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.EMAIL_NOT_FOUND_ERROR_MESSAGE).formatErrorMessage(email), exception.getMessage());
@@ -105,11 +111,12 @@ class UserEntityServiceImplTest {
     @Test
     void shouldThrowExceptionWhenEmailIsEmpty() {
         String email = "";
-        when(this.userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.ofNullable(this.userEntity));
+        UserContract userContract = this.getUserContract(UserProfile.BENEFICIARY);
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(userContract);
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityService.searchUserByEmail(email));
 
-        verify(this.userRepository, never()).findByEmail(anyString());
+        verify(this.userRepository, never()).findUserEntityByUserEmail(anyString());
 
         assertNotNull(exception);
         assertEquals(ExceptionDetails.getExceptionDetails(UserEntityServiceImpl.INVALID_EMAIL_ERROR_MESSAGE).formatErrorMessage(), exception.getMessage());
@@ -132,35 +139,42 @@ class UserEntityServiceImplTest {
     @Test
     void shouldCreateUserEntity() {
         this.userEntity.setUserProfile(UserProfileType.DONOR);
-        when(this.userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.empty());
-        when(this.userRepository.save(any(UserEntity.class))).thenReturn(this.userEntity);
+        UserContract userContract = getUserContract(UserProfile.DONOR);
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(null);
+        when(this.userRepository.persist(any(UserContract.class))).thenReturn(userContract);
 
         UserEntityCreatedResponse actual = this.userEntityService.createUserEntity(this.request);
 
-        verify(this.userRepository, times(1)).findByEmail(USER_EMAIL);
-        verify(this.userRepository, times(1)).save(this.userEntityCaptor.capture());
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(USER_EMAIL);
+        verify(this.userRepository, times(1)).persist(this.userContractCaptor.capture());
 
         assertNotNull(actual);
-        UserEntity captorValue = this.userEntityCaptor.getValue();
+        UserContract captorValue = this.userContractCaptor.getValue();
         assertNotNull(captorValue);
         assertTrue(UuidUtils.isValidUUID(captorValue.getId()));
-        assertEquals(USERNAME, captorValue.getUserName());
+        assertEquals(USERNAME, captorValue.getUsername());
         assertEquals(USER_EMAIL, captorValue.getEmail());
         assertEquals(USER_PASSWORD, captorValue.getUserPassword());
-        assertEquals(UserProfileType.DONOR, captorValue.getUserProfile());
+        assertEquals(UserProfile.DONOR, captorValue.getUserProfile());
         assertEquals(USER_ID, actual.getId());
         assertEquals(USERNAME, actual.getUserName());
         assertEquals(USER_EMAIL, actual.getEmail());
         assertEquals(UserProfileType.DONOR, actual.getUserProfile());
     }
 
+
+    private UserContract getUserContract(UserProfile userProfile) {
+        return new User(USER_ID, USERNAME, USER_EMAIL, userProfile, USER_PASSWORD);
+    }
+
     @Test
     void shouldThrowExceptionWhenEmailAlreadyExists() {
-        when(this.userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.ofNullable(this.userEntity));
+        UserContract userContract = this.getUserContract(UserProfile.BENEFICIARY);
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(userContract);
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityService.createUserEntity(this.request));
 
-        verify(this.userRepository, times(1)).findByEmail(USER_EMAIL);
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(USER_EMAIL);
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
@@ -202,11 +216,11 @@ class UserEntityServiceImplTest {
     @Test
     void shouldThrowExceptionWhenRequestUsernameIsNull() {
         this.request.setUserName(null);
-        when(this.userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(null);
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityService.createUserEntity(this.request));
 
-        verify(this.userRepository, times(1)).findByEmail(anyString());
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(anyString());
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
@@ -219,11 +233,11 @@ class UserEntityServiceImplTest {
     @ValueSource(strings = {"", "   "})
     void shouldThrowExceptionWhenRequestUsernameIsBlank(String requestUserValue) {
         this.request.setUserName(requestUserValue);
-        when(this.userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(null);
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityService.createUserEntity(this.request));
 
-        verify(this.userRepository, times(1)).findByEmail(anyString());
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(anyString());
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
@@ -235,11 +249,11 @@ class UserEntityServiceImplTest {
     @Test
     void shouldThrowExceptionWhenRequestUserPasswordIsNull() {
         this.request.setUserPassword(null);
-        when(this.userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(null);
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityService.createUserEntity(this.request));
 
-        verify(this.userRepository, times(1)).findByEmail(anyString());
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(anyString());
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
@@ -252,11 +266,11 @@ class UserEntityServiceImplTest {
     @ValueSource(strings = {"", "   "})
     void shouldThrowExceptionWhenRequestUserPasswordIsBlank(String requestUserValue) {
         this.request.setUserPassword(requestUserValue);
-        when(this.userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(null);
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityService.createUserEntity(this.request));
 
-        verify(this.userRepository, times(1)).findByEmail(anyString());
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(anyString());
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
@@ -268,11 +282,11 @@ class UserEntityServiceImplTest {
     @Test
     void shouldThrowExceptionWhenRequestUserProfileIsNull() {
         this.request.setUserProfile(null);
-        when(this.userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(null);
 
         UserEntityFailuresException exception = assertThrows(UserEntityFailuresException.class, () -> this.userEntityService.createUserEntity(this.request));
 
-        verify(this.userRepository, times(1)).findByEmail(anyString());
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(anyString());
         verify(this.userRepository, never()).save(any(UserEntity.class));
 
         assertNotNull(exception);
@@ -322,19 +336,18 @@ class UserEntityServiceImplTest {
 
     @Test
     void testFindByEmail_WhenEmailIsValid_ShouldReturnUserEntityCreatedResponseObject(){
-
-        when(userRepository.findByEmail(USER_EMAIL)).thenReturn(Optional.ofNullable(this.userEntity));
+        UserContract userContract = this.getUserContract(UserProfile.BENEFICIARY);
+        when(this.userRepository.findUserEntityByUserEmail(USER_EMAIL)).thenReturn(userContract);
 
         UserEntityCreatedResponse userByEmail = userEntityService.findUserByEmail(USER_EMAIL);
+
+        verify(this.userRepository, times(1)).findUserEntityByUserEmail(USER_EMAIL);
 
         assertNotNull(userByEmail);
         assertEquals(USER_ID, userByEmail.getId());
         assertEquals(USERNAME, userByEmail.getUserName());
         assertEquals(USER_EMAIL, userByEmail.getEmail());
         assertEquals(UserProfileType.BENEFICIARY, userByEmail.getUserProfile());
-
-        verify(userRepository, times(1)).findByEmail(USER_EMAIL);
-
     }
 
 }

@@ -28,6 +28,7 @@
         <sonar.coverage.exclusions>
             **/dto/**,
             **/model/**,
+            **/adapter/**,
             **/response/**,
             **/request/**,
             **/config/**,
@@ -35,7 +36,9 @@
             **/enums/**,
             **/exception/**,
             **/mapper/**,
-            **/utils/**
+            **/factory/**,
+            **/utils/**,
+            **/diegosneves/github/conectardoacoes/adapters/rest/ConectarDoacoesApplication.java
         </sonar.coverage.exclusions>
     </properties>
     <dependencies>

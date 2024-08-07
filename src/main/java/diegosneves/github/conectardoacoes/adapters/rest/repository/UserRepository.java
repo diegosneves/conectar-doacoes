@@ -34,6 +34,7 @@ public interface UserRepository extends UserContractRepository, CrudRepository<U
     Integer INVALID_ID_MESSAGE = 19;
     Integer REQUIRED_USER_ERROR_MESSAGE = 35;
     Integer INVALID_UUID_FORMAT_MESSAGE = 6;
+    Integer INVALID_EMAIL_ERROR_MESSAGE = 29;
 
     /**
      * Este método busca um usuário pelo email fornecido e retorna um {@link Optional} de {@link UserEntity}.
@@ -147,4 +148,10 @@ public interface UserRepository extends UserContractRepository, CrudRepository<U
         this.delete(targetEntity);
     }
 
+    @Override
+    default UserContract findUserEntityByUserEmail(String userEmail) {
+        ValidationUtils.validateNotNullOrEmpty(userEmail, INVALID_EMAIL_ERROR_MESSAGE, UserEntityFailuresException.class);
+        Optional<UserEntity> foundUserEntity = this.findByEmail(userEmail);
+        return foundUserEntity.map(userEntity -> this.getUserMapper().mapFrom(userEntity)).orElse(null);
+    }
 }

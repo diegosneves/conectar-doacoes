@@ -246,10 +246,10 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldGetUserById() {
+    void shouldGetUserByIdById() {
         when(this.userContractRepository.findEntityById(USER_UUID)).thenReturn(this.user);
 
-        UserContract actual = this.userService.getUser(USER_UUID);
+        UserContract actual = this.userService.getUserById(USER_UUID);
 
         verify(this.userContractRepository, times(1)).findEntityById(USER_UUID);
 
@@ -258,10 +258,10 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldReturnNullWhenUserNotFoundOnGetUser() {
+    void shouldReturnNullWhenUserNotFoundOnGetUserById() {
         when(this.userContractRepository.findEntityById(USER_IDENTIFIER)).thenReturn(null);
 
-        UserContract actual = this.userService.getUser(USER_IDENTIFIER);
+        UserContract actual = this.userService.getUserById(USER_IDENTIFIER);
 
         verify(this.userContractRepository, times(1)).findEntityById(USER_IDENTIFIER);
 
@@ -269,20 +269,9 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldThrowUserServiceFailureExceptionWhenNullUserIdProvidedOnGetUser() {
+    void shouldThrowUserServiceFailureExceptionWhenNullUserIdProvidedOnGetUserById() {
 
-        UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUser(null));
-
-        verify(this.userContractRepository, never()).findEntityById(anyString());
-
-        assertNotNull(actual);
-        assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
-    }
-
-    @Test
-    void shouldThrowUserServiceFailureExceptionWhenEmptyUserIdProvidedOnGetUser() {
-
-        UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUser("   "));
+        UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUserById(null));
 
         verify(this.userContractRepository, never()).findEntityById(anyString());
 
@@ -291,9 +280,20 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldThrowUserServiceFailureExceptionWhenInvalidUserIdProvidedOnGetUser() {
+    void shouldThrowUserServiceFailureExceptionWhenEmptyUserIdProvidedOnGetUserById() {
 
-        UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUser("id"));
+        UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUserById("   "));
+
+        verify(this.userContractRepository, never()).findEntityById(anyString());
+
+        assertNotNull(actual);
+        assertEquals(UserServiceFailureException.ERROR.buildMessage(UserService.INVALID_IDENTIFIER_ERROR_MESSAGE), actual.getMessage());
+    }
+
+    @Test
+    void shouldThrowUserServiceFailureExceptionWhenInvalidUserIdProvidedOnGetUserById() {
+
+        UserServiceFailureException actual = assertThrows(UserServiceFailureException.class, () -> this.userService.getUserById("id"));
 
         verify(this.userContractRepository, never()).findEntityById(anyString());
 

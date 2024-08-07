@@ -5,9 +5,11 @@ import diegosneves.github.conectardoacoes.adapters.rest.controller.ShelterContro
 import diegosneves.github.conectardoacoes.adapters.rest.exception.ShelterEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ReceiveDonationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.request.ShelterCreationRequest;
-import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterCreatedResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.response.ShelterInformationResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.ShelterEntityService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,5 +57,11 @@ public class ShelterControllerImpl implements ShelterController {
         ShelterInformationResponse shelterRecoveryByUserResponsibleEmail =
                 shelterEntityService.findShelterByUserResponsibleEmail(userResponsibleEmail);
         return ResponseEntity.ok(shelterRecoveryByUserResponsibleEmail);
+    }
+
+    @Override
+    public ResponseEntity<Page<ShelterInformationResponse>> findAll(Pageable pageable) {
+        Page<ShelterInformationResponse> allPageableShelters = shelterEntityService.findAll(pageable);
+        return ResponseEntity.ok(allPageableShelters);
     }
 }

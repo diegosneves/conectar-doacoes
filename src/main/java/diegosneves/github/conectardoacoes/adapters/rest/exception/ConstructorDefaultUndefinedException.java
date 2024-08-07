@@ -15,7 +15,7 @@ public class ConstructorDefaultUndefinedException extends CustomException {
      * @param message a mensagem de detalhe da exceção.
      */
     public ConstructorDefaultUndefinedException(Integer term, String message) {
-        super(message, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message);
     }
 
     /**
@@ -25,7 +25,7 @@ public class ConstructorDefaultUndefinedException extends CustomException {
      * @param e a causa da exceção.
      */
     public ConstructorDefaultUndefinedException(Integer term, String message, Throwable e) {
-        super(message, e, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message, e);
     }
 
 }
