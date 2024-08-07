@@ -13,6 +13,8 @@ import diegosneves.github.conectardoacoes.core.exception.ShelterCreationFailureE
 import diegosneves.github.conectardoacoes.core.exception.UuidUtilsException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -211,5 +213,17 @@ public interface ShelterRepository extends ShelterContractRepository, CrudReposi
      * @throws IllegalArgumentException se o parâmetro de e-mail fornecido for nulo, vazio ou não em um formato de e-mail válido.
      */
     Optional<ShelterEntity> findShelterEntitiesByResponsibleUser_Email(String responsibleUserEmail);
+
+    /**
+     * Este método é usado para buscar todos os abrigos cadastrados e devolvê-los paginados.
+     * <p>
+     * Esse método recupera todas as entidades de {@link ShelterEntity} presentes no banco de dados, usando o método semelhante ao {@code findAll}.
+     * No entanto, ele recebe um parâmetro {@link Pageable} para que possa ser feita a paginação e também a ordenação (sort) de todos os shelters.
+     * <p>
+     *
+     * @return Um {@link Page} de todos os {@link ShelterEntity} registrados no banco de dados. Se não houver entidades de abrigo no banco de dados, retorna uma lista vazia.
+     */
+
+    Page<ShelterEntity> findAll(Pageable pageable);
 
 }

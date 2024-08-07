@@ -53,7 +53,7 @@ public class AddressEntityFailuresException extends CustomException {
      *                para a superclasse {@link RuntimeException}.
      */
     public AddressEntityFailuresException(Integer term, String message) {
-        super(message, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message);
     }
 
     /**
@@ -74,7 +74,7 @@ public class AddressEntityFailuresException extends CustomException {
      * @see ExceptionDetails
      */
     public AddressEntityFailuresException(Integer term, Throwable cause) {
-        super(cause, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), cause);
     }
 
     /**
@@ -87,6 +87,6 @@ public class AddressEntityFailuresException extends CustomException {
      * @param cause   A exceção causal.
      */
     public AddressEntityFailuresException(Integer term, String message, Throwable cause) {
-        super(message, cause, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message, cause);
     }
 }

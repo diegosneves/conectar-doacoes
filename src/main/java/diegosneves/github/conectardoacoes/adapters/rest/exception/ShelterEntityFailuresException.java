@@ -45,7 +45,7 @@ public class ShelterEntityFailuresException extends CustomException {
      * @param message A mensagem específica da exceção.
      */
     public ShelterEntityFailuresException(Integer term, String message) {
-        super(message, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message);
     }
 
     /**
@@ -71,7 +71,7 @@ public class ShelterEntityFailuresException extends CustomException {
      *                                 enumeração para o termo fornecido.
      */
     public ShelterEntityFailuresException(Integer term, Throwable cause) {
-        super(cause, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), cause);
     }
 
     /**
@@ -82,7 +82,7 @@ public class ShelterEntityFailuresException extends CustomException {
      * @param cause   A causa original do erro.
      */
     public ShelterEntityFailuresException(Integer term, String message, Throwable cause) {
-        super(message, cause, obtainExceptionDetails(term));
+        super(obtainExceptionDetails(term), message, cause);
     }
 
 }

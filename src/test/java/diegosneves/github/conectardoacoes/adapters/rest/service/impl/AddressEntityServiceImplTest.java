@@ -1,12 +1,16 @@
 package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
+import diegosneves.github.conectardoacoes.adapters.rest.adapter.RetrieveAddressAdapter;
+import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressApiResponseDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.enums.ExceptionDetails;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
+import diegosneves.github.conectardoacoes.adapters.rest.exception.ExternalApiFailureException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.AddressEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.AddressRepository;
+import diegosneves.github.conectardoacoes.adapters.rest.response.AddressApiResponse;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
 import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;
 import diegosneves.github.conectardoacoes.core.utils.UuidUtils;
@@ -32,6 +36,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 class AddressEntityServiceImplTest {
@@ -49,13 +54,25 @@ class AddressEntityServiceImplTest {
     @Mock
     private AddressRepository repository;
 
+    @Mock
+    private RetrieveAddressAdapter addressAdapter;
+
     @Captor
     private ArgumentCaptor<AddressEntity> addressCaptor;
 
     private AddressDTO addressDTO;
+    private AddressApiResponse addressApiResponse;
 
     @BeforeEach
     void setUp() {
+        this.addressApiResponse = AddressApiResponse.builder()
+                .street(STREET)
+                .neighborhood(NEIGHBORHOOD)
+                .city(CITY)
+                .state(STATE)
+                .zip(ZIP)
+                .build();
+
         this.addressDTO = AddressDTO.builder()
                 .street(STREET)
                 .number(NUMBER)
@@ -296,6 +313,64 @@ class AddressEntityServiceImplTest {
         assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ADDRESS_CREATION_ERROR).formatErrorMessage(), exception.getMessage());
         assertNotNull(exception.getCause());
         assertEquals(AddressCreationFailureException.class, exception.getCause().getClass());
+    }
+
+    @Test
+    void shouldRetrieveAddressFromAPIAndNotStoreInRepository(){
+        when(this.addressAdapter.retrieveAddress(ZIP)).thenReturn(this.addressApiResponse);
+
+        AddressApiResponseDTO addressApiResponseDTO = this.service.restrieveAddress(ZIP);
+
+        verify(this.addressAdapter, times(1)).retrieveAddress(ZIP);
+        verify(this.repository, never()).save(any(AddressEntity.class));
+
+        assertNotNull(addressApiResponseDTO);
+        assertEquals(STREET, addressApiResponseDTO.getStreet());
+        assertEquals(NEIGHBORHOOD, addressApiResponseDTO.getNeighborhood());
+        assertEquals(CITY, addressApiResponseDTO.getCity());
+        assertEquals(STATE, addressApiResponseDTO.getState());
+        assertEquals(ZIP, addressApiResponseDTO.getZip());
+
+    }
+
+    @Test
+    void shouldThrowExceptionWhenRetrievingAddressWithNullZipcode() {
+
+        AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.service.restrieveAddress(null));
+
+        verify(this.addressAdapter, never()).retrieveAddress(ZIP);
+
+        assertNotNull(exception);
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ZIPCODE_INVALID_FAILURE).formatErrorMessage(), exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "  "})
+    void shouldThrowExceptionWhenRetrievingAddressWithEmptyOrWhitespaceZipcode(String value) {
+
+        AddressEntityFailuresException exception = assertThrows(AddressEntityFailuresException.class, () -> this.service.restrieveAddress(value));
+
+        verify(this.addressAdapter, never()).retrieveAddress(ZIP);
+
+        assertNotNull(exception);
+        assertEquals(ExceptionDetails.getExceptionDetails(AddressEntityServiceImpl.ZIPCODE_INVALID_FAILURE).formatErrorMessage(), exception.getMessage());
+        assertNull(exception.getCause());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenRetrievingAddressWithInvalidZipcode() {
+        String invalidZipcode = "invalid";
+        int term = 12;
+        when(this.addressAdapter.retrieveAddress(invalidZipcode)).thenThrow(new ExternalApiFailureException(term, invalidZipcode, new Exception()));
+
+        ExternalApiFailureException exception = assertThrows(ExternalApiFailureException.class, () -> this.service.restrieveAddress(invalidZipcode));
+
+        verify(this.addressAdapter, never()).retrieveAddress(ZIP);
+
+        assertNotNull(exception);
+        assertEquals(ExceptionDetails.getExceptionDetails(term).formatErrorMessage(invalidZipcode), exception.getMessage());
+        assertNotNull(exception.getCause());
     }
 
 }

@@ -1,5 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.service;
 
+import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressApiResponseDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
@@ -37,4 +38,20 @@ public interface AddressEntityService {
      */
     Address createAndSaveAddressFromDto(AddressDTO address) throws AddressEntityFailuresException;
 
+    /**
+     * Recupera um endereço usando o CEP fornecido.
+     * <p>
+     * Este método tem como objetivo fazer uma requisição para recuperar um endereço através de um CEP fornecido
+     * como parâmetro, retornando um objeto {@link AddressApiResponseDTO} contendo os detalhes do endereço.
+     * <p>
+     * O método interage com um serviço {@link diegosneves.github.conectardoacoes.adapters.rest.adapter.RetrieveAddressAdapter} para realizar a requisição e obter a resposta correspondente.
+     * Após obter a resposta, a mesma é convertida para {@link AddressApiResponseDTO} e retorna ao chamador.
+     * Em caso de falha na recuperação do endereço, como por exemplo CEP nulo ou vazio, uma exceção {@link AddressEntityFailuresException} será lançada.
+     *
+     * @param zipcode Um {@link String} que representa o CEP para o qual o endereço precisa ser recuperado.
+     * @return Um objeto {@link AddressApiResponseDTO} que representa o endereço recuperado do CEP fornecido.
+     * @throws AddressEntityFailuresException Se o {@code zipcode} recebido for nulo ou vázio.
+     * @throws diegosneves.github.conectardoacoes.adapters.rest.exception.ExternalApiFailureException Se ocorrer uma falha durante a recuperação do endereço.
+     */
+    AddressApiResponseDTO restrieveAddress(String zipcode);
 }

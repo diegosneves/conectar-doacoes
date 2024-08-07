@@ -20,14 +20,15 @@ public enum ExceptionDetails {
     CONSTRUCTOR_DEFAULT_UNDEFINED(2, "Classe [ %s ] deve declarar um construtor padrão.", HttpStatus.NOT_IMPLEMENTED),
     REQUEST_VALIDATION_ERROR_MESSAGE(3, "Por favor, forneça uma requisição de criação de Abrigo preenchida corretamente.", HttpStatus.BAD_REQUEST),
     CLASS_MAPPING_FAILURE(4, "Falha ao tentar mapear a classe [ %s ].", HttpStatus.BAD_REQUEST),
-    SHELTER_CREATION_ERROR_MESSAGE(5, "Erro na criação do Abrigo. Confirme se todos os campos do Abrigo estão corretos e tente novamente.", HttpStatus.BAD_REQUEST),
+    SHELTER_CREATION_ERROR_MESSAGE(5, "Erro na criação de um Abrigo. Por favor,Confirme se todos os campos do Abrigo estão corretamente preenchidos e tente novamente.", HttpStatus.BAD_REQUEST),
     INVALID_UUID_FORMAT_MESSAGE(6, "O ID %s precisa estar no formato UUID", HttpStatus.BAD_REQUEST),
-    RESPONSIBLE_USER_PROFILE_INVALID(7, "O usuário deve possuir o perfil de responsável.", HttpStatus.BAD_REQUEST),
-    EMAIL_NOT_FOUND_ERROR_MESSAGE(8, "Não foi possivel encontrar um usuário com o email %s .", HttpStatus.BAD_REQUEST),
-    RESPONSIBLE_USER_ALREADY_IN_USE(9, "Este usuário já possui responsabilidade sobre outro abrigo.", HttpStatus.BAD_REQUEST),
-    EMAIL_ALREADY_IN_USE(10, "Desculpe, o endereço de email %s já está associado a uma conta existente. Por favor, tente com um email diferente.", HttpStatus.BAD_REQUEST),
-    USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR(11, "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.", HttpStatus.BAD_REQUEST),
-    DONATION_VALIDATION_ERROR(13, "Para o cadastro de doações, é indispensável fornecer informações válidas e completas.", HttpStatus.BAD_REQUEST),
+    RESPONSIBLE_USER_PROFILE_INVALID(7, "O usuário deve possuir o perfil de responsável.", HttpStatus.FORBIDDEN),
+    EMAIL_NOT_FOUND_ERROR_MESSAGE(8, "Não foi possível encontrar um usuário com o email %s .", HttpStatus.NOT_FOUND),
+    RESPONSIBLE_USER_ALREADY_IN_USE(9, "Este usuário já possui responsabilidade sobre outro abrigo.", HttpStatus.FORBIDDEN),
+    EMAIL_ALREADY_IN_USE(10, "Desculpe, o endereço de email %s , já está associado a uma conta existente. Por favor,tente com um email diferente.", HttpStatus.FORBIDDEN),
+    USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR(11, "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.", HttpStatus.NOT_FOUND),
+    ZIPCODE_RETRIEVAL_FAILURE(12, "Falha ao recuperar o endereço com o CEP fornecido (%s). Por favor, verifique se o CEP está correto e tente novamente em alguns instantes.", HttpStatus.BAD_REQUEST),
+    DONATION_VALIDATION_ERROR(13, "Para o cadastro de doações, é indispensável o fornecimento de informações válidas e completas.", HttpStatus.BAD_REQUEST),
     EMPTY_DONATION_LIST(15, "Até o momento, não há doações listadas.", HttpStatus.BAD_REQUEST),
     RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER(17, "Por favor, verifique se o e-mail do usuário responsável está correto e associado a um abrigo. Caso contrário, certifique-se de que o usuário responsável tenha um e-mail válido em nosso sistema.", HttpStatus.BAD_REQUEST),
     INVALID_ID_MESSAGE(19, "Deve ser fornecido um ID válido!", HttpStatus.BAD_REQUEST),
@@ -38,7 +39,8 @@ public enum ExceptionDetails {
     INVALID_EMAIL_ERROR_MESSAGE(29, "Não foi informado nenhum email. Por favor, forneça um email válido.", HttpStatus.BAD_REQUEST),
     USER_CREATION_FAILURE_MESSAGE(31, "Ops! A criação do novo usuário não foi bem-sucedida. Por favor, certifique-se de que seus dados estão corretos e tente novamente.", HttpStatus.BAD_REQUEST),
     USER_PROFILE_VALIDATION_FAILURE(33, "A validação do Perfil do usuário fornecido falhou.", HttpStatus.BAD_REQUEST),
-    REQUIRED_USER_ERROR_MESSAGE(35, "Um usuário válido é requerido para efetuar a persistência.", HttpStatus.BAD_REQUEST);
+    REQUIRED_USER_ERROR_MESSAGE(35, "Um usuário válido é requerido para efetuar a persistência.", HttpStatus.BAD_REQUEST),
+    ZIPCODE_INVALID_FAILURE(37, "Falha ao tentar recuperar o endereço com o CEP fornecido. Por favor, verifique se o CEP está correto e tente novamente", HttpStatus.BAD_REQUEST);
 
 
     public static final String EXCEPTION_PREFIX = "T%03dF - ";

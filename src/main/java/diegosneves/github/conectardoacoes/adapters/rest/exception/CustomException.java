@@ -44,7 +44,7 @@ public abstract class CustomException extends RuntimeException {
      * @param message A mensagem de erro personalizada.
      * @param error   O objeto {@link ExceptionDetails} que contém as informações detalhadas do erro.
      */
-    protected CustomException(String message, ExceptionDetails error) {
+    protected CustomException(ExceptionDetails error, String message) {
         super(error.formatErrorMessage(message));
         this.errorDetails = error;
     }
@@ -61,7 +61,7 @@ public abstract class CustomException extends RuntimeException {
      *              and indicates that the cause is nonexistent or unknown).
      * @param error o objeto {@link ExceptionDetails} que contém as informações mais detalhadas do erro.
      */
-    protected CustomException(Throwable cause, ExceptionDetails error) {
+    protected CustomException(ExceptionDetails error, Throwable cause) {
         super(error.formatErrorMessage(), cause);
         this.errorDetails = error;
     }
@@ -82,7 +82,7 @@ public abstract class CustomException extends RuntimeException {
      *                Um valor nulo é permitido, e indica que a causa é inexistente ou desconhecida.
      * @param error   O objeto {@link ExceptionDetails} que contém as informações mais detalhadas do erro.
      */
-    protected CustomException(String message, Throwable cause, ExceptionDetails error) {
+    protected CustomException(ExceptionDetails error, String message, Throwable cause) {
         super(error.formatErrorMessage(message), cause);
         this.errorDetails = error;
     }

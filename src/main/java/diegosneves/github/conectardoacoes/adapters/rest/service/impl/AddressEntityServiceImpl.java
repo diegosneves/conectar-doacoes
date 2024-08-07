@@ -1,15 +1,19 @@
 package diegosneves.github.conectardoacoes.adapters.rest.service.impl;
 
+import diegosneves.github.conectardoacoes.adapters.rest.adapter.RetrieveAddressAdapter;
+import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressApiResponseDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.dto.AddressDTO;
 import diegosneves.github.conectardoacoes.adapters.rest.exception.AddressEntityFailuresException;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.AddressEntityMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.mapper.BuilderMapper;
 import diegosneves.github.conectardoacoes.adapters.rest.model.AddressEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.AddressRepository;
+import diegosneves.github.conectardoacoes.adapters.rest.response.AddressApiResponse;
 import diegosneves.github.conectardoacoes.adapters.rest.service.AddressEntityService;
 import diegosneves.github.conectardoacoes.core.domain.shelter.entity.value.Address;
-import diegosneves.github.conectardoacoes.core.domain.shelter.factory.AddressFactory;
 import diegosneves.github.conectardoacoes.core.exception.AddressCreationFailureException;
+import diegosneves.github.conectardoacoes.core.service.AddressService;
+import diegosneves.github.conectardoacoes.core.service.AddressServiceContract;
 import diegosneves.github.conectardoacoes.core.utils.ValidationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,7 +26,7 @@ import org.springframework.stereotype.Service;
  * Ao iniciar, o serviço valida se o objeto endereço não é nulo nem vazio.
  * Em caso de falha na validação, é lançada uma exceção {@link AddressEntityFailuresException} com a mensagem específica.
  * <p>
- * Depois, é criada uma nova instância de {@link Address} usando {@link AddressFactory}, que pode gerar exceções durante a criação,
+ * Depois, é criada uma nova instância de {@link Address} usando {@link AddressServiceContract}, que pode gerar exceções durante a criação,
  * as quais são capturadas e tratadas, emitindo novas {@link AddressEntityFailuresException} em caso de erros.
  * <p>
  * Por fim, o serviço faz uso do objeto {@link Address} criado para armazená-lo no repositório correspondente,
@@ -49,12 +53,17 @@ public class AddressEntityServiceImpl implements AddressEntityService {
     public static final String CREATION_FAILURE_LOG = "Falha na tentativa de criação de um novo Endereço. Causa do erro: {}";
     public static final String ADDRESS_MAPPING_ERROR_LOG = "Ocorreu uma falha ao tentar mapear o Endereço. Causa do erro: {}";
     public static final String ADDRESS_REGISTRATION_SUCCESS_LOG = "Novo endereço registrado com êxito! Identificador do endereço (ID): {} - Código Postal (ZIPCODE): {}";
+    public static final int ZIPCODE_INVALID_FAILURE = 37;
 
 
     private final AddressRepository repository;
+    private final AddressServiceContract addressServiceContract;
+    private final RetrieveAddressAdapter addressAdapter;
 
-    public AddressEntityServiceImpl(AddressRepository repository) {
+    public AddressEntityServiceImpl(AddressRepository repository, RetrieveAddressAdapter addressAdapter) {
         this.repository = repository;
+        this.addressAdapter = addressAdapter;
+        this.addressServiceContract = new AddressService();
     }
 
     @Override
@@ -62,7 +71,7 @@ public class AddressEntityServiceImpl implements AddressEntityService {
         ValidationUtils.validateNotNullOrEmpty(address, ADDRESS_CREATION_ERROR, AddressEntityFailuresException.class);
         Address newAddress;
         try {
-            newAddress = AddressFactory.create(address.getStreet(), address.getNumber(), address.getNeighborhood(), address.getCity(), address.getState(), address.getZip());
+            newAddress = this.addressServiceContract.createAddress(address.getStreet(), address.getNumber(), address.getNeighborhood(), address.getCity(), address.getState(), address.getZip());
         } catch (AddressCreationFailureException e) {
             log.error(CREATION_FAILURE_LOG, e.getMessage(), e);
             throw new AddressEntityFailuresException(ADDRESS_CREATION_ERROR, e);
@@ -91,4 +100,10 @@ public class AddressEntityServiceImpl implements AddressEntityService {
         log.info(ADDRESS_REGISTRATION_SUCCESS_LOG, address.getId(), address.getZip());
     }
 
+    @Override
+    public AddressApiResponseDTO restrieveAddress(String zipcode) {
+        ValidationUtils.validateNotNullOrEmpty(zipcode, ZIPCODE_INVALID_FAILURE, AddressEntityFailuresException.class);
+        AddressApiResponse addressApiResponse = this.addressAdapter.retrieveAddress(zipcode);
+        return addressApiResponse.convertToDTO();
+    }
 }
