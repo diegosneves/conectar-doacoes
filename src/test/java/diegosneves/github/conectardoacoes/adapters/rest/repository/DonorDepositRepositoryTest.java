@@ -1,7 +1,6 @@
 package diegosneves.github.conectardoacoes.adapters.rest.repository;
 
 import diegosneves.github.conectardoacoes.adapters.rest.enums.UserProfileType;
-import diegosneves.github.conectardoacoes.adapters.rest.mapper.MapperStrategy;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DepositEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.model.DonorDeposit;
 import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
@@ -65,20 +64,15 @@ class DonorDepositRepositoryTest {
         Optional<DonorDeposit> actual = this.repository.findDonorDepositByUser_Email(USER_EMAIL);
 
         assertTrue(actual.isPresent());
-        DonorDeposit donorDeposit = actual.get();
-        assertNotNull(donorDeposit.getId());
-        assertTrue(UuidUtils.isValidUUID(donorDeposit.getId()));
-        assertEquals(USER_ID, donorDeposit.getUser().getId());
-        assertEquals(USER_NAME, donorDeposit.getUser().getUserName());
-        assertEquals(USER_EMAIL, donorDeposit.getUser().getEmail());
-        assertEquals(UserProfileType.DONOR, donorDeposit.getUser().getUserProfile());
-        assertNotNull(donorDeposit.getDeposits());
-        assertEquals(1, donorDeposit.getDeposits().size());
-    }
-
-    private <T, E> void persistEntity(MapperStrategy<T, E> mapper, E entity) {
-        this.entityManager.persist(mapper.mapFrom(entity));
-        this.entityManager.flush();
+        DonorDeposit donorFound = actual.get();
+        assertNotNull(donorFound.getId());
+        assertTrue(UuidUtils.isValidUUID(donorFound.getId()));
+        assertEquals(USER_ID, donorFound.getUser().getId());
+        assertEquals(USER_NAME, donorFound.getUser().getUserName());
+        assertEquals(USER_EMAIL, donorFound.getUser().getEmail());
+        assertEquals(UserProfileType.DONOR, donorFound.getUser().getUserProfile());
+        assertNotNull(donorFound.getDeposits());
+        assertEquals(1, donorFound.getDeposits().size());
     }
 
     private <T> void persistEntity(T entity) {
