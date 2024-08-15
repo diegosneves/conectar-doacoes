@@ -40,7 +40,8 @@ public enum ExceptionDetails {
     USER_CREATION_FAILURE_MESSAGE(31, "Ops! A criação do novo usuário não foi bem-sucedida. Por favor, certifique-se de que seus dados estão corretos e tente novamente.", HttpStatus.BAD_REQUEST),
     USER_PROFILE_VALIDATION_FAILURE(33, "A validação do Perfil do usuário fornecido falhou.", HttpStatus.BAD_REQUEST),
     REQUIRED_USER_ERROR_MESSAGE(35, "Um usuário válido é requerido para efetuar a persistência.", HttpStatus.BAD_REQUEST),
-    ZIPCODE_INVALID_FAILURE(37, "Falha ao tentar recuperar o endereço com o CEP fornecido. Por favor, verifique se o CEP está correto e tente novamente", HttpStatus.BAD_REQUEST);
+    ZIPCODE_INVALID_FAILURE(37, "Falha ao tentar recuperar o endereço com o CEP fornecido. Por favor, verifique se o CEP está correto e tente novamente", HttpStatus.BAD_REQUEST),
+    DEPOSIT_VALIDATION_ERROR(39, "Para o cadastro de doações no depósito, é indispensável o fornecimento de informações válidas e completas.", HttpStatus.BAD_REQUEST);
 
 
     public static final String EXCEPTION_PREFIX = "T%03dF - ";
