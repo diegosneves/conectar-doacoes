@@ -29,6 +29,7 @@ public enum ExceptionDetails {
     USER_RESPONSIBLE_EMAIL_NOT_FOUND_ERROR(11, "Ops! Não conseguimos encontrar o e-mail do usuário responsável. Por gentileza, tente novamente.", HttpStatus.NOT_FOUND),
     ZIPCODE_RETRIEVAL_FAILURE(12, "Falha ao recuperar o endereço com o CEP fornecido (%s). Por favor, verifique se o CEP está correto e tente novamente em alguns instantes.", HttpStatus.BAD_REQUEST),
     DONATION_VALIDATION_ERROR(13, "Para o cadastro de doações, é indispensável o fornecimento de informações válidas e completas.", HttpStatus.BAD_REQUEST),
+    DONOR_EMAIL_NOT_FOUND_ERROR_MESSAGE(14, "Não foi possível encontrar um doador com o email %s .", HttpStatus.NOT_FOUND),
     EMPTY_DONATION_LIST(15, "Até o momento, não há doações listadas.", HttpStatus.BAD_REQUEST),
     RESPONSIBLE_EMAIL_NOT_ASSOCIATED_WITH_SHELTER(17, "Por favor, verifique se o e-mail do usuário responsável está correto e associado a um abrigo. Caso contrário, certifique-se de que o usuário responsável tenha um e-mail válido em nosso sistema.", HttpStatus.BAD_REQUEST),
     INVALID_ID_MESSAGE(19, "Deve ser fornecido um ID válido!", HttpStatus.BAD_REQUEST),
@@ -41,7 +42,7 @@ public enum ExceptionDetails {
     USER_PROFILE_VALIDATION_FAILURE(33, "A validação do Perfil do usuário fornecido falhou.", HttpStatus.BAD_REQUEST),
     REQUIRED_USER_ERROR_MESSAGE(35, "Um usuário válido é requerido para efetuar a persistência.", HttpStatus.BAD_REQUEST),
     ZIPCODE_INVALID_FAILURE(37, "Falha ao tentar recuperar o endereço com o CEP fornecido. Por favor, verifique se o CEP está correto e tente novamente", HttpStatus.BAD_REQUEST),
-    DEPOSIT_VALIDATION_ERROR(39, "Para o cadastro de doações no depósito, é indispensável o fornecimento de informações válidas e completas.", HttpStatus.BAD_REQUEST);
+    DEPOSIT_VALIDATION_ERROR(39, "Para o registro de doações no depósito, é indispensável o fornecimento de informações válidas e completas.", HttpStatus.BAD_REQUEST);
 
 
     public static final String EXCEPTION_PREFIX = "T%03dF - ";
