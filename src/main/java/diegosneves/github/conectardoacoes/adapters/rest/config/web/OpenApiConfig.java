@@ -61,6 +61,7 @@ public class OpenApiConfig {
         return List.of(
                 new Tag().name("Endereços").description("Funcionalidades direcionadas para os Endereços"),
                 new Tag().name("Usuários").description("Funcionalidades direcionadas para os Usuários"),
+                new Tag().name("Depósitos").description("Funcionalidades direcionadas para Depósitos"),
                 new Tag().name("Abrigos").description("Funcionalidades direcionadas para os Abrigos"));
     }
 
