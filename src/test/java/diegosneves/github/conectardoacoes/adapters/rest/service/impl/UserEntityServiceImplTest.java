@@ -7,6 +7,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.UserRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.UserEntityCreationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.response.UserEntityCreatedResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.service.DonorDepositService;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.value.UserProfile;
@@ -51,6 +52,9 @@ class UserEntityServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private DonorDepositService donorDepositService;
 
     @Captor
     private ArgumentCaptor<UserContract> userContractCaptor;
@@ -147,6 +151,7 @@ class UserEntityServiceImplTest {
 
         verify(this.userRepository, times(1)).findUserEntityByUserEmail(USER_EMAIL);
         verify(this.userRepository, times(1)).persist(this.userContractCaptor.capture());
+        verify(this.donorDepositService,times(1)).linkDepositToDonor(any(UserEntity.class));
 
         assertNotNull(actual);
         UserContract captorValue = this.userContractCaptor.getValue();
