@@ -3,6 +3,7 @@
 - [1.0.0](#_release-100_)
 - [1.1.0](#_release-110_)
 - [1.2.0](#_release-120_)
+- [1.3.0](#_release-130_)
 
 ---
 ## **_Release 1.0.0_**
@@ -1067,8 +1068,7 @@ Este commit adicionou a interface `UserController` e sua implementação na clas
 
 **Nota:** A ênfase deste commit é adicionar a funcionalidade de criação de usuário, gerenciando as requisições HTTP e as respostas correspondentes, facilitando a interação de clientes com a criação de novos usuários.
 
----
-
+- [Sumary](#release-notes)
 
 ---
 
@@ -1770,6 +1770,8 @@ Este commit adiciona documentações Javadoc para a classe `AddressEntityService
 
 **Nota:** A ênfase principal deste commit é melhorar a documentação do código, fornecendo comentários Javadoc detalhados para a classe de serviço `AddressEntityService` e sua implementação, tornando mais fácil para os desenvolvedores entenderem o propósito e a funcionalidade dessas classes.
 
+- [Sumary](#release-notes)
+
 ---
 
 ## **_Release 1.2.0_**
@@ -1973,6 +1975,102 @@ Este commit introduz novas funcionalidades de paginação ao método `findAll` n
 - **ShelterRepositoryIntegrationTest.java**: Inclusão de testes de integração para validar o funcionamento da paginação no repositório de abrigos.
 
 **Nota:** A principal ênfase deste commit é a implementação da funcionalidade de paginação para os registros de abrigos e os testes associados, melhorando a eficiência no gerenciamento e recuperação de dados.
+
+- [Sumary](#release-notes)
+
+---
+
+## **_Release 1.3.0_**
+
+**Commit** a7ff8fc9014ff4c8d2a8326c58454c165927dd61:
+
+Este commit adiciona novas funcionalidades relacionadas ao gerenciamento de depósitos de doadores. Foram incluídas classes e repositórios para `DepositEntity` e `DonorDeposit`, além de testes unitários para garantir o correto funcionamento dessas novas entidades e repositórios. Essas adições permitem a manipulação e consulta de depósitos e doações dos usuários no sistema, providenciando métodos para salvar, consultar, e recuperar dados específicos dos depósitos de doadores.
+
+**Arquivos Alterados:** `DonorDepositRepository.java`, `DepositEntity.java`, `DonorDeposit.java`, `DonorDepositRepositoryTest.java`
+
+**Alterações:**
+
+- Criação da entidade `DepositEntity` incluindo suas propriedades e anotações necessárias.
+- Criação da entidade `DonorDeposit` com mapeamento de relacionamentos e suas anotações.
+- Implementação do repositório `DonorDepositRepository` para gerenciar `DonorDeposit`.
+- Adição de testes unitários na classe `DonorDepositRepositoryTest` para validar a persistência e recuperação de dados da entidade `DonorDeposit`.
+
+**Nota:** Este commit é importante para habilitar o gerenciamento de depósitos e doações de usuários no sistema, oferecendo suporte completo para operações CRUD e consultas específicas para depósitos de doadores.
+
+---
+
+**Commit** 1554bd2e1901be478f56c1bec4f9c985632726e9:
+
+Este commit adiciona suporte para a criação e manipulação da entidade `Deposit`. Isso inclui a introdução do `DepositDTO`, o serviço `DepositEntityService`, uma implementação de fábrica de depósitos e testes. A implementação também adiciona validações para os dados do depósito e utiliza um repositório para a persistência.
+
+**Arquivos Alterados:** `DepositDTO.java`, `DepositEntityService.java`, `DepositServiceImpl.java`, `DepositFactory.java`, `DepositRepository.java`, `DepositServiceTest.java`
+
+**Alterações:**
+
+- Adicionada a classe `DepositDTO` para representar os dados de transferência.
+- Implementado o serviço `DepositEntityService` para fornecer funcionalidades relacionadas à entidade `Deposit`.
+- Criada a fábrica de depósitos (`DepositFactory`) responsável pela criação de instâncias de depósito.
+- Adicionado o repositório `DepositRepository` para gerenciar a persistência dos dados de depósito.
+- Desenvolvidos os testes unitários na classe `DepositServiceTest`.
+- Validações para os dados do depósito foram integradas no serviço.
+- O serviço utiliza o repositório `DepositRepository` para persistência das entidades de depósito.
+
+**Nota:** A principal ênfase deste commit é oferecer suporte robusto para a criação, manipulação e validação da entidade `Deposit`, além de garantir a persistência através de um repositório dedicado.
+
+---
+
+**Commit** ba5ecfbcb528e66ff485fe0ea99a959ba260cbe8:
+
+Este commit adiciona serviços e fábrica para o gerenciamento de depósitos de doadores. Isso inclui a implementação da interface `DonorDepositService` e a adição da classe de fábrica `DonorDepositFactory`.
+
+**Arquivos Alterados:** `DonorDepositService.java`, `DonorDepositFactory.java`
+
+**Alterações:**
+
+- **Implementação da interface `DonorDepositService`**:
+  - Métodos para registrar doações.
+  - Métodos para vincular depósitos a doadores.
+
+- **Adição da classe de fábrica `DonorDepositFactory`**:
+  - Método para criar instâncias de `DonorDeposit`.
+
+**Nota:** A principal ênfase deste commit é fornecer uma camada estruturada de serviços para o gerenciamento de depósitos de doadores e uma fábrica para a criação de instâncias.
+
+---
+
+**Commit** c8c9e1a34a17486f8075875812f24d476e42b22d:
+
+Este commit implanta a interface e a implementação para o controlador `DonorDeposit` permitindo o registro de doações no depósito. Adicionalmente, foi adicionada a documentação Swagger e atualizada a configuração OpenAPI para incluir a nova tag "Depósitos".
+
+**Arquivos Alterados:** `DonorDepositController.java`, `openapi-config.yaml`
+
+**Alterações:**
+
+- Implementação da interface para o controlador `DonorDeposit` no arquivo `DonorDepositController.java`.
+- Adicionada a documentação Swagger detalhada para os novos endpoints relacionados a doações no depósito.
+- Atualização da configuração OpenAPI (`openapi-config.yaml`) para incluir a nova tag "Depósitos".
+
+**Nota:** A principal ênfase deste commit é permitir o registro de itens de doação no depósito e fornecer uma documentação clara e atualizada dos novos endpoints através do Swagger.
+
+---
+
+**Commit** bbbbfd1699a962d956aa64e867e3a9854ba66fdc:
+
+Este commit implementa o método para relacionar um usuário Doador com a doação no serviço `UserEntityServiceImpl`. Isso inclui a injeção de dependência do serviço `DonorDepositService` e a chamada ao método `linkDepositToDonor` durante a criação de uma nova entidade de usuário.
+
+**Arquivos Alterados:** `UserEntityServiceImpl.java`, `UserEntityServiceImplTest.java`
+
+**Alterações:**
+
+- Adicionada a importação do serviço `DonorDepositService` e sua injeção via construtor em `UserEntityServiceImpl`.
+- Inclusão da chamada ao método `donorDepositService.linkDepositToDonor(newUser)` dentro do método `createUserEntityFromCreationRequest` para estabelecer a relação entre o usuário Doador e a doação.
+- No arquivo de teste `UserEntityServiceImplTest.java`:
+  - Mock do serviço `DonorDepositService` adicionado.
+  - Adicionada a verificação da chamada ao método `linkDepositToDonor` do serviço `DonorDepositService`.
+
+**Nota:** A principal ênfase desta confirmação é garantir que ao criar um novo usuário do tipo Doador, sua relação com a doação seja devidamente registrada através do serviço `DonorDepositService`.
+
+- [Sumary](#release-notes)
 
 ---
 
