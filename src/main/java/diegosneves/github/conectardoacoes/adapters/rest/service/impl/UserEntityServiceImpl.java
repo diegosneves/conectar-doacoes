@@ -7,6 +7,7 @@ import diegosneves.github.conectardoacoes.adapters.rest.model.UserEntity;
 import diegosneves.github.conectardoacoes.adapters.rest.repository.UserRepository;
 import diegosneves.github.conectardoacoes.adapters.rest.request.UserEntityCreationRequest;
 import diegosneves.github.conectardoacoes.adapters.rest.response.UserEntityCreatedResponse;
+import diegosneves.github.conectardoacoes.adapters.rest.service.DonorDepositService;
 import diegosneves.github.conectardoacoes.adapters.rest.service.UserEntityService;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.User;
 import diegosneves.github.conectardoacoes.core.domain.user.entity.UserContract;
@@ -56,10 +57,12 @@ public class UserEntityServiceImpl implements UserEntityService {
 
     private final UserRepository userRepository;
     private final UserServiceContract userServiceContract;
+    private final DonorDepositService donorDepositService;
 
     @Autowired
-    public UserEntityServiceImpl(UserRepository userRepository) {
+    public UserEntityServiceImpl(UserRepository userRepository, DonorDepositService donorDepositService) {
         this.userRepository = userRepository;
+        this.donorDepositService = donorDepositService;
         this.userServiceContract = new UserService(this.userRepository);
     }
 
@@ -78,6 +81,7 @@ public class UserEntityServiceImpl implements UserEntityService {
         ValidationUtils.validateNotNullOrEmpty(request, MISSING_USER_ENTITY_REQUEST_ERROR_MESSAGE, UserEntityFailuresException.class);
         this.checkIfEmailAlreadyInUse(request.getEmail());
         UserEntity newUser = createUserEntityFromCreationRequest(request);
+        this.donorDepositService.linkDepositToDonor(newUser);
         return BuilderMapper.mapTo(UserEntityCreatedResponse.class, newUser);
     }
 

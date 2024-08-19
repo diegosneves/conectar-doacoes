@@ -7,6 +7,7 @@ diegosneves.github.conectardoacoes.adapters.rest.controller.imp
 diegosneves.github.conectardoacoes.adapters.rest.dto
 diegosneves.github.conectardoacoes.adapters.rest.enums
 diegosneves.github.conectardoacoes.adapters.rest.exception
+diegosneves.github.conectardoacoes.adapters.rest.factory
 diegosneves.github.conectardoacoes.adapters.rest.mapper
 diegosneves.github.conectardoacoes.adapters.rest.model
 diegosneves.github.conectardoacoes.adapters.rest.repository
