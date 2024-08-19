@@ -45,7 +45,7 @@ public class OpenApiConfig {
      */
     private Info getInfo() {
         return new Info()
-                .version("v1.2.0")
+                .version("v1.3.0")
                 .title("Conectar Doações")
                 .description("API de conexão de doadores e organização de doações")
                 .contact(new Contact().email("neves.diegoalex@outlook.com").url("https://github.com/diegosneves/conectar-doacoes").name("Diego Neves"));
@@ -61,6 +61,7 @@ public class OpenApiConfig {
         return List.of(
                 new Tag().name("Endereços").description("Funcionalidades direcionadas para os Endereços"),
                 new Tag().name("Usuários").description("Funcionalidades direcionadas para os Usuários"),
+                new Tag().name("Depósitos").description("Funcionalidades direcionadas para Depósitos"),
                 new Tag().name("Abrigos").description("Funcionalidades direcionadas para os Abrigos"));
     }
 
